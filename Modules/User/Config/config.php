@@ -61,6 +61,11 @@ return [
         'permissions',
         'first_name',
         'last_name',
+        'company',
+        'designation',
+        'profileImg',
+        'device_code',
+        'device_type'
     ],
     /*
     |--------------------------------------------------------------------------

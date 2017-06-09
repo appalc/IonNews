@@ -65,7 +65,77 @@ class SidebarExtender implements \Maatwebsite\Sidebar\SidebarExtender
                         $this->auth->hasAccess('content.contentimages.index')
                     );
                 });
+                $item->item(trans('content::contentusers.title.contentusers'), function (Item $item) {
+                    $item->icon('fa fa-copy');
+                    $item->weight(0);
+                    $item->append('admin.content.contentuser.create');
+                    $item->route('admin.content.contentuser.index');
+                    $item->authorize(
+                        $this->auth->hasAccess('content.contentusers.index')
+                    );
+                });
+                $item->item(trans('content::contentcompanies.title.contentcompanies'), function (Item $item) {
+                    $item->icon('fa fa-copy');
+                    $item->weight(0);
+                    $item->append('admin.content.contentcompany.create');
+                    $item->route('admin.content.contentcompany.index');
+                    $item->authorize(
+                        $this->auth->hasAccess('content.contentcompanies.index')
+                    );
+                });
+                $item->item(trans('content::contentlikestories.title.contentlikestories'), function (Item $item) {
+                    $item->icon('fa fa-copy');
+                    $item->weight(0);
+                    $item->append('admin.content.contentlikestory.create');
+                    $item->route('admin.content.contentlikestory.index');
+                    $item->authorize(
+                        $this->auth->hasAccess('content.contentlikestories.index')
+                    );
+                });
+                $item->item(trans('content::multiplecategorycontents.title.multiplecategorycontents'), function (Item $item) {
+                    $item->icon('fa fa-copy');
+                    $item->weight(0);
+                    $item->append('admin.content.multiplecategorycontent.create');
+                    $item->route('admin.content.multiplecategorycontent.index');
+                    $item->authorize(
+                        $this->auth->hasAccess('content.multiplecategorycontents.index')
+                    );
+                });
+                $item->item(trans('content::custom_contentstories.title.custom_contentstories'), function (Item $item) {
+                    $item->icon('fa fa-copy');
+                    $item->weight(0);
+                    $item->append('admin.content.custom_contentstory.create');
+                    $item->route('admin.content.custom_contentstory.index');
+                    $item->authorize(
+                        $this->auth->hasAccess('content.custom_contentstories.index')
+                    );
+                });
+                $item->item(trans('content::usergroups.title.usergroups'), function (Item $item) {
+                    $item->icon('fa fa-copy');
+                    $item->weight(0);
+                    $item->append('admin.content.usergroup.create');
+                    $item->route('admin.content.usergroup.index');
+                    $item->authorize(
+                        $this->auth->hasAccess('content.usergroups.index')
+                    );
+                });
+                $item->item(trans('content::custommulticategories.title.custommulticategories'), function (Item $item) {
+                    $item->icon('fa fa-copy');
+                    $item->weight(0);
+                    $item->append('admin.content.custommulticategory.create');
+                    $item->route('admin.content.custommulticategory.index');
+                    $item->authorize(
+                        $this->auth->hasAccess('content.custommulticategories.index')
+                    );
+                });
 // append
+
+
+
+
+
+
+
 
 
 

@@ -22,16 +22,52 @@
                 {!! $errors->first('sub_title', '<span class="help-block">:message</span>') !!}
             </div>
         </div>
-        <div class="col-sm-6">
-              <div class="form-group{{ $errors->has('company_id') ? ' has-error' : '' }}">
-                  {!! Form::label('category_id', trans('Service Provider Name')) !!}
-                  <select class="form-control" name="category_id">
-                      <?php foreach ($categories as $category): ?>
-                          <option value="{{ $category->id }}" <?php if($category->id == $content->category_id) echo "selected"; else echo '';?> >{{ $category->name }}</option>
+     
+        <div class="col-sm-12">
+            <div class="form-group{{ $errors->has('tags') ? ' has-error' : '' }}">
+                {!! Form::label('tags', trans('Tags')) !!}
+                {!! Form::text('tags', $content->tags, ['class' => 'form-control', 'placeholder' => trans('tags')]) !!}
+                {!! $errors->first('tags', '<span class="help-block">:message</span>') !!}
+            </div>
+        </div>
+     
+          
+
+          <div class="tab-pane" id="tab_2-2">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                  {!! Form::label('category_id', trans('Service Provider Name')) !!}
+                                    <select multiple="" class="form-control" name="category_id[]">
+
+                                        <?php   $allContentCategory=array();
+                                            $allcategory=$content->all_category;
+                                             if($allcategory)
+                                             { 
+                                              $allContentCategory=json_decode($allcategory,true);
+                                             } else $allContentCategory[0]=$content->category_id;
+
+                                        foreach ($categories as $category): ?>
+                                        <option value="{{ $category->id }}" <?php
+                                        if (in_array($category->id, $allContentCategory)) 
+                                        echo "selected"; else echo '';?>  >{{ $category->name }}</option>
                       <?php endforeach; ?>
-                  </select>
-              </div>
-          </div>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+         <div class="col-sm-12">
+        <label class="pull-left">Expiry Date</label>
+        <div id="returnrange" class="pull-left" style="margin-left:20px;background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
+        <input type="hidden" name="expiry_date" id="expiry_date"  value="{{$content->expiry_date}}">
+        <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+        <span></span><b class="caret"></b>
+        </div>
+        </div>
 
         <div class="col-sm-12">
             <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
@@ -41,37 +77,43 @@
             </div>
         </div>
        </div>
+
+      
+  
+
       <div class="row">
         
             <div class="col-sm-4">
                 <div class="form-group{{ $errors->has('image') ? ' has-error' : '' }}">
                     {!! Form::label('image', trans('Image')) !!}
-                    {!! Form::file('image', old('image'), ['class' => 'form-control', 'placeholder' => trans('image')]) !!}
+                
+                    <input name="img" type="file" onchange="previewFile()">
                     {!! $errors->first('image', '<span class="help-block">:message</span>') !!}
-                    <img src="{{ $content->image }}" width="120">
+                    <img  src="{{ $content->image }}" onchange="previewFile()" width="120">
                 </div>
             </div>
-            <!-- URL::asset('/a.jpg ')-->
-     	<!-- <div class="form-group box-body">
-	        <input name="" type="button" class="btn btn-primary btn-flat" value="Add Image" onclick="addRow('dataTable')" />
-	        <input type="button" class="btn btn-danger btn-flat" value="Delete Image" onclick="deleteRow('dataTable')" />
-	        <table id="dataTable" width="350px" border="1" class="imgtable" style="width: 100%;border: 4px solid #ecf0f5;">
-	            <tr>
-	                <th></th>
-	                <th>SL.no</th>
-	                <th>Upload</th>
-	                <th>Preview</th>
-	                <th>Image Description</th>
-	            </tr>
-	            <tr>
-	                <td><input  type="checkbox" name="chk"/></td>
-	                <td> 1 </td>
-	                <td class="filechoose"><input type='file' name="filebox[]" onchange="readURL(this);"/ value=""></td>
-	                <td><img id="blah" src="#" alt="Image preview" width="60" /></td>
-	                <td><textarea name=""></textarea></td>
-	            </tr>
-	        </table>
-	    </div> -->
-       </div>
+      </div>
+        <div class="tab-pane user-types" id="tab_2-2">
+           <div class="box-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                      {!! Form::label('user_group', trans('User Group')) !!}
+                      <select multiple="multiple" class=" user_group form-control" name="user_roles[]">
+                      <?php foreach ($user_roles as $user_role): ?>                     
+                      <option value="{{ $user_role['id'] }}" <?php
+                                        if ($user_role['checked']==1) 
+                                        echo "selected"; else echo '';?>>{{ $user_role['type'] }}</option>
+                      <?php endforeach; ?>
+                      </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>         
+ 
+	    </div> 
+      
+
     </div>
-</div>
+

@@ -32,12 +32,19 @@
                                 <th>{{ trans('ID') }}</th>
                                 <th>{{ trans('Name') }}</th>
                                 <th>{{ trans('Slug Name') }}</th>
+                                <th>{{trans('priority')}}</th>
                                 <th>{{ trans('Status') }}</th>
                                 <th data-sortable="false">{{ trans('core::core.table.actions') }}</th>
                             </tr>
                             </thead>
                             <tbody>
                             <?php if (isset($categories)): ?>
+                            <?php  $priorityArray=array();
+                                   foreach ($categories as $value) {
+                                   $priorityArray[$value->id]=$value->priority;
+                            }
+
+                            ?>
                             <?php foreach ($categories as $category): ?>
                             <tr>
 
@@ -50,8 +57,13 @@
                                  <td>
                                         {{ $category->slug_name }}
                                 </td>
+                                 <td>
+                                         <span name="priority_status" id="set_prioority_{{$category->id}}" onclick="changeDetails(this);"> {{ $category->priority }}</span>
+                                         <input onblur="rollBackDiv(this);" onfocus="readData(this);" onchange="changeDetailsDiv(this);" orderId="{{$category->id}}"   type="hidden" class="set_prioority_{{$category->id}}" value="{{ $category->priority }}">
+                                </td>
                                 <td>
-                                        {{ $category->status }}
+                                         {{ $category->status }}
+                                       
                                 </td>
                     
                                 <td>
@@ -69,7 +81,8 @@
                                 <th>{{ trans('ID') }}</th>
                                 <th>{{ trans('Name') }}</th>
                                 <th>{{ trans('Slug Name') }}</th>
-                                <th>{{ trans('Status') }}</th>
+                                <th>{{ trans('Priority') }} &nbsp <button type="button" class="btn btn-primary btn-flat" id="updatepriority" hidden="hidden"> update</button></th>
+                                <th>{{ trans('Status') }} </th>
                                 <th>{{ trans('core::core.table.actions') }}</th>
                             </tr>
                             </tfoot>
@@ -114,11 +127,134 @@
                 "sort": true,
                 "info": true,
                 "autoWidth": true,
-                "order": [[ 0, "desc" ]],
+                "order": [[ 3, "desc" ]],
                 "language": {
                     "url": '<?php echo Module::asset("core:js/vendor/datatables/{$locale}.json") ?>'
                 }
             });
         });
+    </script>
+    <script type="text/javascript">
+   
+           var priorityArray = <?php if(count($priorityArray)) echo json_encode($priorityArray); else "" ;?>;  
+           console.log(priorityArray);
+            var count = Object.keys(priorityArray).length;
+             var max=count;
+             var min=1;
+              console.log(count);
+           // var arr = $.map(priorityArray, function(el) { return el; })
+           // var max = Math.max(...arr);            
+           // var min = Math.min(...arr); 
+        
+            // console.log(priorityArray.length);
+            // var jo = $.parseJSON(priorityArray);
+            // priorityArray['4']=5;
+            // console.log(priorityArray['4']);
+
+            // console.log(priorityArray);
+            // $.each(priorityArray, function(key,value){
+            //       console.log(value);
+            //        console.log(key);
+            //     });
+
+            // $('body').on('click', 'span[id^=set_prioority]', function () {  
+            // $("#updatepriority").show();           
+            // var id = '';
+            // var column_name = '';
+            // id = $(this).attr('id').replace(/[^\d.]/g, '');
+            // column_name = $(this).attr('name');
+            // var input = $('<input />', {
+            //     'id': 'set_prioority_' +id,
+            //     'type': 'number',
+            //     'name': column_name,
+            //     'orderId':id,
+            //     'value': $(this).text().trim()
+
+            // });
+
+             
+            // $(this).parent().append(input);          
+            // $(this).remove();
+            // input.focus();
+            // textbox = true;         
+            
+        // });
+        actualData = 0;
+        function readData(event){
+            console.log("actualData"+actualData);
+            actualData = event.value;
+            console.log("actualData1"+actualData);
+
+        }
+      function changeDetailsDiv(event) { 
+
+          event_class= $(event).attr("class");
+          new_value = $("."+event_class).val();          
+          var categories_id=$("."+event_class).attr('orderId');
+            
+           if(new_value>max || new_value<min)
+           {
+             alert("Please set the priority in given range ["+min+ " to "+max+" ]");
+             $("."+event_class).val(priorityArray[categories_id]);
+              return 0;
+           }
+         
+          var original_value= priorityArray[categories_id];       
+          $.each(priorityArray, function(key,value){
+            if(original_value>new_value)
+            {
+             
+                   if(parseInt(new_value)<= parseInt(value) && parseInt(original_value)> parseInt(value))
+                   {
+                      priorityArray[key]=parseInt(value)+1;
+                   }
+            }
+            else {
+                   if(parseInt(new_value)>=parseInt(value) && parseInt(original_value)<parseInt(value))
+                     {
+                        priorityArray[key]=parseInt(value)-1;
+                     }
+
+             }
+           });
+
+          priorityArray[categories_id]=new_value;
+          console.log(priorityArray);
+          $.each(priorityArray,function(k,v){
+            $("#set_prioority_"+k).html(v);
+            $(".set_prioority_"+k).val(v);
+          })
+      } 
+
+      $("#updatepriority").click(function()
+      { 
+        
+         $.ajax({
+                type: 'POST',
+                data: {url: priorityArray},
+                url: '{{ env('APP_URL') }}/Category/updatePriority',
+                success: function(result) {
+                    
+                  $("#updatepriority").hide(); 
+                }
+     });
+
+      });
+         
+         function changeDetails(event){
+            
+            var className = event.id;
+            $("#"+className).css({display:"none"});
+            $("."+className).attr("type","number");
+         }
+         $("#updatepriority").hide();
+         function rollBackDiv(event){
+            $("#updatepriority").show(); 
+            var className = $(event).attr("class");
+            $("#"+className).css({display:"block"});
+            $("#"+className).html($("."+className).val());
+            $("."+className).attr("type","hidden");
+         }
+
     </script>
 @stop

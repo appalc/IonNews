@@ -65,7 +65,13 @@ return [
         'ime',
         'status',
         'phone',
-        'parent_id'
+        'parent_id',
+        'company',
+        'designation',
+        'profileImg',
+        'device_code',
+        'device_type',
+        'role_id'
     ],
     /*
     |--------------------------------------------------------------------------

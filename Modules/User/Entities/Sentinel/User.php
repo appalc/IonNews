@@ -19,6 +19,13 @@ class User extends EloquentUser implements UserInterface
         'permissions',
         'first_name',
         'last_name',
+        'company',
+        'designation',
+        'profileImg',
+        'device_code',
+        'device_type',
+        'role_id'
+
     ];
 
     /**
@@ -93,7 +100,7 @@ class User extends EloquentUser implements UserInterface
      * @inheritdoc
      */
     public function getFirstApiKey()
-    {
+    {   
         $userToken = $this->api_keys->first();
 
         if ($userToken === null) {

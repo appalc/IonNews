@@ -7,10 +7,11 @@
                 {!! $errors->first('name', '<span class="help-block">:message</span>') !!}
             </div>
         </div>
-        <div class="col-sm-6">
-        <label></label><br>
+        <div class="col-sm-3">
+        <label></label><br><br>
         <input  type="button" class="btn btn-primary btn-flat" value="Crawl Content" onclick="crawl()" />
         </div>
+
     </div>
 
       <div class="row">
@@ -23,22 +24,53 @@
         </div>
         <div class="col-sm-12">
             <div class="form-group{{ $errors->has('sub_title') ? ' has-error' : '' }}">
-                {!! Form::label('sub_title', trans('Subtitle')) !!}
+                {!! Form::label('sub_titzle', trans('Subtitle')) !!}
                 {!! Form::text('sub_title', old('sub_title'), ['class' => 'form-control','id' =>'sub_title', 'placeholder' => trans('subtitle')]) !!}
                 {!! $errors->first('sub_title', '<span class="help-block">:message</span>') !!}
             </div>
         </div>
-          <div class="col-sm-6">
-              <div class="form-group{{ $errors->has('company_id') ? ' has-error' : '' }}">
-                  {!! Form::label('category_id', trans('Category')) !!}
-                  <select class="form-control" name="category_id">
-                      <?php foreach ($categories as $category): ?>
+        <div class="col-sm-12">
+            <div class="form-group{{ $errors->has('tags') ? ' has-error' : '' }}">
+                {!! Form::label('tags', trans('Tags')) !!}
+                {!! Form::text('tags', old('tags'), ['class' => 'form-control','id' =>'tags', 'placeholder' => trans('tags')]) !!}
+                {!! $errors->first('tags', '<span class="help-block">:message</span>') !!}
+            </div>
+        </div>
+
+
+         <div class="tab-pane" id="tab_2-2">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                  {!! Form::label('category_id', trans('Category')) !!}
+                                    <select multiple="" class="form-control category_select" onchange="selectCategory(this.value)" name="category_id[]">
+                                        <?php foreach ($categories as $category): ?>
                           <option value="{{ $category->id }}">{{ $category->name }}</option>
                       <?php endforeach; ?>
-                  </select>
-              </div>
-          </div>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+ 
+
+       <div class="col-sm-12">
+        <label class="pull-left">Expiry Date</label>
+        <div id="returnrange" class="pull-left" style="margin-left:20px;background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
+        <input type="hidden" name="expiry_date" id="expiry_date"  value="" >
+        <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+        <span></span><b class="caret"></b>
+        </div>
+        </div>
+  
+
     
+
+
         <div class="col-sm-12">
             <div class="form-group{{ $errors->has('content') ? ' has-error' : '' }}">
                 {!! Form::label('content', trans('Story content')) !!}
@@ -48,10 +80,10 @@
         </div>
        </div>
       <div class="row">
-     	<div class="form-group box-body">
-	        <input  type="hidden" class="btn btn-primary btn-flat" value="Add Image" onclick="addRow('dataTable')" />
-	        <input type="hidden" class="btn btn-danger btn-flat" value="Delete Image" onclick="deleteRow('dataTable')" />
+     	<div class="form-group box-body img-info">
+
 	        <table id="dataTable" width="350px" border="1" class="imgtable" style="width: 100%;border: 4px solid #ecf0f5;">
+          <col width="30">
                 <thead>
 
                 <tr>
@@ -71,5 +103,65 @@
 	            {{--</tr>--}}
 	        </table>
 	    </div>
-       </div>
+            
+             
+            <div class="col-sm-12 custom_img">
+                <div class="form-group{{ $errors->has('image') ? ' has-error' : '' }}">
+                    {!! Form::label('image', trans('Image')) !!}                
+                    <input name="img" type="file" onchange="previewFile()">
+                    {!! $errors->first('image', '<span class="help-block">:message</span>') !!}
+                    <img  class="select_img" src="" onchange="previewFile()" width="120">
+
+                </div>
+            </div>
+    
+       <div class="tab-pane user-types" id="tab_2-2">
+
+           <div class="box-body">
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group ">
+                      {!! Form::label('user_group', trans('User Group')) !!}
+                      <select multiple="multiple" class="user_group form-control" name="user_roles[]">
+                      <?php foreach ($user_roles as $user_role): ?>
+                      <option value="{{ $user_role['id'] }}" <?php
+                                        if ($user_role['id']==-1) 
+                                        echo "selected"; else echo '';?>>{{ $user_role['type'] }}</option>
+                      <?php endforeach; ?>
+                      </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+ 
+<!--       <div class="form-group user-types form_grp_relative" style="">
+
+           <table class=" data-table table table-bordered table-hover dataTable" id="User_data" role="grid" aria-describedby="DataTables_Table_0_info" >          
+              <button type="button" class="btn btn-primary" id="select_all_page" style="position: relative; top: 71px;    margin-left: 5px;height: 32px;width: 83px;"><span style="position: relative;
+              top: -2px;">SelectAll</span></button>
+
+       
+
+           <thead>
+               <tr>
+                  <th data-sortable="false" style="width: 70px;">
+                  <input type="checkbox"  id="select_all">Select</th>
+                  <th>Name</th>
+                  <th>Company Name </th>
+                  <th>Designation</th>
+              </tr>  
+              </thead>
+              <tbody id = "user_info">  
+
+         
+                </tbody>
+              
+           </table>  
+             
+      </div> -->
     </div>
+    </div>
+

@@ -68,6 +68,8 @@ class UserController extends BaseUserModuleController
     public function create()
     {
         $roles = $this->role->all();
+                 // echo "<pre>";print_r(json_decode($roles)); exit;
+
 
         return view('user::admin.users.create', compact('roles'));
     }
@@ -81,7 +83,6 @@ class UserController extends BaseUserModuleController
     public function store(CreateUserRequest $request)
     {
         $data = $this->mergeRequestWithPermissions($request);
-
         $this->user->createWithRoles($data, $request->roles, true);
 
         return redirect()->route('admin.user.user.index')
@@ -95,7 +96,7 @@ class UserController extends BaseUserModuleController
      * @return Response
      */
     public function edit($id)
-    {
+    {    
         if (!$user = $this->user->find($id)) {
             return redirect()->route('admin.user.user.index')
                 ->withError(trans('user::messages.user not found'));

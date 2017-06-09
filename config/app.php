@@ -59,7 +59,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost/masterapp/public'),
+    'url' => env('APP_URL', 'http://localhost'),
 
     /*
     |--------------------------------------------------------------------------

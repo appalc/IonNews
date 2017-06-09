@@ -16,7 +16,7 @@
 @stop
 
 @section('content')
-    {!! Form::open(['route' => ['admin.content.content.update', $content->id], 'method' => 'put']) !!}
+    {!! Form::open(['route' => ['admin.content.content.update', $content->id], 'method' => 'put','enctype' => 'multipart/form-data' ,'onsubmit'=>'return formValidator()' ,'id' => 'userListing']) !!}
     <div class="row">
         <div class="col-md-12">
             <div class="nav-tabs-custom">
@@ -52,8 +52,9 @@
 @stop
 
 @section('scripts')
-    <script type="text/javascript">
-        $( document ).ready(function() {
+    <script type="text/javascript">     
+       
+        $( document ).ready(function() {             
             $(document).keypressAction({
                 actions: [
                     { key: 'b', route: "<?= route('admin.content.content.index') ?>" }
@@ -63,6 +64,7 @@
     </script>
     <script>
         $( document ).ready(function() {
+           
             $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
                 checkboxClass: 'icheckbox_flat-blue',
                 radioClass: 'iradio_flat-blue'
@@ -82,66 +84,108 @@
             }
         }
     </script>
-    <script language="javascript">
-        function addRow(tableID) {
-
-            var table = document.getElementById(tableID);
-
-            var rowCount = table.rows.length;
-            var row = table.insertRow(rowCount);
-
-            var cell1 = row.insertCell(0);
-            var element1 = document.createElement("input");
-            element1.type = "checkbox";
-            element1.name="chkbox[]";
-            cell1.appendChild(element1);
-
-            var cell2 = row.insertCell(1);
-            cell2.innerHTML = rowCount + 1;
-
-            var cell3 = row.insertCell(2);
-            var element2 = document.createElement("input");
-            element2.type = "file";
-            element2.onchange = "readURL(this)"
-            element2.id = "blah2";
-            element2.name = "filebox[]";
-            cell3.appendChild(element2);
-
-            var cell4 = row.insertCell(3);
-            var element3 = document.createElement("img");
-            element3.src = "#";
-            element3.alt = "Image preview";
-            element3.name = "imges[]";
-            cell4.appendChild(element3);
-
-            var cell4 = row.insertCell(4);
-            var element4 = document.createElement("textarea");
-            element4.name = "textarea";
-            cell4.appendChild(element4);
-
-
-        }
-
-        function deleteRow(tableID) {
-            try {
-            var table = document.getElementById(tableID);
-            var rowCount = table.rows.length;
-
-            for(var i=0; i<rowCount; i++) {
-                var row = table.rows[i];
-                var chkbox = row.cells[0].childNodes[0];
-                if(null != chkbox && true == chkbox.checked) {
-                    table.deleteRow(i);
-                    rowCount--;
-                    i--;
-                }
-
-
+      <script type="text/javascript">
+       var checked_result;
+       var uncheck_result;
+        var a;
+        var b;
+        var optionSet1 = {
+            startDate: moment().subtract(29, 'days'),
+            endDate: moment(),
+            minDate: '01/01/2012',
+            maxDate: moment(),
+            dateLimit: { days: 300},
+            showDropdowns: true,
+            showWeekNumbers: true,
+            autoApply: true,
+            timePicker: false,
+            timePickerIncrement: 1,
+            timePicker12Hour: true,
+            ranges: {
+                'Today': [moment(), moment()],
+            },
+            opens: 'right',
+            format: 'MM/DD/YYYY',
+            separator: ' to ',
+            locale: {
+                applyLabel: 'Submit',
+                cancelLabel: 'Clear',
+                fromLabel: 'From',
+                toLabel: 'To',
+                customRangeLabel: 'Custom',
+                daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr','Sa'],
+                monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                firstDay: 1
             }
-            }catch(e) {
-                alert(e);
-            }
-        }
+        };
+  var datetime="<?php echo ($content->expiry_date != "0000-00-00")?$content->expiry_date:date('Y-m-d'); ?>";
 
-    </script>
+
+          var optionSet2 = {
+          singleDatePicker:true,
+           minDate: moment(),
+          startDate:moment.utc(Date.parse(datetime)),
+          endDate: moment.utc(Date.parse(datetime))
+        }
+        var cb = function(start, end, label) {
+            $('#returnrange span').html(start.format('MMMM D, YYYY'));
+            a=start.format('YYYY-MM-DD');
+            b=end.format('YYYY-MM-DD');            
+            $('#expiry_date').val(b);
+        };
+        cb(moment.utc(Date.parse(datetime)), moment.utc(Date.parse(datetime)), "Last Month");
+        $('#returnrange').daterangepicker(optionSet2,cb);        
+        $('#returnrange').val(daterangepicker);
+        $('#expiry_date').val(b);
+  </script>
+  <script>
+   function previewFile(){
+    
+       var preview = document.querySelector('img'); //selects the query named img
+       var file    = document.querySelector('input[type=file]').files[0]; //sames as here
+       var reader  = new FileReader();
+
+       reader.onloadend = function () {
+           preview.src = reader.result;
+       }
+
+       if (file) {
+           reader.readAsDataURL(file); //reads the data as a URL
+       } else {
+           preview.src = "";
+       }
+  }
+
+  </script>
+    <script language="javascript">    
+    var form_checker=0;
+
+     function formValidator() {
+       
+       
+         return true;
+    }
+          checkedArray = [];
+   
+
+
+  
+function changed(event){
+  if(event.checked){
+    checkedArray.push(event.value);
+    console.log(checkedArray);
+
+  }else{
+    var a = checkedArray.indexOf(event.value);
+    // console.log(a);
+    checkedArray.splice(a, 1);
+  }
+  // console.log(checkedArray);
+}
+
+
+       
+   </script>
+
+
 @stop

@@ -11,5 +11,5 @@ class Category extends Model
 
     protected $table = 'content__categories';
     public $translatedAttributes = [];
-    protected $fillable = ['name','slug_name','status'];
+    protected $fillable = ['name','slug_name','status','priority'];
 }

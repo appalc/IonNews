@@ -16,6 +16,7 @@ use Modules\User\Repositories\RoleRepository;
 use Modules\User\Services\UserResetter;
 use Modules\Services\Repositories\UsertypeRepository;
 use Modules\Authentication\Events\Confirmnotify;
+use Input;
 use Log;
 class FrontController extends BasePublicController
 {
@@ -32,7 +33,8 @@ class FrontController extends BasePublicController
     public function login(Request $request,Client $http){
       $validator = Validator::make($request->all(), [
           'email' => 'required',
-          'password' => 'required'
+          'password' => 'required',
+
       ]);
       if ($validator->fails()) {
           $errors = $validator->errors();
@@ -41,21 +43,67 @@ class FrontController extends BasePublicController
           }
           $this->response->setContent(array('message'=> $message));
         return $this->response->setStatusCode(400,$meserror);
-      }else{
+      }else{         
 
         $credentials = [
             'email' => $request->email,
             'password' => $request->password,
         ];
       
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])) {    
+         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])) {    
          $authicated_user = Auth::user();    
            if($this->user->find($authicated_user->id)->isActivated()){
                $last_login =  $authicated_user->last_login;
                Auth::user()->last_login = new \DateTime();
+               if(isset($request->device_code))
+               {
+               if($request->device_code)
+               Auth::User()->device_code=$request->device_code;
+               }
                Auth::user()->save();
+
                $token = Auth::generateTokenById($authicated_user->id);
-               return response(['token' => $token,'last_login' =>$last_login,'first_name'=> $authicated_user->first_name,'role'=>$authicated_user->role])->header('Content-Type', 'application/json');
+               $authicated_user->token=$token;
+
+
+
+                $authicated_user=json_decode($authicated_user,true);
+               $response=array();
+               $response['id']=$authicated_user['id'];
+               $response['email']=$authicated_user['email'];
+               $response['first_name']=$authicated_user['first_name'];
+               $response['last_name']=$authicated_user['last_name'];
+               $response['created_at']=$authicated_user['created_at'];
+               $response['updated_at']=$authicated_user['updated_at'];
+               $response['phone']=$authicated_user['phone'];
+               $response['address']=$authicated_user['address'];
+               $response['role']=$authicated_user['role'];
+               $response['role_id']=$authicated_user['role_id'];
+
+               if(!empty($authicated_user['device_code']))
+               $response['device_code']=$authicated_user['device_code'];             
+               else $response['device_code']="";
+
+               if(!empty($authicated_user['company']))
+               $response['company']=$authicated_user['company'];
+               else $response['company']="";
+
+               if(!empty($authicated_user['designation']))
+               $response['designation']=$authicated_user['designation'];
+               else $response['designation']="";
+               $response['role']=$authicated_user['role'];
+               if(!empty($authicated_user['profileImg']))
+               $response['profileImg']=$authicated_user['profileImg'];
+               else  $response['profileImg']="";
+               
+               $response['token']=$authicated_user['token'];
+
+
+               return response(json_encode($response))->header('Content-Type', 'application/json');
+
+               // return response($authicated_user);
+               // return response(['id'=>$authicated_user->id,'token' => $token,'email'=>$authicated_user->email,'last_login' =>$last_login,'first_name'=> $authicated_user->first_name,'last_name'=>$authicated_user->last_name,'create_at'=>$authicated_user->created_at,'updated_at'=>$authicated_user->updated_at,
+                // 'company_name'=>$authicated_user->company,'designation'=>$authicated_user->designation,'role'=>$authicated_user->role])->header('Content-Type', 'application/json');
            }else{
                $this->response->setContent(array('message'=>'Please Activate your account'));
                return $this->response->setStatusCode(401,'Please Activate your account');
@@ -74,8 +122,6 @@ class FrontController extends BasePublicController
           if(isset($request->email) && $request->email){
             $user = $this->user->findByCredentials(['email' => $request->email ]);
             app(UserResetter::class)->startReset($request->all());
-            //return $user;
-           // event(new UserHasBegunResetProcess($user,rand()));
             return  array('message' => "successfully sent" );
           }else{
                $this->response->setContent(array('message'=>'Email id required'));
@@ -104,7 +150,8 @@ class FrontController extends BasePublicController
           'phone' => 'required|unique:users|max:10|min:9',
           'first_name' => 'required|max:25',
           'role' => 'required',
-          'last_name' => 'required|max:25'
+          'last_name' => 'required|max:25',
+          'device_code'=>'required'
       ]);
         if ($validator->fails()) {
             $errors = $validator->errors();
@@ -118,6 +165,7 @@ class FrontController extends BasePublicController
           
             $role_id = '';
             $roledetails = $roles->all();
+            Log::info($request->all()); 
             foreach ($roledetails as $roledetail) {
                 if(ucfirst($request->role) != 'Admin'){
                   if(ucfirst($request->role) == ucfirst($roledetail->name)){
@@ -141,7 +189,7 @@ class FrontController extends BasePublicController
            if($this->user->find($authicated_user->id)->isActivated()){
                $last_login =  $authicated_user->last_login;
                Auth::user()->last_login = new \DateTime();
-               Auth::user()->save();
+               Auth::user()->save();               
                $user->token = Auth::generateTokenById($authicated_user->id);
           return response($user)->header('Content-Type', 'application/json');
           }
@@ -149,33 +197,82 @@ class FrontController extends BasePublicController
       }
     }
 
-   
+   public function update(Request $request){
+        
+          $validator = Validator::make($request->all(), [        
+          'first_name' => 'required|max:25',
+          'last_name' => 'required|max:25',
+          'role' => 'required',
+      ]);  
+           
+          if ($validator->fails()) {
+            $errors = $validator->errors();
+            foreach ($errors->all() as $message) {             
 
-    public function update(Request $request){
-            
+                $meserror =$message;
+            }              
+           $this->response->setContent(array('message'=> $message));
+          return $this->response->setStatusCode(400,$meserror);
+        }else { 
+         
+
             $find_user = $this->user->find($request->user_id);
 
-            if(isset($request->phone) && $request->phone){
-                $phone = $request->phone;
+            if(isset($request->first_name) && $request->first_name){
+                $first_name = $request->first_name;
             }else{
-                $phone = $find_user->phone;
+                $first_name = $find_user->first_name;
             }
 
-            if(isset($request->address) && $request->address){
-                $address = $request->address;
+            if(isset($request->last_name) && $request->last_name){
+                $last_name = $request->last_name;
             }else{
-                $address = $find_user->address;
+                $last_name = $find_user->last_name;
             }
+
+             if(isset($request->company) && $request->company){
+                $company = $request->company;
+            }else{
+                $company = $find_user->company;
+            }
+           if(isset($request->designation) && $request->designation){
+                $designation = $request->designation;
+            }else{
+                $designation = $find_user->designation;
+            }
+
+
+
+
 
            
             $user_Detail = array(
-                            'address' => $address,
-                            'phone' => $phone
+                            'last_name' => $last_name,
+                            'first_name' => $first_name,
+                            'company'=>$company,
+                            'designation'=>$designation
                           );
-           
-           $details = $this->user->update($find_user,$user_Detail);
-          return response($details)->header('Content-Type', 'application/json');
-    }
+            $details = $this->user->update($find_user,$user_Detail);
+
+
+            $response['id']=$details->id;
+            $response['email']=$details->email;
+            $response['first_name']=$details->first_name;
+            $response['last_name']=$details->last_name;
+            $response['created_at']=$details->created_at;
+            $response['updated_at']=$details->updated_at;
+            $response['phone']=$details->phone;
+            $response['address']=$details->address;
+            $response['role']=$details->role;
+            $response['role_id']=$details->role_id;
+            $response['status']=$details->status;
+            $response['company']=$details->company;
+            $response['designation']=$details->designation;
+          
+          return response($response)->header('Content-Type', 'application/json');
+    } 
+  }
+
 
     public function getactive(Request $request){
       $validator = Validator::make($request->all(), [
@@ -243,4 +340,149 @@ class FrontController extends BasePublicController
          }
         return $userTypes;
      }
+     public function updateuserinfo(Request $request){
+
+     }
+     public function updateProfileImg(Request $request)
+     {
+       Log::info($request->all());
+       $validator = Validator::make($request->all(), [
+          'profileImg' => 'required'
+      ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            foreach ($errors->all() as $message) {
+                $meserror =$message;
+            }
+            $this->response->setContent(array('message'=> $meserror));
+          return $this->response->setStatusCode(400,$meserror);
+        }else{    
+
+                $find_user = $this->user->find($request->user_id);       
+
+                $userId=$request->user_id;
+                $data=$request->profileImg;
+                $newname="profileImg".$userId.".jpg";  
+                $imgurl = env('IMG_URL')."/".$newname;       
+                $ifp = fopen($imgurl, "wb"); 
+                fwrite($ifp, base64_decode($data)); 
+                fclose($ifp); 
+                $target1 = env('IMG_URL1')."/".$newname;
+
+                $user_Detail = array(
+                                    'profileImg' => $target1
+                                    );
+                $details = $this->user->update($find_user,$user_Detail);
+               $response['profileImg']=$target1;
+                // return response($target1);
+                
+                return response($response)->header('Content-Type', 'application/json');
+             }
+
+
+     }
+
+     public function push_notifications(Request $request)
+      {
+
+        $message['title']="https://www.google.co.in/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwibvueq74rUAhUJLY8KHcZOBaYQjRwIBw&url=https%3A%2F%2Fmadeby.google.com%2Fphone%2F&psig=AFQjCNF5QEC8J5piftgFBH2pcbASMTXfkw&ust=1495795695209453";
+        $message['message']="https://www.google.co.in/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwibvueq74rUAhUJLY8KHcZOBaYQjRwIBw&url=https%3A%2F%2Fmadeby.google.com%2Fphone%2F&psig=AFQjCNF5QEC8J5piftgFBH2pcbASMTXfkw&ust=1495795695209453https://www.google.co.in/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwibvueq74rUAhUJLY8KHcZOBaYQjRwIBw&url=https%3A%2F%2Fmadeby.google.com%2Fphone%2F&psig=AFQjCNF5QEC8J5piftgFBH2pcbASMTXfkw&ust=1495795695209453https://www.google.co.in/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwibvueq74rUAhUJLY8KHcZOBaYQjRwIBw&url=https%3A%2F%2Fmadeby.google.com%2Fphone%2F&psig=AFQjCNF5QEC8J5piftgFBH2pcbASMTXfkw&ust=1495795695209453";
+        $message['imageUrl']="https://www.google.co.in/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwibvueq74rUAhUJLY8KHcZOBaYQjRwIBw&url=https%3A%2F%2Fmadeby.google.com%2Fphone%2F&psig=AFQjCNF5QEC8J5piftgFBH2pcbASMTXfkw&ust=1495795695209453";
+        $message['crawl_url']='http://git.mantralabsglobal.com/bharath/cms-project/blob/master/Modules/Content/Http/Controllers/Admin/ContentController.php';
+        $device_code="eBASB4uQpNU:APA91bEvHoXfdP1T29X1J2YJSn2z4wN21CROcjTsTRGRqk6ig3Tpg3tZAAuuxeJdX5HOtBAI0ctbWV6IVcJOPjAixzLGuevkMTVgbuq_ovFi75slWhDHoDZiTCqCy0cNCSnp41_h3cgX";
+
+        $API_ACCESS_KEY = env("API_ACCESS_KEY");
+        $registrationIds=$device_code;
+        $msg=$message;      
+       
+      
+        $fields = array
+        (
+          'registration_ids'  =>array($registrationIds),
+          'data'      => $msg
+        );
+         
+        $headers = array
+        (
+          'Authorization: key=' . $API_ACCESS_KEY,
+          'Content-Type: application/json'
+        );
+        $url='https://fcm.googleapis.com/fcm/send';
+         
+        $ch = curl_init();
+        curl_setopt( $ch,CURLOPT_URL, 'http://android.googleapis.com/gcm/send');
+        curl_setopt( $ch,CURLOPT_POST, true );
+        curl_setopt( $ch,CURLOPT_HTTPHEADER, $headers );
+        curl_setopt( $ch,CURLOPT_RETURNTRANSFER, true );
+        curl_setopt( $ch,CURLOPT_SSL_VERIFYPEER, false );
+        curl_setopt( $ch,CURLOPT_POSTFIELDS, json_encode($fields) );
+        $result = curl_exec($ch );       
+        curl_close( $ch );
+        // Log::info($result);
+        return response($result);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        $apnsHost = env('apnsHost');
+        $apnsCert = env('apnsCert');
+        $apnsPort = env('apnsPort');
+        $apnsPass = env('apnsPass');
+        $token ='e1e960c635806be9b95aa2116b879f73bc78768f48549646e2a62611477459aa';    
+
+        $story='IBM NEWS';
+        $title='ION NEWS';
+        $url="http://assets.myntassets.com.jpg";
+        $output='{
+"aps": {
+"alert": {
+"title": "123456789012345678901\n23456789012345766737373\n12345678901234",
+"body": "titi"
+}
+},
+"mediaUrl": "https://www.w3schools.com/html/pic_mountain.jpg",
+"mediaType": "image"}';
+        Log::info($payload['acme2']=['abab','bababa']);
+        Log::info($output);
+        $token = pack('H*', str_replace(' ', '', $token));
+        $apnsMessage = chr(0).chr(0).chr(32).$token.chr(0).chr(strlen($output)).$output;
+
+        $streamContext = stream_context_create();
+        stream_context_set_option($streamContext, 'ssl', 'local_cert', $apnsCert);
+        stream_context_set_option($streamContext, 'ssl', 'passphrase', $apnsPass);
+
+        $apns = stream_socket_client('ssl://'.$apnsHost.':'.$apnsPort, $error, $errorString, 2, STREAM_CLIENT_CONNECT, $streamContext);
+        // print_r($apns);
+        Log::info($apns);
+
+        if (!$apns)
+         exit("Failed to connect: $err $errstr" . PHP_EOL);
+        echo 'Connected to APNS' . PHP_EOL;
+
+        fwrite($apns, $apnsMessage);
+        fclose($apns);
+         return response("successfully");
+      }
 }

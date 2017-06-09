@@ -28,7 +28,7 @@ class Regemail extends Mailable implements ShouldQueue
     {
         $this->user = $user;
         $this->msg = $msg;
-        $this->subject = 'Welcome to BrigadePoll ';
+        $this->subject = 'Welcome to ION News ';
     }
 
     /**

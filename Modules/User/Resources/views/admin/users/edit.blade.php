@@ -47,6 +47,23 @@
                                     {!! $errors->first('email', '<span class="help-block">:message</span>') !!}
                                 </div>
                             </div>
+                             <div class="col-sm-4">
+                                <div class="form-group{{ $errors->has('company') ? ' has-error' : '' }}">
+                                    {!! Form::label('company') !!}
+                                    {!! Form::text('company', old('company', $user->company), ['class' => 'form-control']) !!}
+                                    {!! $errors->first('company', '<span class="help-block">:message</span>') !!}
+                                </div>
+                            </div>
+
+                              <div class="col-sm-4">
+                                <div class="form-group{{ $errors->has('designation') ? ' has-error' : '' }}">
+                                    {!! Form::label('designation') !!}
+                                    {!! Form::text('designation', old('designation', $user->designation), ['class' => 'form-control']) !!}
+                                    {!! $errors->first('designation', '<span class="help-block">:message</span>') !!}
+                                </div>
+                            </div>
+                           
+                            
                         </div>
                         <div class="row">
                             <div class="col-md-3">

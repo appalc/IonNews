@@ -78,7 +78,98 @@ class ContentServiceProvider extends ServiceProvider
                 return new \Modules\Content\Repositories\Cache\CacheContentImagesDecorator($repository);
             }
         );
+        $this->app->bind(
+            'Modules\Content\Repositories\ContentUserRepository',
+            function () {
+                $repository = new \Modules\Content\Repositories\Eloquent\EloquentContentUserRepository(new \Modules\Content\Entities\ContentUser());
+
+                if (! config('app.cache')) {
+                    return $repository;
+                }
+
+                return new \Modules\Content\Repositories\Cache\CacheContentUserDecorator($repository);
+            }
+        );
+        $this->app->bind(
+            'Modules\Content\Repositories\ContentCompanyRepository',
+            function () {
+                $repository = new \Modules\Content\Repositories\Eloquent\EloquentContentCompanyRepository(new \Modules\Content\Entities\ContentCompany());
+
+                if (! config('app.cache')) {
+                    return $repository;
+                }
+
+                return new \Modules\Content\Repositories\Cache\CacheContentCompanyDecorator($repository);
+            }
+        );
+        $this->app->bind(
+            'Modules\Content\Repositories\ContentLikeStoryRepository',
+            function () {
+                $repository = new \Modules\Content\Repositories\Eloquent\EloquentContentLikeStoryRepository(new \Modules\Content\Entities\ContentLikeStory());
+
+                if (! config('app.cache')) {
+                    return $repository;
+                }
+
+                return new \Modules\Content\Repositories\Cache\CacheContentLikeStoryDecorator($repository);
+            }
+        );
+        $this->app->bind(
+            'Modules\Content\Repositories\MultipleCategoryContentRepository',
+            function () {
+                $repository = new \Modules\Content\Repositories\Eloquent\EloquentMultipleCategoryContentRepository(new \Modules\Content\Entities\MultipleCategoryContent());
+
+                if (! config('app.cache')) {
+                    return $repository;
+                }
+
+                return new \Modules\Content\Repositories\Cache\CacheMultipleCategoryContentDecorator($repository);
+            }
+        );
+        $this->app->bind(
+            'Modules\Content\Repositories\Custom_ContentStoryRepository',
+            function () {
+                $repository = new \Modules\Content\Repositories\Eloquent\EloquentCustom_ContentStoryRepository(new \Modules\Content\Entities\Custom_ContentStory());
+
+                if (! config('app.cache')) {
+                    return $repository;
+                }
+
+                return new \Modules\Content\Repositories\Cache\CacheCustom_ContentStoryDecorator($repository);
+            }
+        );
+        $this->app->bind(
+            'Modules\Content\Repositories\UserGroupRepository',
+            function () {
+                $repository = new \Modules\Content\Repositories\Eloquent\EloquentUserGroupRepository(new \Modules\Content\Entities\UserGroup());
+
+                if (! config('app.cache')) {
+                    return $repository;
+                }
+
+                return new \Modules\Content\Repositories\Cache\CacheUserGroupDecorator($repository);
+            }
+        );
+        $this->app->bind(
+            'Modules\Content\Repositories\CustomMultiCategoryRepository',
+            function () {
+                $repository = new \Modules\Content\Repositories\Eloquent\EloquentCustomMultiCategoryRepository(new \Modules\Content\Entities\CustomMultiCategory());
+
+                if (! config('app.cache')) {
+                    return $repository;
+                }
+
+                return new \Modules\Content\Repositories\Cache\CacheCustomMultiCategoryDecorator($repository);
+            }
+        );
 // add bindings
+
+
+
+
+
+
+
 
 
 
