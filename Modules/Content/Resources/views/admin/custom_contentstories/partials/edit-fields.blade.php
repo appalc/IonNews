@@ -24,22 +24,33 @@
                 {!! $errors->first('tags', '<span class="help-block">:message</span>') !!}
             </div>
         </div>
-         <div class="tab-pane" id="tab_2-2">
-                    <div class="box-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                  {!! Form::label('category_id', trans('Category')) !!}
-                                    <select multiple="" class="form-control category_select" onchange="selectCategory(this.value)" name="category_id[]">
-                                        <?php foreach ($categories as $category): ?>
-                          <option value="{{ $category->id }}">{{ $category->name }}</option>
-                      <?php endforeach; ?>
-                                    </select>
-                                </div>
+
+          <div class="tab-pane" id="tab_2-2">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                              {!! Form::label('category_id', trans('Service Provider Name')) !!}
+                                <select multiple="" class="form-control" name="category_id[]">
+
+                                    <?php   $allContentCategory=array();
+                                        $allcategory=$custom_contentstory->all_category;
+                                         if($allcategory)
+                                         { 
+                                          $allContentCategory=json_decode($allcategory,true);
+                                         } else $allContentCategory[0]=$custom_contentstory->category_id;
+
+                                    foreach ($categories as $category): ?>
+                                    <option value="{{ $category->id }}" <?php
+                                    if (in_array($category->id, $allContentCategory)) 
+                                    echo "selected"; else echo '';?>  >{{ $category->name }}</option>
+                  <?php endforeach; ?>
+                                </select>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
      
           
