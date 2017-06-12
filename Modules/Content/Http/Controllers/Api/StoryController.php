@@ -147,7 +147,9 @@ class StoryController extends BasePublicController
 
             $users= $this->user->find($request->user_id);
             $user_groupId=$users->role_id;
-            // Log::info($user_groupId);
+
+            Log::info($user_groupId);
+            
             $dataresponse = array();
             $current_date=date('Y-m-d');
             $user_id=$request->user_id;          
@@ -161,7 +163,7 @@ class StoryController extends BasePublicController
                  foreach ($setexist as $key => $value) {
 
                                 $value->priority=$category->priority;
-                           // $value->like_count=$this->checkLikeorNot($value,$user_id);                              
+                                                         
                             }           
                  $dataresponse[$category->name]=$setexist;  
                  }

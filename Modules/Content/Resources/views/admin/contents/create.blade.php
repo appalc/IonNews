@@ -45,7 +45,7 @@
 
             <div id='contain_textbox' class="container table-responsive" style="width: 100%;">
               
-                       <img id="imgview" src="" style="width: 100%;height: 100%;"></img>                 
+                       <img id="imgview" src="" style="width: 500px;height: 400px;"></img>                 
             </div>
            
         

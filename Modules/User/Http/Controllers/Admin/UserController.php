@@ -10,6 +10,7 @@ use Modules\User\Http\Requests\UpdateUserRequest;
 use Modules\User\Permissions\PermissionManager;
 use Modules\User\Repositories\RoleRepository;
 use Modules\User\Repositories\UserRepository;
+use Log;
 
 class UserController extends BaseUserModuleController
 {
@@ -83,6 +84,9 @@ class UserController extends BaseUserModuleController
     public function store(CreateUserRequest $request)
     {
         $data = $this->mergeRequestWithPermissions($request);
+        if($request->has('roles'))
+        $data['role_id']=$data['roles'][0];
+       
         $this->user->createWithRoles($data, $request->roles, true);
 
         return redirect()->route('admin.user.user.index')
@@ -118,6 +122,9 @@ class UserController extends BaseUserModuleController
     public function update($id, UpdateUserRequest $request)
     {
         $data = $this->mergeRequestWithPermissions($request);
+        if($request->has('roles'))
+        $data['role_id']=$data['roles'][0];
+        // Log::info($data);
 
         $this->user->updateAndSyncRoles($id, $data, $request->roles);
 

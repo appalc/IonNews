@@ -410,7 +410,7 @@ class ContentController extends AdminBaseController
          } 
 
          foreach ($user_roles as $key => $value) {
-           if(in_array($value['id'], $user_type))
+           if( sizeof($user_type) and in_array($value['id'], $user_type))
             $user_roles[$value['id']]['checked']=1;
            else $user_roles[$value['id']]['checked']=0;
 
