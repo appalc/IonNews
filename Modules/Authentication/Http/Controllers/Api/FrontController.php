@@ -60,6 +60,12 @@ class FrontController extends BasePublicController
                if($request->device_code)
                Auth::User()->device_code=$request->device_code;
                }
+              if(isset($request->device_type))
+               {
+               if($request->device_type)
+               Auth::User()->device_type=$request->device_type;
+               }
+           
                Auth::user()->save();
 
                $token = Auth::generateTokenById($authicated_user->id);
@@ -144,6 +150,7 @@ class FrontController extends BasePublicController
     }
 
     public function register(Request $request,RoleRepository $roles,Confirmnotify $confirm){
+      
       $validator = Validator::make($request->all(), [
           'email' => 'required|unique:users',
           'password' => 'required',
@@ -151,7 +158,8 @@ class FrontController extends BasePublicController
           'first_name' => 'required|max:25',
           'role' => 'required',
           'last_name' => 'required|max:25',
-          'device_code'=>'required'
+          'device_code'=>'required',
+          'role_id'=>'required'
       ]);
         if ($validator->fails()) {
             $errors = $validator->errors();
@@ -385,11 +393,66 @@ class FrontController extends BasePublicController
      public function push_notifications(Request $request)
       {
 
-        $message['title']="https://www.google.co.in/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwibvueq74rUAhUJLY8KHcZOBaYQjRwIBw&url=https%3A%2F%2Fmadeby.google.com%2Fphone%2F&psig=AFQjCNF5QEC8J5piftgFBH2pcbASMTXfkw&ust=1495795695209453";
+        $apnsHost = env('apnsHost');
+        $apnsCert = env('apnsCert');
+        $apnsPort = env('apnsPort');
+        $apnsPass = env('apnsPass');
+        $token ='56ed3ac2a250158cc76c33af099a0629fb41a4565923154cb0675baa468b9915';    
+
+        $story='IBM NEWS';
+        $title='ION NEWS';
+        $url="http://assets.myntassets.com.jpg";
+//         $output='{
+// "aps": {
+// "alert": {
+// "title": "123456789012345678901\n23456789012345766737373\n12345678901234",
+// "body": "titi"
+// }
+// },
+// "mediaUrl": "https://www.w3schools.com/html/pic_mountain.jpg",
+// "mediaType": "image"}';
+
+
+$output='{
+"aps": {
+"alert": {
+"title":"IBM About IBM - United States",
+"body": "Virginia M"
+}
+},
+"mediaUrl": "http://www.ibm.com/ibm/us/en/res/innovation_food_safety_580x200.jpg",
+"mediaType": "image"} ';
+
+        // Log::info($payload['acme2']=['abab','bababa']);
+        Log::info($output);
+        $token = pack('H*', str_replace(' ', '', $token));
+        $apnsMessage = chr(0).chr(0).chr(32).$token.chr(0).chr(strlen($output)).$output;
+
+        $streamContext = stream_context_create();
+        stream_context_set_option($streamContext, 'ssl', 'local_cert', $apnsCert);
+        stream_context_set_option($streamContext, 'ssl', 'passphrase', $apnsPass);
+
+        $apns = stream_socket_client('ssl://'.$apnsHost.':'.$apnsPort, $error, $errorString, 2, STREAM_CLIENT_CONNECT, $streamContext);
+        // print_r($apns);
+        Log::info($apns);
+
+        if (!$apns)
+         exit("Failed to connect: $err $errstr" . PHP_EOL);
+        echo 'Connected to APNS' . PHP_EOL;
+
+        fwrite($apns, $apnsMessage);
+        fclose($apns);
+         return response("successfully");
+
+
+
+
+
+              $message['title']="https://www.google.co.in/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwibvueq74rUAhUJLY8KHcZOBaYQjRwIBw&url=https%3A%2F%2Fmadeby.google.com%2Fphone%2F&psig=AFQjCNF5QEC8J5piftgFBH2pcbASMTXfkw&ust=1495795695209453";
         $message['message']="https://www.google.co.in/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwibvueq74rUAhUJLY8KHcZOBaYQjRwIBw&url=https%3A%2F%2Fmadeby.google.com%2Fphone%2F&psig=AFQjCNF5QEC8J5piftgFBH2pcbASMTXfkw&ust=1495795695209453https://www.google.co.in/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwibvueq74rUAhUJLY8KHcZOBaYQjRwIBw&url=https%3A%2F%2Fmadeby.google.com%2Fphone%2F&psig=AFQjCNF5QEC8J5piftgFBH2pcbASMTXfkw&ust=1495795695209453https://www.google.co.in/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwibvueq74rUAhUJLY8KHcZOBaYQjRwIBw&url=https%3A%2F%2Fmadeby.google.com%2Fphone%2F&psig=AFQjCNF5QEC8J5piftgFBH2pcbASMTXfkw&ust=1495795695209453";
         $message['imageUrl']="https://www.google.co.in/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwibvueq74rUAhUJLY8KHcZOBaYQjRwIBw&url=https%3A%2F%2Fmadeby.google.com%2Fphone%2F&psig=AFQjCNF5QEC8J5piftgFBH2pcbASMTXfkw&ust=1495795695209453";
         $message['crawl_url']='http://git.mantralabsglobal.com/bharath/cms-project/blob/master/Modules/Content/Http/Controllers/Admin/ContentController.php';
-        $device_code="eBASB4uQpNU:APA91bEvHoXfdP1T29X1J2YJSn2z4wN21CROcjTsTRGRqk6ig3Tpg3tZAAuuxeJdX5HOtBAI0ctbWV6IVcJOPjAixzLGuevkMTVgbuq_ovFi75slWhDHoDZiTCqCy0cNCSnp41_h3cgX";
+        $device_code="d3hKcsfAkrE:APA91bFdXR__Y-hgLZW7XF3huDilsGfCBIk_A_Qn8P5ghzaz6h9isNpL15-iOAJ3Aiz5BGWtqr9OuMU_qv3iCuX-dan86yJn2mg96Q1TVM-EVgR-lWE2LkG6xsfGLcZIxAGnbMZGr2rz";
 
         $API_ACCESS_KEY = env("API_ACCESS_KEY");
         $registrationIds=$device_code;
@@ -422,67 +485,5 @@ class FrontController extends BasePublicController
         return response($result);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        $apnsHost = env('apnsHost');
-        $apnsCert = env('apnsCert');
-        $apnsPort = env('apnsPort');
-        $apnsPass = env('apnsPass');
-        $token ='e1e960c635806be9b95aa2116b879f73bc78768f48549646e2a62611477459aa';    
-
-        $story='IBM NEWS';
-        $title='ION NEWS';
-        $url="http://assets.myntassets.com.jpg";
-        $output='{
-"aps": {
-"alert": {
-"title": "123456789012345678901\n23456789012345766737373\n12345678901234",
-"body": "titi"
-}
-},
-"mediaUrl": "https://www.w3schools.com/html/pic_mountain.jpg",
-"mediaType": "image"}';
-        Log::info($payload['acme2']=['abab','bababa']);
-        Log::info($output);
-        $token = pack('H*', str_replace(' ', '', $token));
-        $apnsMessage = chr(0).chr(0).chr(32).$token.chr(0).chr(strlen($output)).$output;
-
-        $streamContext = stream_context_create();
-        stream_context_set_option($streamContext, 'ssl', 'local_cert', $apnsCert);
-        stream_context_set_option($streamContext, 'ssl', 'passphrase', $apnsPass);
-
-        $apns = stream_socket_client('ssl://'.$apnsHost.':'.$apnsPort, $error, $errorString, 2, STREAM_CLIENT_CONNECT, $streamContext);
-        // print_r($apns);
-        Log::info($apns);
-
-        if (!$apns)
-         exit("Failed to connect: $err $errstr" . PHP_EOL);
-        echo 'Connected to APNS' . PHP_EOL;
-
-        fwrite($apns, $apnsMessage);
-        fclose($apns);
-         return response("successfully");
       }
 }

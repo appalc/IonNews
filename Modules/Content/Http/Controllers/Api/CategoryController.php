@@ -44,11 +44,24 @@ class CategoryController extends BasePublicController
     public function getUserGroup( )
     {
        $roles=$this->role->all();
+       $finalData=array();
+
        foreach ($roles as $key => $value) {
+            if($value['id']=='1')
+            {
+              unset($roles[$key]);
+              continue;
+            }
+
+            if($value['slug']!='admin')
+            {
             unset($value['permissions']);
+            $finalData[]=$value;
+          }
        
        }
-        return $roles;
+    
+        return response($finalData);
 
     }
   }

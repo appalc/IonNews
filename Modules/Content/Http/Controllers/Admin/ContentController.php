@@ -345,7 +345,8 @@ class ContentController extends AdminBaseController
           if($value['id']==$final_users[$i]['id']){
               $company_name[]=$value['company'];
               $i++;
-              $device_code[$value['id']]=$value['device_code'];
+              if($value['device_type'])
+              $device_code[$value['device_type']][$value['id']]=$value['device_code'];
           }
           if($i>=sizeof($final_users))
               break;
@@ -368,13 +369,27 @@ class ContentController extends AdminBaseController
           $message['crawl_url']=$Alldata['crawl_url'];
 
 
-      Log::info($device_code);
+      // Log::info($device_code);
 
 
-      foreach ($device_code as $value) {
-          if($value)
-              $this->push_notifications($message,$value);
+      foreach ($device_code as $device_type=>$value) {
+          if($device_type=="iphone"){
+              foreach ($value as $device_iphone) {
+                if($value)
+                  $this->push_notificationsIOS($message,$device_iphone);
+                  // Log::info("IOS");
+                  // Log::info($device_iphone);
+
+              }
+          }
+          else if($device_type=="android"){
+              foreach ($value as  $device_andriod) {
+                if($value)
+                  $this->push_notifications($message,$device_andriod);              
+              }
+          }
       }
+  
 
            
 
@@ -676,17 +691,61 @@ class ContentController extends AdminBaseController
         curl_setopt( $ch,CURLOPT_POSTFIELDS, json_encode($fields) );
         $result = curl_exec($ch );       
         curl_close( $ch );
-        // Log::info($result);
+        Log::info($result);
         return response($result);
       } 
-      public function push_notificationsIOS($smg=array(),$registrationIds)
+
+      public function push_notificationsIOS($msg = array(),$registrationIds)
+      {
+          $API_ACCESS_KEY = env("API_ACCESS_KEY");      
+       
+      
+        // $fields = array
+        // (
+        //   'registration_ids'  =>array($registrationIds),
+        //   'data'      => $msg
+        // );
+        // $fields = array(
+        //     'registration_ids'  => array($registrationIds),
+        //     'notification'      => $msg
+        // );
+          $notification['title']='ION NEWS';
+          $fields = array(
+            'to' => $registrationIds,
+            'data' => $msg,
+            'notification' => $notification
+        );
+         
+        $headers = array
+        (
+          'Authorization: key=' . $API_ACCESS_KEY,
+          'Content-Type: application/json'
+        );
+        $url='https://fcm.googleapis.com/fcm/send';
+         
+        $ch = curl_init();
+        curl_setopt( $ch,CURLOPT_URL, 'http://android.googleapis.com/gcm/send');
+        curl_setopt( $ch,CURLOPT_POST, true );
+        curl_setopt( $ch,CURLOPT_HTTPHEADER, $headers );
+        curl_setopt( $ch,CURLOPT_RETURNTRANSFER, true );
+        curl_setopt( $ch,CURLOPT_SSL_VERIFYPEER, false );
+        curl_setopt( $ch,CURLOPT_POSTFIELDS, json_encode($fields) );
+        $result = curl_exec($ch );       
+        curl_close( $ch );
+        Log::info($result);
+
+        return response($result);
+      } 
+      public function push_notificationsIOS1($smg=array(),$registrationIds)
       {
 
         $apnsHost = env('apnsHost');
         $apnsCert = env('apnsCert');
         $apnsPort = env('apnsPort');
         $apnsPass = env('apnsPass');
-        $token =$registrationIds;
+        // $token =$registrationIds;
+        $token ='56ed3ac2a250158cc76c33af099a0629fb41a4565923154cb0675baa468b9915';
+
         
         // Log::info(json_encode($smg));
         // $message=json_encode($smg);
@@ -694,25 +753,34 @@ class ContentController extends AdminBaseController
         // $payload['acme2']='ION NEWS';
         // $output = json_encode($payload);
 
-        $story=$smg['message'];
-        $story='IBM NEWS';
-        $title='ION NEWS';
-        $url="http://assets.jpg";
+        $title=substr( $smg['title'],0,45);
+        $message=substr($smg['message'],0,10);
+        $img_url=$smg['imageUrl'];
+        $crawl_url=$smg['crawl_url'];
+        // $story='IBM NEWS';
+        // $title='ION NEWS';
+        // $url="http://assets.jpg";
 
-        $output='{
-    "aps": { 
-      "alert": { 
-        "title": "Pusher Native Push Notifications API", 
-        "subtitle": "Bringing you iOS 10 support!", 
-        "body": "Now add more content to your Push Notifications!"
-        }, 
-        "mutable-content": 1,
-        "category": "pusher"
-      },
-    "data": {
-      "attachment-url": "https://pusher.com/static_logos/320x320.png"
-    }
-}';
+$output='{
+"aps": {
+"alert": {
+"title":"'.$title.'",
+"body": "'.$message.'"
+}
+},
+"mediaUrl": "'.$img_url.'",
+"mediaType": "image"}';
+
+// $output='{
+// "aps": {
+// "alert": {
+// "title": "123456789012345678901\n23456789012345766737373\n12345678901234",
+// "body": "titi"
+// }
+// },
+// "mediaUrl": "https://www.w3schools.com/html/pic_mountain.jpg",
+// "mediaType": "image"}';
+Log::info($output);
         // Log::info($payload['acme2']=['abab','bababa']);
         // Log::info($output);
         // $token = pack('H*', str_replace(' ', '', $token));
@@ -724,14 +792,15 @@ class ContentController extends AdminBaseController
 
         $apns = stream_socket_client('ssl://'.$apnsHost.':'.$apnsPort, $error, $errorString, 2, STREAM_CLIENT_CONNECT, $streamContext);
         // print_r($apns);
-        // Log::info($apns);
+        Log::info($apns);
 
         if (!$apns)
          exit("Failed to connect: $err $errstr" . PHP_EOL);
-        echo 'Connected to APNS' . PHP_EOL;
+          //echo 'Connected to APNS' . PHP_EOL;
 
         fwrite($apns, $apnsMessage);
         fclose($apns);
+        sleep(60);
         // echo "hahhaa";
       }
 
