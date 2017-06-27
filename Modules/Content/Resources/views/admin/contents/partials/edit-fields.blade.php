@@ -1,20 +1,25 @@
 <div class="box-body">
     <div class="box-body">
       <div class="row">
+
+
          <div class="col-sm-12">
-            <div class="form-group{{ $errors->has('first_name') ? ' has-error' : '' }}">
-                {!! Form::label('title', trans('Title')) !!}
-                {!! Form::text('title', $content->title, ['class' => 'form-control', 'placeholder' => trans('user::users.form.first-name')]) !!}
-                {!! $errors->first('first_name', '<span class="help-block">:message</span>') !!}
-            </div>
-        </div>
-       <!--  <div class="col-sm-12">
             <div class="form-group{{ $errors->has('crawl_url') ? ' has-error' : '' }}">
-                {!! Form::label('Crawl url', trans('crawl url')) !!}
-                {!! Form::text('crawl_url', $content->crawl_url, ['class' => 'form-control', 'placeholder' => trans('crawl url'),'readonly' => 'true']) !!}
+                {!! Form::label('URL Address', trans('URL ')) !!}
+                {!! Form::text('crawl_url', $content->crawl_url, ['class' => 'form-control', 'placeholder' => trans('crawl url')]) !!}
                 {!! $errors->first('crawl_url', '<span class="help-block">:message</span>') !!}
             </div>
-        </div> -->
+         </div>
+
+         <div class="col-sm-12">
+            <div class="form-group{{ $errors->has('title') ? ' has-error' : '' }}">
+                {!! Form::label('title', trans('Title')) !!}
+                {!! Form::text('title', $content->title, ['class' => 'form-control', 'placeholder' => trans('Story title')]) !!}
+                {!! $errors->first('title', '<span class="help-block">:message</span>') !!}
+            </div>
+        </div>     
+
+
         <div class="col-sm-12">
             <div class="form-group{{ $errors->has('sub_title') ? ' has-error' : '' }}">
                 {!! Form::label('sub_title', trans('Subtitle')) !!}

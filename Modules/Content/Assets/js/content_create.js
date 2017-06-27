@@ -96,7 +96,7 @@ function crawl() {
                   }
                 if(result.img_count>counter)
                 table+='<tr><td style="text-align: center;">'+
-                        '<input  type="radio" name="image" value ="'+value.img_url+'"/></td>'+
+                        '<input  type="radio" name="image" onchange="restImageView()" value ="'+value.img_url+'"/></td>'+
                         '<td><img id="blah" onclick="fullViews(this)" name="" src="'+value.img_url+'" alt="'+value.img_name+'" width="100"  class="model_rolling" data-toggle="modal" data-target="#myModal" style="margin-top:0px;margin-bottom:0px;text-align:center;">'+
                         '<input type="hidden" name="img'+i+'" value="'+value.img_url+'" style="opacity: 0;"/></td></tr>';
                 i++;

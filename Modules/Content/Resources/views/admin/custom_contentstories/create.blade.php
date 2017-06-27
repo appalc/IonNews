@@ -16,7 +16,7 @@
 @stop
 
 @section('content')
-    {!! Form::open(['route' => ['admin.content.custom_contentstory.store'], 'method' => 'post','enctype' => 'multipart/form-data']) !!}
+    {!! Form::open(['route' => ['admin.content.custom_contentstory.store'], 'method' => 'post','enctype' => 'multipart/form-data', 'onsubmit'=>'return formValidator()']) !!}
 
     <div class="row">
         <div class="col-md-12">
@@ -69,6 +69,20 @@
                 radioClass: 'iradio_flat-blue'
             });
         });
+
+    function formValidator() {
+     var content=$("#content").val();
+     var img_check=$(".select_img").attr('src');
+     
+     if(!content.trim() && !img_check)
+     { 
+        alert('Please Add content story or Image to create custom content');
+       return false;
+     }
+     else return true;
+
+     return true;
+}
 
     function previewFile(){    
        var preview = document.querySelector('img.select_img'); //selects the query named img

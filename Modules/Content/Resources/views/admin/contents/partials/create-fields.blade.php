@@ -108,11 +108,14 @@
             <div class="col-sm-12 custom_img">
                 <div class="form-group{{ $errors->has('image') ? ' has-error' : '' }}">
                     {!! Form::label('image', trans('Image')) !!}                
-                    <input name="img" type="file" onchange="previewFile()">
+                    <input name="img" type="file" onchange="previewFile()" id="img_changes"> 
                     {!! $errors->first('image', '<span class="help-block">:message</span>') !!}
                     <img  class="select_img" src="" onchange="previewFile()" width="120">
 
+
                 </div>
+                                    <div>
+<input type="button" class="btn btn-primary btn-flat reset_preview_image" value="Reset Image" onclick="restImageView()" ></div>
             </div>
     
        <div class="tab-pane user-types" id="tab_2-2">

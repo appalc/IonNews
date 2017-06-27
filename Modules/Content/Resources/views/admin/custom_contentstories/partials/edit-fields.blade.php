@@ -1,11 +1,19 @@
 <div class="box-body">
     <div class="box-body">
       <div class="row">
+
          <div class="col-sm-12">
-            <div class="form-group{{ $errors->has('first_name') ? ' has-error' : '' }}">
+            <div class="form-group{{ $errors->has('custom_url') ? ' has-error' : '' }}">
+                {!! Form::label('URL Address', trans('URL ')) !!}
+                {!! Form::text('custom_url', $custom_contentstory->custom_url, ['class' => 'form-control', 'placeholder' => trans('custom url')]) !!}
+                {!! $errors->first('custom_url', '<span class="help-block">:message</span>') !!}
+            </div>
+         </div>
+         <div class="col-sm-12">
+            <div class="form-group{{ $errors->has('title') ? ' has-error' : '' }}">
                 {!! Form::label('title', trans('Title')) !!}
-                {!! Form::text('title', $custom_contentstory->title, ['class' => 'form-control', 'placeholder' => trans('user::users.form.first-name')]) !!}
-                {!! $errors->first('first_name', '<span class="help-block">:message</span>') !!}
+                {!! Form::text('title', $custom_contentstory->title, ['class' => 'form-control', 'placeholder' => trans('Story title')]) !!}
+                {!! $errors->first('title', '<span class="help-block">:message</span>') !!}
             </div>
         </div>
       

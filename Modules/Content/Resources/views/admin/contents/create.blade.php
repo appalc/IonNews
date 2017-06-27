@@ -118,8 +118,13 @@
          $('#imgview').attr('src', event.src);
       }
 
+      function restImageView(){
+        $(".select_img").attr("src","");
+        $("#img_changes").val("");
+      }
+
       function previewFile(){
-    
+       $('input[name="image"]').prop('checked', false);
        var preview = document.querySelector('img.select_img'); //selects the query named img
        var file    = document.querySelector('input[type=file]').files[0]; //sames as here
        var reader  = new FileReader();
