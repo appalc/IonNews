@@ -76,7 +76,7 @@
                 
                     <input name="img" type="file" onchange="previewFile()">
                     {!! $errors->first('image', '<span class="help-block">:message</span>') !!}
-                    <img  src="{{ $custom_contentstory->image }}" onchange="previewFile()" width="120">
+                    <img class="select_img img_preview" src="{{ $custom_contentstory->image }}" onchange="previewFile()" width="120">
                 </div>
             </div>
       </div>

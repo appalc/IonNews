@@ -69,13 +69,18 @@
             });
         });
 
-    function previewFile(){    
-       var preview = document.querySelector('img'); //selects the query named img
+   function previewFile(){
+    
+       var preview = document.querySelector('img.img_preview'); //selects the query named img
        var file    = document.querySelector('input[type=file]').files[0]; //sames as here
+       // console.log(file);
+
        var reader  = new FileReader();
 
        reader.onloadend = function () {
-           preview.src = reader.result;
+           // preview.src = reader.result;
+           // console.log(reader.result);
+           $(".img_preview").attr("src",reader.result);
        }
 
        if (file) {
