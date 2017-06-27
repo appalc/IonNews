@@ -40,12 +40,13 @@
 
         var cb = function(start, end, label) {
             $('#returnrange span').html(start.format('MMMM D, YYYY'));
+
             a=start.format('YYYY-MM-DD');
             b=end.format('YYYY-MM-DD');
             $('#expiry_date').val(b);
         };
 
-        cb(moment(), moment(), "Last Month");
+        cb(moment().add(30, 'days'), moment().add(30, 'days'), "Last Month");
         $('#returnrange').daterangepicker(optionSet2,cb);
         $('#returnrange').val(daterangepicker);
         $('#expiry_date').val(b);

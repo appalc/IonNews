@@ -89,10 +89,11 @@
                 
                     <input name="img" type="file" onchange="previewFile()">
                     {!! $errors->first('image', '<span class="help-block">:message</span>') !!}
-                    <img  src="{{ $content->image }}"  class="img_preview" onchange="previewFile()" width="120">
+                    <img  class="select_img" src="{{ $content->image }}"  class="img_preview" onchange="previewFile()" width="120">
                 </div>
             </div>
       </div>
+
         <div class="tab-pane user-types" id="tab_2-2">
            <div class="box-body">
               <div class="row">
