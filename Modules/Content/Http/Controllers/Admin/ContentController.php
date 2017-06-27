@@ -108,12 +108,16 @@ class ContentController extends AdminBaseController
              $title = $dom->getElementsByTagName('title')->item(0)->nodeValue;
              $sub_title = $title;
             }
+            // echo "<pre>";
+            // echo $title; echo "<br>";
+            // echo $sub_title; echo "<br>";
               
-               $img1=$dom->getElementsByTagName("*");//
+               $img1=$dom->getElementsByTagName("*");
                $k=0; $j=0;
                $baseUrl="";   
                $url=explode("/",$url); 
-               $baseUrl="http://".$url[2];  
+               $baseUrl="http://".$url[2];                
+
                 foreach ($img1 as $item) {
                   if($item->getAttribute('data-src'))
                   {
@@ -136,6 +140,8 @@ class ContentController extends AdminBaseController
                     $k++;                    
                   }
                 }
+
+       
 
            if(sizeof($img_array)>0)
            {        
@@ -205,12 +211,14 @@ class ContentController extends AdminBaseController
                else {
                 $paracount=0;
                }
-            for ($i = 0; $i <sizeof($all_img_array); $i++){
-                $FinalArray[$i]['img_name'] = $all_img_array[$i]['img_name'];
-                $FinalArray[$i]['img_url'] = $all_img_array[$i]['img_url'];
+            for ($i = 0; $i <4 ; $i++){
+                if(sizeof($all_img_array)>$i){
+                    $FinalArray[$i]['img_name'] = $all_img_array[$i]['img_name'];
+                    $FinalArray[$i]['img_url'] = $all_img_array[$i]['img_url'];
+                }
                 if ($paracount<$parasize)
                     $FinalArray[$i]['desc'] = $paraarray[$paracount++];
-                  else{
+                else{
                      $paracount=0;
                      $FinalArray[$i]['desc'] = $paraarray[$paracount++];
                   }
@@ -219,9 +227,10 @@ class ContentController extends AdminBaseController
             $FinalArray['title'] = $title;
             $FinalArray['sub_title'] = $title;
             $FinalArray['count'] = $count;
+            $FinalArray['img_count'] = sizeof($all_img_array);
             $FinalArray['status']=200;
             }else{  $FinalArray['title'] = $title;
-                $FinalArray['status']=202;
+                    $FinalArray['status']=202;
              }
 
             // echo "<pre>"; echo "<br>"; print_r($FinalArray); exit;

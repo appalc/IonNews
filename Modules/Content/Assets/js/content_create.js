@@ -70,7 +70,10 @@ function crawl() {
     url: crawlUrl,
     success: function(result) {
          $(".user-types").show();
-         $(".img-info").show();
+         if(result.img_count==0)
+         $(".img-info").hide();
+         else 
+           $(".img-info").show();
          $(".custom_img").show();
         results = result;
         $('#sub_title').val(result.sub_title);
@@ -91,7 +94,7 @@ function crawl() {
                     counter++;
                     $('#content').append(value.desc + '   <br>');
                   }
-                
+                if(result.img_count>counter)
                 table+='<tr><td style="text-align: center;">'+
                         '<input  type="radio" name="image" value ="'+value.img_url+'"/></td>'+
                         '<td><img id="blah" onclick="fullViews(this)" name="" src="'+value.img_url+'" alt="'+value.img_name+'" width="100"  class="model_rolling" data-toggle="modal" data-target="#myModal" style="margin-top:0px;margin-bottom:0px;text-align:center;">'+
