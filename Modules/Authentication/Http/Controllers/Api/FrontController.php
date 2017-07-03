@@ -154,7 +154,6 @@ class FrontController extends BasePublicController
       $validator = Validator::make($request->all(), [
           'email' => 'required|unique:users',
           'password' => 'required',
-          'phone' => 'required|unique:users|max:10|min:9',
           'first_name' => 'required|max:25',
           'role' => 'required',
           'last_name' => 'required|max:25',

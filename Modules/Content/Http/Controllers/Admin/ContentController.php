@@ -187,8 +187,11 @@ class ContentController extends AdminBaseController
                   {
                   if(!in_array($split_image['extension'], $img_extenstion)){
                   $all_img_array[$k]['width']=$value['width'];
-                  $all_img_array[$k]['height']=$value['height'];                
-                  $all_img_array[$k]['img_url']=$value['img_url'];
+                  $all_img_array[$k]['height']=$value['height'];  
+                  if(substr($value['img_url'], 0,1)=="/")                  
+                    $all_img_array[$k]['img_url']=$baseUrl.$value['img_url'];                  
+                  else 
+                    $all_img_array[$k]['img_url']=$value['img_url'];
                   $all_img_array[$k]['img_name']=$value['img_name'];
                   $url_check[$k]=$value['img_url'];
                   $k++;
@@ -204,13 +207,14 @@ class ContentController extends AdminBaseController
                 $paraarray[] = $pdata->nodeValue;
             }
              $parasize=sizeof($paraarray);
-              if($paraarray>20)
-              {
-                $paracount=15;
-              }
-               else {
-                $paracount=0;
-               }
+             $paracount=0;
+              // if($paraarray>20)
+              // {
+              //   $paracount=15;
+              // }
+              //  else {
+              //   $paracount=0;
+              //  }
             for ($i = 0; $i <4 ; $i++){
                 if(sizeof($all_img_array)>$i){
                     $FinalArray[$i]['img_name'] = $all_img_array[$i]['img_name'];
@@ -218,10 +222,10 @@ class ContentController extends AdminBaseController
                 }
                 if ($paracount<$parasize)
                     $FinalArray[$i]['desc'] = $paraarray[$paracount++];
-                else{
-                     $paracount=0;
-                     $FinalArray[$i]['desc'] = $paraarray[$paracount++];
-                  }
+                // else{
+                //      $paracount=0;
+                //      $FinalArray[$i]['desc'] = $paraarray[$paracount++];
+                //   }
             }
             $count = sizeof($FinalArray);
             $FinalArray['title'] = $title;
@@ -700,7 +704,7 @@ class ContentController extends AdminBaseController
         curl_setopt( $ch,CURLOPT_POSTFIELDS, json_encode($fields) );
         $result = curl_exec($ch );       
         curl_close( $ch );
-        Log::info($result);
+        // Log::info($result);
         return response($result);
       } 
 
@@ -741,7 +745,7 @@ class ContentController extends AdminBaseController
         curl_setopt( $ch,CURLOPT_POSTFIELDS, json_encode($fields) );
         $result = curl_exec($ch );       
         curl_close( $ch );
-        Log::info($result);
+        // Log::info($result);
 
         return response($result);
       } 
@@ -789,7 +793,7 @@ $output='{
 // },
 // "mediaUrl": "https://www.w3schools.com/html/pic_mountain.jpg",
 // "mediaType": "image"}';
-Log::info($output);
+// Log::info($output);
         // Log::info($payload['acme2']=['abab','bababa']);
         // Log::info($output);
         // $token = pack('H*', str_replace(' ', '', $token));
