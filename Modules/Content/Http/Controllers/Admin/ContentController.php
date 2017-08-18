@@ -206,6 +206,9 @@ class ContentController extends AdminBaseController
             foreach ($paragraph as $pdata){
                 $paraarray[] = $pdata->nodeValue;
             }
+            // echo "<pre>";
+            // print_r($paraarray); die;
+
              $parasize=sizeof($paraarray);
              $paracount=0;
               // if($paraarray>20)
@@ -215,18 +218,23 @@ class ContentController extends AdminBaseController
               //  else {
               //   $paracount=0;
               //  }
-            for ($i = 0; $i <4 ; $i++){
-                if(sizeof($all_img_array)>$i){
+             $extra=' ';
+            for ($i = 0; $i <$parasize ; $i++){
+                if(sizeof($all_img_array)>$i and $i<4){
                     $FinalArray[$i]['img_name'] = $all_img_array[$i]['img_name'];
                     $FinalArray[$i]['img_url'] = $all_img_array[$i]['img_url'];
                 }
                 if ($paracount<$parasize)
-                    $FinalArray[$i]['desc'] = $paraarray[$paracount++];
-                // else{
-                //      $paracount=0;
-                //      $FinalArray[$i]['desc'] = $paraarray[$paracount++];
-                //   }
-            }
+                {   if(strlen($paraarray[$i])>80)
+                    $FinalArray[$paracount++]['desc'] = $paraarray[$i];
+
+                    else if($k++>10)$extra=$extra.$paraarray[$i];
+                }
+             }
+             if($paracount>4)
+              $FinalArray[$paracount++]['desc']=$extra;
+
+             // print_r($FinalArray); die;
             $count = sizeof($FinalArray);
             $FinalArray['title'] = $title;
             $FinalArray['sub_title'] = $title;

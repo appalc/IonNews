@@ -125,6 +125,7 @@ class StoryController extends BasePublicController
                
                 $i++;              
             }
+             $dataset['total_Count']=sizeof($custom);
              $dataset['all_data']=$custom;
 
             // Log::info("custom info");
