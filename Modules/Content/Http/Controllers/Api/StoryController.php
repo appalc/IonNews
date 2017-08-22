@@ -235,9 +235,61 @@ class StoryController extends BasePublicController
 
         }
 
+    public function move_to_archive(Request $request){
+      $current_date=date('Y-m-d');
+      $exipre_story=DB::table('content__contents')
+                            ->where('expiry_date','<',$current_date)
+                            ->orderBy('id', 'desc')
+                            ->get();   
+
+     $categories = $this->category->getByAttributes(['status' => 1, 'slug_name'=>'archive']);
+      $categories=json_decode($categories);
+      $category_id=$categories[0]->id;
+      $cat[]=$category_id;      
+      foreach ($exipre_story as $key => $value) {
+      DB::table('content__contents')
+            ->where('id', $value->id)
+            ->update(['category_id' => $category_id, 'all_category'=>json_encode($cat)]);
+        $categoryID=DB::table('content__multiplecategorycontents')                        
+                          ->where('content_id','=',$value->id)->delete();
+
+              $abc['category_id']=$category_id;
+              $abc['content_id']=$value->id;       
+              $this->multiContCategory->create($abc); 
+       }
+
+        return $exipre_story;
+
+    }
+
     public function updateDatabase(Request $request)
     {     
-        #this one only purpose of update databse using some query
+      $current_date=date('Y-m-d');
+      $exipre_story=DB::table('content__contents')
+                            ->where('expiry_date','<',$current_date)
+                            ->orderBy('id', 'desc')
+                            ->get();   
+
+     $categories = $this->category->getByAttributes(['status' => 1, 'slug_name'=>'archive']);
+     print_r($categories); exit;
+
+      $categories=json_decode($categories);
+      $category_id=$categories[0]->id;
+      $cat[]=$category_id;      
+      foreach ($exipre_story as $key => $value) {
+      DB::table('content__contents')
+            ->where('id', $value->id)
+            ->update(['category_id' => $category_id, 'all_category'=>json_encode($cat)]);
+        $categoryID=DB::table('content__multiplecategorycontents')                        
+                          ->where('content_id','=',$value->id)->delete();
+
+              $abc['category_id']=$category_id;
+              $abc['content_id']=$value->id;       
+              $this->multiContCategory->create($abc); 
+       }
+
+        return $exipre_story;
+        exit;
 
        //  $update=DB::table('users')
        //            ->get();

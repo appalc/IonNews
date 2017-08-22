@@ -70,7 +70,7 @@
            var all_users_info="";
           $(".user-types").hide();
           $(".img-info").hide();
-          $(".custom_img").hide();
+          // $(".custom_img").hide();
           dateRangePickerFunctions();
 
             $(document).keypressAction({
@@ -112,6 +112,7 @@
 
           console.log(category_check);
       }
+      
       function fullViews(event)
       {
         console.log(event.src);

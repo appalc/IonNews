@@ -25,7 +25,12 @@ Route::group(['middleware' => 'cors'], function(Router $router){
      $router->get('/updateDatabase', [
         'as' => 'StoryController.api.updateDatabase',
         'uses' => 'StoryController@updateDatabase',
-        'middleware' => 'auth:api'
+        // 'middleware' => 'auth:api'
+    ]);
+      $router->get('/move_to_archive', [
+        'as' => 'StoryController.api.move_to_archive',
+        'uses' => 'StoryController@move_to_archive',
+        // 'middleware' => 'auth:api'
     ]);
     $router->POST('/story_like', [
         'as' => 'StoryController.api.story_like',

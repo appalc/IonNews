@@ -47,12 +47,13 @@
                                   <!-- <div class="form-group multiselect" style="height: auto;"> -->
                                   <div class="form-control category_select multiselect"> 
                                     <!-- <select multiple="" class="form-control category_select" onchange="selectCategory(this.value)" name="category_id[]"> -->
-                                        <?php foreach ($categories as $category): ?>
+                            <?php foreach ($categories as $category): 
+                             if($category->slug_name!='archive') {?>
 
                           <!-- <option value="{{ $category->id }}">{{ $category->name }}</option> -->
  <label><input type="checkbox" style="vertical-align:top; margin-right: 10px;" 
   onclick ="selectCategory(this.value)" name="category_id[]"  value="{{ $category->id }}" />{{ $category->name }}</label>
-                      <?php endforeach; ?>
+                      <?php }endforeach; ?>
                                     <!-- </select> -->
                                 </div>
                                

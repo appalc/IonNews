@@ -165,26 +165,31 @@
     var form_checker=0;
 
      function formValidator() {
-       
-       
-         return true;
+      if(checkedArray.length>0 || check==0)      
+        return true;
+      else {
+        alert("Please Assing category for this Story");
+        return false;
+      }
     }
           checkedArray = [];
    
 
-
-  
-function changed(event){
-  if(event.checked){
-    checkedArray.push(event.value);
-    console.log(checkedArray);
-
+var check=0;
+var checkedArray 
+function selectCategory(event){
+   if(check==0){
+   checkedArray = <?= $content->all_category ?>;
+    check=1;
+  }    
+  if(!checkedArray.includes(event)){
+       checkedArray.push(event);
   }else{
-    var a = checkedArray.indexOf(event.value);
-    // console.log(a);
-    checkedArray.splice(a, 1);
-  }
-  // console.log(checkedArray);
+        var a = checkedArray.indexOf(event);
+        console.log(a);
+        checkedArray.splice(a, 1);
+      }
+      console.log(checkedArray);
 }
 
 

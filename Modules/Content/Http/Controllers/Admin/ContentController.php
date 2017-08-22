@@ -68,13 +68,16 @@ class ContentController extends AdminBaseController
     public function create()
     {
         $categories = $this->category->getByAttributes(['status' => 1],'priority','desc');
-       // echo "<pre>"; print_r(json_decode($categories)); die;
-        $roles=json_decode($this->role->all());
-          
+        foreach ($categories as $key => $value) {
+          if($value->slug_name=='archive')
+            unset($categories[$key]);         
+        }
+
+        $roles=json_decode($this->role->all());          
           $user_roles[-1]['id']=-1;       
           $user_roles[-1]['type']='All';
-             
-         foreach ($roles as $value) { 
+                       
+          foreach ($roles as $value) { 
           if($value->name!='Admin')
           {                
           $user_roles[$value->id]['id']=$value->id;        
@@ -202,9 +205,12 @@ class ContentController extends AdminBaseController
              } 
                
             $paragraph = $dom->getElementsByTagName('p');
+            $ul_list = $dom->getElementsByTagName('li');  
+
             $paraarray = array();
             
-            foreach ($paragraph as $pdata){
+            foreach ($paragraph  as $pdata){
+                if( isset($pdata->childNodes[0]->tagName) && $pdata->childNodes[0]->tagName!='style')
                 $paraarray[] = $pdata->nodeValue;
             }
             // echo "<pre>";
@@ -373,12 +379,12 @@ class ContentController extends AdminBaseController
               break;
       }
 
-      for ($i=0;$i<sizeof($company_name);$i++) {               
-          $ContentCompany= new ContentCompany;
-          $ContentCompany->content_id=$id;
-          $ContentCompany->company_name=$company_name[$i];
-          $ContentCompany->save();
-      }
+      // for ($i=0;$i<sizeof($company_name);$i++) {               
+      //     $ContentCompany= new ContentCompany;
+      //     $ContentCompany->content_id=$id;
+      //     $ContentCompany->company_name=$company_name[$i];
+      //     $ContentCompany->save();
+      // }
       $message=array();
 
 
@@ -430,7 +436,7 @@ class ContentController extends AdminBaseController
          $find_group_type=$find_group_type->all_users;
          $user_type=json_decode($find_group_type,true);
 
-        $categories = $this->category->getByAttributes(['status' => 1]);
+        $categories = $this->category->getByAttributes(['status' => 1],'priority','desc');
         $roles=json_decode($this->role->all());
           
           $user_roles[-1]['id']=-1;       

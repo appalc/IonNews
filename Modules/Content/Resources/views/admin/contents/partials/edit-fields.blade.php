@@ -44,21 +44,24 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                   {!! Form::label('category_id', trans('Service Provider Name')) !!}
-                                    <select multiple="" class="form-control" name="category_id[]">
+                                   <!--  <select multiple="" class="form-control" name="category_id[]"> -->
+               <div class="form-control  " style="width: 20em;height: 10em;border: 1px solid rgb(192, 192, 192);overflow: auto;"> 
+                  <?php   $allContentCategory=array();
+                    $allcategory=$content->all_category;
+                     if($allcategory)
+                     { 
+                      $allContentCategory=json_decode($allcategory,true);
 
-                                        <?php   $allContentCategory=array();
-                                            $allcategory=$content->all_category;
-                                             if($allcategory)
-                                             { 
-                                              $allContentCategory=json_decode($allcategory,true);
-                                             } else $allContentCategory[0]=$content->category_id;
+                     } else $allContentCategory[0]=$content->category_id;
 
-                                        foreach ($categories as $category): ?>
-                                        <option value="{{ $category->id }}" <?php
-                                        if (in_array($category->id, $allContentCategory)) 
-                                        echo "selected"; else echo '';?>  >{{ $category->name }}</option>
-                      <?php endforeach; ?>
-                                    </select>
+                foreach ($categories as $category): 
+                  if($category->slug_name!='archive'){ ?>
+                 <label style="display: block;"><input type="checkbox" style="vertical-align:top; margin-right: 10px;" 
+  onclick ="selectCategory(this.value)" name="category_id[]"  value="{{ $category->id }}"<?php if (in_array($category->id, $allContentCategory)) 
+                  echo "checked"; else echo '';?> />{{ $category->name }}</label>
+                  <?php }; endforeach; ?>
+                                    <!-- </select> -->
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -123,3 +126,4 @@
 
     </div>
 
+  
