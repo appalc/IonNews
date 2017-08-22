@@ -91,13 +91,7 @@
 
 
          });
-     
 
-      
-
-    </script>
-   
-    <script type="text/javascript">
      user_roles='<?php echo json_encode($user_roles);?>';
      var all_users_roles=jQuery.parseJSON(user_roles);
     
@@ -106,17 +100,49 @@
 
 
       function selectCategory(event)
-      {   
-          category_check=$("select").val(); 
-          console.log(category_check); 
+      {    
+          if(!category_check.includes(event)){
+           category_check.push(event);
+       }else{
+            var a = category_check.indexOf(event);
+            console.log(a);
+            category_check.splice(a, 1);
+          }
+          // category_check=event;
 
-
+          console.log(category_check);
       }
       function fullViews(event)
       {
         console.log(event.src);
          $('#imgview').attr('src', event.src);
       }
+
+      $(".multiselect").css({ "width":"20em","height":"10em","border":"solid 1px #c0c0c0",
+        "overflow":"auto"});
+      $(".multiselect label").css({"display":"block"});
+      $(".multiselect-on").css({"color":"#ffffff","background-color":"#000099"});
+
+    jQuery.fn.multiselect = function() {
+    $(this).each(function() {
+        var checkboxes = $(this).find("input:checkbox");
+        checkboxes.each(function() {
+            var checkbox = $(this);
+            // Highlight pre-selected checkboxes
+              console.log("h");
+            if (checkbox.prop("checked"))
+                checkbox.parent().addClass("multiselect-on");
+ 
+            // Highlight checkboxes that the user selects
+            checkbox.click(function() {
+                if (checkbox.prop("checked"))
+                    checkbox.parent().addClass("multiselect-on");
+                else
+                    checkbox.parent().removeClass("multiselect-on");
+            });
+        });
+    });
+};
 
       function restImageView(){
         $(".select_img").attr("src","");

@@ -42,13 +42,20 @@
                     <div class="box-body">
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group">
+                                <div class="form-group ">
                                   {!! Form::label('category_id', trans('Category')) !!}
-                                    <select multiple="" class="form-control category_select" onchange="selectCategory(this.value)" name="category_id[]">
+                                  <!-- <div class="form-group multiselect" style="height: auto;"> -->
+                                  <div class="form-control category_select multiselect"> 
+                                    <!-- <select multiple="" class="form-control category_select" onchange="selectCategory(this.value)" name="category_id[]"> -->
                                         <?php foreach ($categories as $category): ?>
-                          <option value="{{ $category->id }}">{{ $category->name }}</option>
+
+                          <!-- <option value="{{ $category->id }}">{{ $category->name }}</option> -->
+ <label><input type="checkbox" style="vertical-align:top; margin-right: 10px;" 
+  onclick ="selectCategory(this.value)" name="category_id[]"  value="{{ $category->id }}" />{{ $category->name }}</label>
                       <?php endforeach; ?>
-                                    </select>
+                                    <!-- </select> -->
+                                </div>
+                               
                                 </div>
                             </div>
                         </div>

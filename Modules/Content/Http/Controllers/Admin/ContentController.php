@@ -67,7 +67,8 @@ class ContentController extends AdminBaseController
      */
     public function create()
     {
-        $categories = $this->category->getByAttributes(['status' => 1]);
+        $categories = $this->category->getByAttributes(['status' => 1],'priority','desc');
+       // echo "<pre>"; print_r(json_decode($categories)); die;
         $roles=json_decode($this->role->all());
           
           $user_roles[-1]['id']=-1;       
@@ -256,7 +257,6 @@ class ContentController extends AdminBaseController
      */
     public function store(Request  $request)
     {
-        
       $Alldata=$request->all(); 
       $tags="";
       $user_roles=$Alldata['user_roles'];     

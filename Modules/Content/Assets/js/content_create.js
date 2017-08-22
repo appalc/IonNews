@@ -114,38 +114,38 @@ function crawl() {
 
               
 
- $.ajax({
-    type: 'GET',
-    url: userUrl,
-    success: function(result) {
-        $("#user_info").empty();
-        var table = "";
-        var i = 1;
-        all_users_info=result;
-       $.each(result, function (key, values) {
-        $.each(values, function(key,value){                     
+ // $.ajax({
+ //    type: 'GET',
+ //    url: userUrl,
+ //    success: function(result) {
+ //        $("#user_info").empty();
+ //        var table = "";
+ //        var i = 1;
+ //        all_users_info=result;
+ //       $.each(result, function (key, values) {
+ //        $.each(values, function(key,value){                    
 
-        table+='<tr id="'+value.id+'"><td> <input class="checkbox" type="checkbox" onchange="changed(this);" name="check[]" value="'+value.id+'"></td>'+
-                  '<td>'+value.name+'</td>'+
-      '<td>'+value.company+'</td><td>'+value.role+'</td></tr>';
-                i++;
+ //        table+='<tr id="'+value.id+'"><td> <input class="checkbox" type="checkbox" onchange="changed(this);" name="check[]" value="'+value.id+'"></td>'+
+ //                  '<td>'+value.name+'</td>'+
+ //      '<td>'+value.company+'</td><td>'+value.role+'</td></tr>';
+ //                i++;
 
-            });
-          });
+ //            });
+ //          });
             
-            $("#user_info").html(table);
+ //            $("#user_info").html(table);
              
-            dataTableAssign();
+ //            dataTableAssign();
 
 
 
   
-    },
-    error: function(xhr, desc, err) {
-        console.log(xhr);}
+ //    },
+ //    error: function(xhr, desc, err) {
+ //        console.log(xhr);}
 
     
-  });
+ //  });
 
 }
       
