@@ -204,81 +204,63 @@ class FrontController extends BasePublicController
       }
     }
 
-   public function update(Request $request){
-        
-          $validator = Validator::make($request->all(), [        
-          'first_name' => 'required|max:25',
-          'last_name' => 'required|max:25',
-          'role' => 'required',
-      ]);  
-           
-          if ($validator->fails()) {
-            $errors = $validator->errors();
-            foreach ($errors->all() as $message) {             
+    /**
+     * API Method used to update profile of user from
+     *
+     * @param Request $request [description]
+     *
+     * @return json Updated data of user pofile
+     */
+	public function update(Request $request)
+	{
+		$validator = Validator::make($request->all(), [
+			'first_name' => 'required|max:25',
+			'last_name'  => 'required|max:25',
+			'role'       => 'required',
+		]);
 
-                $meserror =$message;
-            }              
-           $this->response->setContent(array('message'=> $message));
-          return $this->response->setStatusCode(400,$meserror);
-        }else { 
-         
+		if ($validator->fails()) {
+			$errors = $validator->errors();
+			foreach ($errors->all() as $message) {
+				$meserror = $message;
+			}
 
-            $find_user = $this->user->find($request->user_id);
+			$this->response->setContent(['message' => $message]);
 
-            if(isset($request->first_name) && $request->first_name){
-                $first_name = $request->first_name;
-            }else{
-                $first_name = $find_user->first_name;
-            }
+			return $this->response->setStatusCode(400, $meserror);
+		}
 
-            if(isset($request->last_name) && $request->last_name){
-                $last_name = $request->last_name;
-            }else{
-                $last_name = $find_user->last_name;
-            }
+		$findUser = $this->user->find($request->user_id);
 
-             if(isset($request->company) && $request->company){
-                $company = $request->company;
-            }else{
-                $company = $find_user->company;
-            }
-           if(isset($request->designation) && $request->designation){
-                $designation = $request->designation;
-            }else{
-                $designation = $find_user->designation;
-            }
+		$userDetail = [
+			'first_name'  => !empty($request->first_name) ? $request->first_name : $findUser->first_name,
+			'last_name'   => !empty($request->last_name) ? $request->last_name : $findUser->last_name,
+			'company'     => !empty($request->company) ? $request->company : $findUser->company,
+			'designation' => !empty($request->designation) ? $request->designation : $findUser->designation,
+			'phone'       => !empty($request->phone) ? $request->phone : $findUser->phone,
+		];
 
+		$details = $this->user->update($findUser, $userDetail);
 
+		$response = [
+			'id'          => $details->id,
+			'email'       => $details->email,
+			'first_name'  => $details->first_name,
+			'last_name'   => $details->last_name,
+			'created_at'  => $details->created_at,
+			'updated_at'  => $details->updated_at,
+			'phone'       => $details->phone,
+			'address'     => $details->address,
+			'role'        => $details->role,
+			'role_id'     => $details->role_id,
+			'status'      => $details->status,
+			'company'     => $details->company,
+			'designation' => $details->designation,
+		];
 
+		return response($response)->header('Content-Type', 'application/json');
+	}
 
-
-           
-            $user_Detail = array(
-                            'last_name' => $last_name,
-                            'first_name' => $first_name,
-                            'company'=>$company,
-                            'designation'=>$designation
-                          );
-            $details = $this->user->update($find_user,$user_Detail);
-
-
-            $response['id']=$details->id;
-            $response['email']=$details->email;
-            $response['first_name']=$details->first_name;
-            $response['last_name']=$details->last_name;
-            $response['created_at']=$details->created_at;
-            $response['updated_at']=$details->updated_at;
-            $response['phone']=$details->phone;
-            $response['address']=$details->address;
-            $response['role']=$details->role;
-            $response['role_id']=$details->role_id;
-            $response['status']=$details->status;
-            $response['company']=$details->company;
-            $response['designation']=$details->designation;
-          
-          return response($response)->header('Content-Type', 'application/json');
-    } 
-  }
 
 
     public function getactive(Request $request){
