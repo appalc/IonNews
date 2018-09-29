@@ -90,171 +90,152 @@ class ContentController extends AdminBaseController
         return view('content::admin.contents.create',compact('categories'),compact('user_roles'));
     }
 
-    public function ajaxcall(Request $request)
-    {  
-        $url=$_GET['url']; 
-        $img_extenstion=['gif','cms','js','html'] ;            
-        $ch=curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_HEADER, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POST, 0);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        $result = curl_exec($ch);
-        curl_close($ch);
-            $dom = new \DOMDocument();
-            libxml_use_internal_errors(true);
-            $dom->loadHTML($result);
-            if($dom->getElementsByTagName('title')->length>1){
-            $title = $dom->getElementsByTagName('title')->item(0)->nodeValue;
-            $sub_title = $dom->getElementsByTagName('title')->item(1)->nodeValue;
-            }else {
-             $title = $dom->getElementsByTagName('title')->item(0)->nodeValue;
-             $sub_title = $title;
-            }
-            // echo "<pre>";
-            // echo $title; echo "<br>";
-            // echo $sub_title; echo "<br>";
-              
-               $img1=$dom->getElementsByTagName("*");
-               $k=0; $j=0;
-               $baseUrl="";   
-               $url=explode("/",$url); 
-               $baseUrl="http://".$url[2];                
+	/**
+	* TO crawl information from a url
+	*
+	* @param Request $request [description]
+	*
+	* @return array Response array of url info
+	*/
+	public function ajaxcall(Request $request)
+	{
+		$crawlResult   = ['title' => '', 'sub_title' => '', 'status' => 400, 'count' => 0, 'img_count' => 0];
+		$urlToCrawl    = !empty($_GET['url']) ? $_GET['url'] : '';
+		$imgExtenstion = ['gif','cms','js','html'];
 
-                foreach ($img1 as $item) {
-                  if($item->getAttribute('data-src'))
-                  {
-                    $img_array['data-src'][$j++]['img_url']= $item->getAttribute('data-src');
-                    
-                 
-                  }
-                  else if($item->getAttribute('src'))
-                  {                    
-                    if($item->getAttribute('width'))
-                    $img_array['src'][$k]['width']= $item->getAttribute('width');
-                    else $img_array['src'][$k]['width']=0;
-                    if($item->getAttribute('height'))
-                    $img_array['src'][$k]['height']= $item->getAttribute('height');
-                    else $img_array['src'][$k]['height']=0;
-                    $img_array['src'][$k]['img_url']= $item->getAttribute('src');
-                    if($item->getAttribute('alt'))
-                       $img_array['src'][$k]['img_name']= $item->getAttribute('src');
-                     else $img_array['src'][$k]['img_name']="sample";
-                    $k++;                    
-                  }
-                }
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $urlToCrawl);
+		curl_setopt($ch, CURLOPT_HEADER, false);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		// stop CURL from verifying the peer's certificate
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+		curl_setopt($ch, CURLOPT_POST, 0);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		$result = curl_exec($ch);
+		curl_close($ch);
 
-       
+		$dom = new \DOMDocument();
+		libxml_use_internal_errors(true);
+		$dom->loadHTML($result);
 
-           if(sizeof($img_array)>0)
-           {        
-            $all_img_array=array();
-            $k=0;
-            $url_check=array();
-            arsort($img_array['src']);
-               if(array_key_exists('data-src', $img_array)  && sizeof($img_array['data-src']))
-               {
-               foreach ($img_array['data-src'] as $value) {
-                $split_image = pathinfo($value['img_url']);
-                if(!in_array($split_image['dirname'], $url_check)){             
+		// Can't crawl the url
+		if ($dom->getElementsByTagName('title')->length < 1) {
+			return $crawlResult;
+		}
 
-                    if(array_key_exists('extension',$split_image) && strlen($split_image['extension'])>=2 && strlen($split_image['extension'])<=4)
-                   {
-                    if(!in_array($split_image['extension'], $img_extenstion) ){
-                    if(substr($value['img_url'], 0,1)=="/")
-                    {
-                    $all_img_array[$k]['img_url']=$baseUrl.$value['img_url'];
-                    $all_img_array[$k]['img_name']="sample";
+		$title    = $dom->getElementsByTagName('title')->item(0)->nodeValue;
+		$subTitle = $title;
+		if ($dom->getElementsByTagName('title')->length > 1) {
+			$subTitle = $dom->getElementsByTagName('title')->item(1)->nodeValue;
+		}
 
-                    $url_check[$k]=$split_image['dirname']; 
-                    }
-                    else{
-                      $all_img_array[$k]['img_url']=$value['img_url'];
-                      $all_img_array[$k]['img_name']="sample";
-                      $url_check[$k]=$value['img_url']; 
-                    }  
-                    $k++;              
-                   }
-                 }
-                }
-              }
-            }
-             
-             foreach ($img_array['src'] as $key => $value) {
-                if(!in_array($value['img_url'], $url_check))
-                {
-                  $split_image = pathinfo($value['img_url']);
+		$crawlResult['title']     = $title;
+		$crawlResult['sub_title'] = $subTitle;
+		$crawlResult['status']    = 202;
+		  
+		$imgSource = $dom->getElementsByTagName("*");
+		$k         = 0;
+		$j         = 0;
+		$baseUrl   = "";
+		$url       = explode("/", $url);
+		$baseUrl   = "http://" . $url[2];
+		foreach ($imgSource as $item) {
+			if ($item->getAttribute('data-src')) {
+				$img_array['data-src'][$j++]['img_url'] = $item->getAttribute('data-src');
+			} elseif ($item->getAttribute('src')) {
+				$img_array['src'][$k]['img_url']  = $item->getAttribute('src');
+				$img_array['src'][$k]['width']    = ($item->getAttribute('width')) ? $item->getAttribute('width') : 0;
+				$img_array['src'][$k]['height']   = ($item->getAttribute('height')) ? $item->getAttribute('height') : 0;
+				$img_array['src'][$k]['img_name'] = ($item->getAttribute('alt')) ? $item->getAttribute('src') : 'sample';
+				
+				$k++;
+			}
+		}
 
+		if (sizeof($img_array) > 0) {
+			$all_img_array =  [];
+			$k             = 0;
+			$url_check     = [];
+			arsort($img_array['src']);
 
-                  if(array_key_exists('extension',$split_image) && strlen($split_image['extension'])>=2 && strlen($split_image['extension'])<=4)
-                  {
-                  if(!in_array($split_image['extension'], $img_extenstion)){
-                  $all_img_array[$k]['width']=$value['width'];
-                  $all_img_array[$k]['height']=$value['height'];  
-                  if(substr($value['img_url'], 0,1)=="/")                  
-                    $all_img_array[$k]['img_url']=$baseUrl.$value['img_url'];                  
-                  else 
-                    $all_img_array[$k]['img_url']=$value['img_url'];
-                  $all_img_array[$k]['img_name']=$value['img_name'];
-                  $url_check[$k]=$value['img_url'];
-                  $k++;
-                } 
-              } 
-              }          
-             } 
-               
-            $paragraph = $dom->getElementsByTagName('p');
-            $ul_list = $dom->getElementsByTagName('li');  
+			if (array_key_exists('data-src', $img_array)  && sizeof($img_array['data-src'])) {
+				foreach ($img_array['data-src'] as $value) {
+					$split_image = pathinfo($value['img_url']);
+					if (!in_array($split_image['dirname'], $url_check)) {
+						if (array_key_exists('extension', $split_image) && (strlen($split_image['extension']) >= 2) && (strlen($split_image['extension']) <= 4)) {
+							if (!in_array($split_image['extension'], $imgExtenstion) ) {
+								if (substr($value['img_url'], 0,1) == "/") {
+									$all_img_array[$k]['img_url']  = $baseUrl . $value['img_url'];
+									$all_img_array[$k]['img_name'] = 'sample';
 
-            $paraarray = array();
-            
-            foreach ($paragraph  as $pdata){
-                if( isset($pdata->childNodes[0]->tagName) && $pdata->childNodes[0]->tagName!='style')
-                $paraarray[] = $pdata->nodeValue;
-            }
-            // echo "<pre>";
-            // print_r($paraarray); die;
+									$url_check[$k] = $split_image['dirname'];
+								} else {
+									$all_img_array[$k]['img_url']  = $value['img_url'];
+									$all_img_array[$k]['img_name'] = 'sample';
+									$url_check[$k]                 = $value['img_url']; 
+								}
 
-             $parasize=sizeof($paraarray);
-             $paracount=0;
-              // if($paraarray>20)
-              // {
-              //   $paracount=15;
-              // }
-              //  else {
-              //   $paracount=0;
-              //  }
-             $extra=' ';
-            for ($i = 0; $i <$parasize ; $i++){
-                if(sizeof($all_img_array)>$i and $i<4){
-                    $FinalArray[$i]['img_name'] = $all_img_array[$i]['img_name'];
-                    $FinalArray[$i]['img_url'] = $all_img_array[$i]['img_url'];
-                }
-                if ($paracount<$parasize)
-                {   if(strlen($paraarray[$i])>80)
-                    $FinalArray[$paracount++]['desc'] = $paraarray[$i];
+								$k++;
+							}
+						}
+					}
+				}
+			}
 
-                    else if($k++>10)$extra=$extra.$paraarray[$i];
-                }
-             }
-             if($paracount>4)
-              $FinalArray[$paracount++]['desc']=$extra;
+			foreach ($img_array['src'] as $key => $value) {
+				if(!in_array($value['img_url'], $url_check)) {
+					$split_image = pathinfo($value['img_url']);
+					if(array_key_exists('extension',$split_image) && strlen($split_image['extension'])>=2 && strlen($split_image['extension']) <= 4) {
+						if (!in_array($split_image['extension'], $imgExtenstion)) {
+							$all_img_array[$k]['width']    = $value['width'];
+							$all_img_array[$k]['height']   = $value['height'];
+							$all_img_array[$k]['img_url']  = (substr($value['img_url'], 0,1 ) == "/") ? $baseUrl . $value['img_url'] : $value['img_url'];
+							$all_img_array[$k]['img_name'] = $value['img_name'];
+							$url_check[$k++]               = $value['img_url'];
+						}
+					}
+				}
+			}
 
-             // print_r($FinalArray); die;
-            $count = sizeof($FinalArray);
-            $FinalArray['title'] = $title;
-            $FinalArray['sub_title'] = $title;
-            $FinalArray['count'] = $count;
-            $FinalArray['img_count'] = sizeof($all_img_array);
-            $FinalArray['status']=200;
-            }else{  $FinalArray['title'] = $title;
-                    $FinalArray['status']=202;
-             }
+			$paragraph = $dom->getElementsByTagName('p');
+			$ul_list   = $dom->getElementsByTagName('li');  
+			$paraarray = [];
 
-            // echo "<pre>"; echo "<br>"; print_r($FinalArray); exit;
-        return $FinalArray;
-    }
+			foreach ($paragraph  as $pdata) {
+				if (isset($pdata->childNodes[0]->tagName) && $pdata->childNodes[0]->tagName!='style')
+					$paraarray[] = $pdata->nodeValue;
+			}
+
+			$paraSize  = sizeof($paraarray);
+			$paraCount = 0;
+			$extra     = ' ';
+			for ($i = 0; $i < $paraSize ; $i++) {
+				if (sizeof($all_img_array) > $i and $i < 4) {
+					$crawlResult[$i]['img_name'] = $all_img_array[$i]['img_name'];
+					$crawlResult[$i]['img_url']  = $all_img_array[$i]['img_url'];
+				}
+
+				if ($paraCount < $paraSize) {
+					if (strlen($paraarray[$i]) > 80)
+						$crawlResult[$paraCount++]['desc'] = $paraarray[$i];
+					elseif ($k++ > 10)
+						$extra = $extra . $paraarray[$i];
+				}
+			}
+
+			if ($paraCount > 4)
+				$crawlResult[$paraCount++]['desc'] = $extra;
+
+			$count                    = sizeof($crawlResult);
+			$crawlResult['count']     = $count;
+			$crawlResult['img_count'] = sizeof($all_img_array);
+			$crawlResult['status']    = 200;
+		}//endif
+
+		return $crawlResult;
+	}
+
     /**
      * Store a newly created resource in storage.
      *
@@ -366,18 +347,18 @@ class ContentController extends AdminBaseController
       else {
           $final_users =$users; 
       }
-     
 
-      foreach ($users as $key => $value) {
-          if($value['id']==$final_users[$i]['id']){
-              $company_name[]=$value['company'];
-              $i++;
-              if($value['device_type'])
-              $device_code[$value['device_type']][$value['id']]=$value['device_code'];
-          }
-          if($i>=sizeof($final_users))
-              break;
-      }
+		foreach ($users as $key => $value) {
+			if (!empty($final_users[$i]) && ($value['id'] == $final_users[$i]['id'])) {
+				$company_name[] = $value['company'];
+				$i++;
+				if($value['device_type'])
+					$device_code[$value['device_type']][$value['id']] = $value['device_code'];
+			}
+
+			if ($i >= sizeof($final_users))
+				break;
+		}
 
       // for ($i=0;$i<sizeof($company_name);$i++) {               
       //     $ContentCompany= new ContentCompany;
