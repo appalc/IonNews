@@ -69,6 +69,7 @@ function crawl() {
     data: {url: urls},
     url: crawlUrl,
     success: function(result) {
+		console.log(result);
          $(".user-types").show();
          if(result.img_count==0)
          $(".img-info").hide();
