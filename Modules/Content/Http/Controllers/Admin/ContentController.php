@@ -138,7 +138,7 @@ class ContentController extends AdminBaseController
 		$k         = 0;
 		$j         = 0;
 		$baseUrl   = "";
-		$url       = explode("/", $url);
+		$url       = explode("/", $urlToCrawl);
 		$baseUrl   = "http://" . $url[2];
 		foreach ($imgSource as $item) {
 			if ($item->getAttribute('data-src')) {

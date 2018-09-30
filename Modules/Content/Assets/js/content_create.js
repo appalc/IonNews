@@ -56,99 +56,99 @@ function changed(event){
 	console.log(checkedArray);
 }
 
-function crawl() {
- 	var urls=$(".form-control").val();
+	function crawl()
+	{
+		var urls = $(".form-control").val();
 
- 	if(!urls)
- 	{
-  		alert ("You have not mention Url Address");
-   		return false;
- 	}
-    $.ajax({
-    type: 'GET',
-    data: {url: urls},
-    url: crawlUrl,
-    success: function(result) {
-		console.log(result);
-         $(".user-types").show();
-         if(result.img_count==0)
-         $(".img-info").hide();
-         else 
-           $(".img-info").show();
-         $(".custom_img").show();
-        results = result;
-        $('#sub_title').val(result.sub_title);
-        $('#title').val(result.title);
+	 	if (!urls) {
+	  		alert ("You have not mention Url Address");
+	   		return false;
+	 	}
 
-        $("#syndata").empty();
-        var table = "";
-        var i = 1;
-        var counter = 0;
-        if (result.status == 200)
-        {   
-            $.each(result, function (key, value) {
+		$.ajax({
+			type: 'GET',
+			data: {url: urls},
+			url: crawlUrl,
+			success: function(result) {
+				console.log(result);
+				$(".user-types").show();
+				if(result.img_count == 0)
+					$(".img-info").hide();
+				else
+					$(".img-info").show();
 
+				$(".custom_img").show();
+				results = result;
+				$('#sub_title').val(result.sub_title);
+				$('#title').val(result.title);
 
-                if (counter == result.count|| i==5)
-                    return false;
-                if (value.desc != null) {
-                    counter++;
-                    $('#content').append(value.desc + '   <br>');
-                  }
-                if(result.img_count>counter)
-                table+='<tr><td style="text-align: center;">'+
-                        '<input  type="radio" name="image" onchange="restImageView()" value ="'+value.img_url+'"/></td>'+
-                        '<td><img id="blah" onclick="fullViews(this)" name="" src="'+value.img_url+'" alt="'+value.img_name+'" width="100"  class="model_rolling" data-toggle="modal" data-target="#myModal" style="margin-top:0px;margin-bottom:0px;text-align:center;">'+
-                        '<input type="hidden" name="img'+i+'" value="'+value.img_url+'" style="opacity: 0;"/></td></tr>';
-                i++;
+				$("#syndata").empty();
+				var table   = "";
+				var i       = 1;
+				var counter = 0;
 
-            });
-            $("#syndata").html(table);
-    }else {
-          alert("No img are found in this given URL");
-        }
-    },
-    error: function(xhr, desc, err) {
-        console.log(xhr);
-    }
-});
+				if (result.status == 200) {
+	            	$.each(result, function (key, value) {
+						if ((counter == result.count) || (i == 5)) {
+							return false;
+						}
 
-              
+						if (value.desc != null) {
+							counter++;
+							$('#content').append(value.desc + '   <br>');
+						}
 
- // $.ajax({
- //    type: 'GET',
- //    url: userUrl,
- //    success: function(result) {
- //        $("#user_info").empty();
- //        var table = "";
- //        var i = 1;
- //        all_users_info=result;
- //       $.each(result, function (key, values) {
- //        $.each(values, function(key,value){                    
+						if(result.img_count > counter) {
+							table += '<tr><td style="text-align: center;">' + '<input  type="radio" name="image" onchange="restImageView()" value ="' + value.img_url + '"/></td>';
+							table +=  '<td><img id="blah" onclick="fullViews(this)" name="" src="' + value.img_url + '" alt="' + value.img_name;
+							table += '" width="100" class="model_rolling" data-toggle="modal" data-target="#myModal" style="margin-top:0px;margin-bottom:0px;text-align:center;">';
+							table += '<input type="hidden" name="img' + i + '" value="' + value.img_url + '" style="opacity: 0;"/></td></tr>';
+						}
 
- //        table+='<tr id="'+value.id+'"><td> <input class="checkbox" type="checkbox" onchange="changed(this);" name="check[]" value="'+value.id+'"></td>'+
- //                  '<td>'+value.name+'</td>'+
- //      '<td>'+value.company+'</td><td>'+value.role+'</td></tr>';
- //                i++;
+						i++;
+					});
 
- //            });
- //          });
-            
- //            $("#user_info").html(table);
-             
- //            dataTableAssign();
+					$("#syndata").html(table);
+				} else {
+					alert("No img are found in this given URL");
+				}
+			},
+			error: function(xhr, desc, err) {
+				console.log(xhr);
+			}
+		});
 
+	 // $.ajax({
+	 //    type: 'GET',
+	 //    url: userUrl,
+	 //    success: function(result) {
+	 //        $("#user_info").empty();
+	 //        var table = "";
+	 //        var i = 1;
+	 //        all_users_info=result;
+	 //       $.each(result, function (key, values) {
+	 //        $.each(values, function(key,value){                    
 
+	 //        table+='<tr id="'+value.id+'"><td> <input class="checkbox" type="checkbox" onchange="changed(this);" name="check[]" value="'+value.id+'"></td>'+
+	 //                  '<td>'+value.name+'</td>'+
+	 //      '<td>'+value.company+'</td><td>'+value.role+'</td></tr>';
+	 //                i++;
 
-  
- //    },
- //    error: function(xhr, desc, err) {
- //        console.log(xhr);}
+	 //            });
+	 //          });
+	            
+	 //            $("#user_info").html(table);
+	             
+	 //            dataTableAssign();
 
-    
- //  });
+	 //    },
+	 //    error: function(xhr, desc, err) {
+	 //        console.log(xhr);}
 
-}
+	    
+	 //  });
+
+	}
       
       function changeorder()
       { 
