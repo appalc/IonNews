@@ -1,5 +1,5 @@
-<?php namespace Modules\Content\Http\Controllers\Api;
-
+<?php
+namespace Modules\Content\Http\Controllers\Api;
 
 use Modules\Core\Http\Controllers\BasePublicController;
 use Illuminate\Routing\Controller;
@@ -26,157 +26,159 @@ use DB;
 
 class StoryController extends BasePublicController
 {
-    protected $guard;
-    public function __construct(Response $response,Guard $guard,UserRepository $user,ContentRepository $content,CategoryRepository $category,ContentLikeStoryRepository $likestory, MultipleCategoryContentRepository $multiContCategory)
-    {
-       parent::__construct();
-       $this->response = $response;
-       $this->guard = $guard;
-       $this->user = $user;
-       $this->content = $content;
-       $this->category = $category;
-       $this->likestory=$likestory;
-       $this->multiContCategory=$multiContCategory;
-       //$this->middleware('auth:api');
-      // $this->middleware('oauth');
-    }
-    public function story(Request $request,Client $http){
-      $validator = Validator::make($request->all(), [
-          'category_id' => 'required'
-      ]);
-       
-      $user_id=$request->user_id;
-      if ($validator->fails()) {
-          $errors = $validator->errors();
-          foreach ($errors->all() as $message) {
-              $meserror =$message;
-          }
-          $this->response->setContent(array('message'=> $message));
-        return $this->response->setStatusCode(400,$meserror);
-      }else{
-            $users= $this->user->find($request->user_id);
-            $user_groupId=$users->role_id;          
-            $dataset = $this->content->filter( $request->category_id,$user_groupId);
+	protected $guard;
 
-            // Log::info($dataset);
-            // Log::info($dataset->total());
-          
-             
-            $positions=DB::table('storypositions')
-                         ->select('positions')
-                         ->get();
-            $positions=json_decode($positions,true);
-            $position=$positions[0]['positions'];
-            // Log::info($position);
-            $limit=12/$position;
-            if($request->has('page'))
-            {
-              $pageno=$request->page;
-              $offset=$limit*($pageno-1); 
-            }else $offset=0;
+	public function __construct(Response $response,Guard $guard,UserRepository $user,ContentRepository $content,CategoryRepository $category,ContentLikeStoryRepository $likestory, MultipleCategoryContentRepository $multiContCategory)
+	{
+		parent::__construct();
 
-            $custom_story=DB::table('content__custom_contentstories as cus')
-                        ->join('content__custommulticategories as cuc', 'cuc.custom_content_id','=','cus.id')
-                        ->where('cuc.category_id','=',$request->category_id)
-                        ->offset($offset)
-                        ->limit($limit)
-                        ->get();
+		$this->response          = $response;
+		$this->guard             = $guard;
+		$this->user              = $user;
+		$this->content           = $content;
+		$this->category          = $category;
+		$this->likestory         = $likestory;
+		$this->multiContCategory = $multiContCategory;
+		//$this->middleware('auth:api');
+		// $this->middleware('oauth');
+	}
 
-            // Log::info(count($custom_story));
+	public function story(Request $request, Client $http)
+	{
+		$validator = Validator::make($request->all(), [
+			'category_id' => 'required'
+		]);
 
-            // Log::info("i Think again every things is ok");
-            if(!count($custom_story))
-            {
-              $custom_story=DB::table('content__custom_contentstories as cus')
-                        ->join('content__custommulticategories as cuc', 'cuc.custom_content_id','=','cus.id')
-                        ->where('cuc.category_id','=',$request->category_id)                   
-                        ->limit($limit)
-                        ->get();
+		$user_id = $request->user_id;
+		if ($validator->fails()) {
+			$errors = $validator->errors();
+			foreach ($errors->all() as $message) {
+				$meserror = $message;
+			}
 
-            }
-            $custom_story=json_decode($custom_story,true);   
+			$this->response->setContent(array('message' => $message));
 
-            $custom=array();
-            $i=0;$k=0;
-            $mul=2;
-            $positions= $position;
-            // Log::info("Positions  ".$position);
-            
-            foreach ($dataset as $key => $value) {             
-                unset($value->category_id);              
-                $value->like_count=$this->likestory->checkLikeorNot($value,$user_id);
-                if($value->like_count)
-                $value->islike=1;
-                else $value->islike=0; 
-                 $custom[$i]=$value;
-                if($i==$positions-1 && count($custom_story))
-                { 
-                  if($k>=count($custom_story))
-                     $k=0;
-                  $custom[$i++]=$custom_story[$k];
-                  $k=$k+1;
-                  $custom[$i]=$value; 
-                  $positions=$position*$mul; 
-                  // Log::info("mul value".$mul."  postions   ". $positions);
-                  $mul+=1; 
-                } 
+			return $this->response->setStatusCode(400,$meserror);
+		} else {
+			$users        = $this->user->find($request->user_id);
+			$user_groupId = $users->role_id;          
+			$dataset      = $this->content->filter( $request->category_id, $user_groupId);
 
-                unset($dataset[$key]);
-               
-                $i++;              
-            }
-             $dataset['total_Count']=sizeof($custom);
-             $dataset['all_data']=$custom;
+			// Log::info($dataset);
+			// Log::info($dataset->total());
 
-            // Log::info("custom info");
-            // Log::info($dataset); 
-            return $dataset;
+			$positions = DB::table('storypositions')->select('positions')->get();
+			$positions = json_decode($positions, true);
+			$position  = $positions[0]['positions'];
+			// Log::info($position);
+			$limit = 12/$position;
 
-          
-   
-            // return response( [
-            //             'products' => $dataset,
-            //             'data'=> $custom
-            //         ]);   
+			if ($request->has('page')) {
+				$pageno = $request->page;
+				$offset = $limit * ($pageno - 1);
+			} else {
+				$offset = 0;
+			}
 
-            // return $dataset;
-        }
-      }
-     
-     public function homepage(Request $request,Client $http){            
-            $categorylist = $this->category->getByAttributes(['status' => 1],'priority');
+			$custom_story = DB::table('content__custom_contentstories as cus')
+						->join('content__custommulticategories as cuc', 'cuc.custom_content_id', '=', 'cus.id')
+						->where('cuc.category_id', '=', $request->category_id)
+						->offset($offset)
+						->limit($limit)
+						->get();
 
-            $users= $this->user->find($request->user_id);
-            $user_groupId=$users->role_id;
+			// Log::info(count($custom_story));
+			// Log::info("i Think again every things is ok");
 
-            Log::info($user_groupId);
-            
-            $dataresponse = array();
-            $current_date=date('Y-m-d');
-            $user_id=$request->user_id;          
+			if (!count($custom_story)) {
+				$custom_story = DB::table('content__custom_contentstories as cus')
+						->join('content__custommulticategories as cuc', 'cuc.custom_content_id', '=', 'cus.id')
+						->where('cuc.category_id', '=', $request->category_id)
+						->limit($limit)
+						->get();
+			}
 
+			$custom_story = json_decode($custom_story, true);
+			$custom       = [];
+			$i            = 0;
+			$k            = 0;
+			$mul          = 2;
+			$positions    = $position;
+			// Log::info("Positions  ".$position);
 
-            foreach ($categorylist as $category) {
-               $setexist=$this->content->getStoryByCategory($category->id,$user_groupId);    
-               if(!empty($setexist)){                
-               if(count($setexist)!=0)
-                {     
-                 foreach ($setexist as $key => $value) {
+			foreach ($dataset as $key => $value) {
+				unset($value->category_id);
+				$value->like_count = $this->likestory->checkLikeorNot($value, $user_id);
 
-                                $value->priority=$category->priority;
-                                                         
-                            }           
-                 $dataresponse[$category->name]=$setexist;  
-                 }
-               }
-             }
-              if(sizeof($dataresponse)==0)
-                 $dataresponse["status"]="No Story";
+				if ($value->like_count)
+					$value->islike = 1;
+				else
+					$value->islike = 0;
 
-               return response($dataresponse); 
+				$custom[$i] = $value;
+				if ($i == $positions-1 && count($custom_story)) {
+					if ($k >=count($custom_story))
+						$k = 0;
 
+					$custom[$i++] = $custom_story[$k];
+					$k            = $k+1;
+					$custom[$i]   = $value;
+					$positions    = $position*$mul;
+					// Log::info("mul value".$mul."  postions   ". $positions);
+					$mul += 1;
+				}
 
-        }
+				unset($dataset[$key]);
+
+				$i++;
+			}
+
+			$dataset['total_Count'] = sizeof($custom);
+			$dataset['all_data']    = $custom;
+
+			// Log::info("custom info");
+			// Log::info($dataset);
+
+			return $dataset;
+
+			// return response( [
+			//             'products' => $dataset,
+			//             'data'=> $custom
+			//         ]);   
+			// return $dataset;
+		}
+	}
+
+	public function homepage(Request $request, Client $http)
+	{
+		$categorylist = $this->category->getByAttributes(['status' => 1], 'priority');
+		$users        = $this->user->find($request->user_id);
+		$user_groupId = $users->role_id;
+
+	    Log::info($user_groupId);
+	    
+		$dataresponse = [];
+		$current_date = date('Y-m-d');
+		$user_id      = $request->user_id;
+
+		foreach ($categorylist as $category) {
+			$setexist = $this->content->getStoryByCategory($category->id, $user_groupId);
+			if (!empty($setexist)) {
+				if (count($setexist) !=0) {
+					foreach ($setexist as $key => $value) {
+						$value->priority = $category->priority;
+					}
+
+					$dataresponse[$category->name] = $setexist;
+				}
+			}
+		}
+
+		if(sizeof($dataresponse) == 0)
+			$dataresponse["status"] = "No Story";
+
+	       return response($dataresponse);
+	}
 
         public function story_like(Request $request)
         { 

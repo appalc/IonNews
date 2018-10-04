@@ -18,23 +18,28 @@ use Modules\User\Repositories\RoleRepository;
 use Modules\User\Repositories\UserRepository;
 use Modules\Tag\Repositories\TagRepository;
 use Modules\User\Services\UserResetter;
+use Modules\Content\Repositories\ContentLikeStoryRepository;
+use Modules\Content\Entities\ContentLikeStory;
 use Validator;
 use Log;
+use DB;
 
 class SearchController extends BasePublicController
 {
     protected $guard;
 
-	public function __construct(Response $response, Guard $guard, UserRepository $user, CategoryRepository $category, RoleRepository $role, TagRepository $tag)
+	public function __construct(Response $response, Guard $guard, UserRepository $user, CategoryRepository $category, RoleRepository $role, TagRepository $tag, ContentRepository $content, ContentLikeStoryRepository $likestory)
 	{
 		parent::__construct();
 
-		$this->response = $response;
-		$this->guard    = $guard;
-		$this->user     = $user;
-		$this->category = $category;
-		$this->role     = $role;
-		$this->tag      = $tag;
+		$this->response  = $response;
+		$this->guard     = $guard;
+		$this->user      = $user;
+		$this->category  = $category;
+		$this->role      = $role;
+		$this->tag       = $tag;
+		$this->content   = $content;
+		$this->likestory = $likestory;
 	}
 
 	/**
@@ -54,19 +59,89 @@ class SearchController extends BasePublicController
 	}
 
 	/**
-	 * return list of category and tags
+	 * return list of tags
 	 *
 	 * @param  Request $request [description]
 	 * @param  Client  $http    [description]
 	 *
 	 * @return array Array of tags and category
 	 */
-	public function searchNews(Request $request, Client $http)
+	public function storyByTag(Request $request, Client $http)
 	{
-		return [
-			'category' => $this->category->getByAttributes(['status' => 1]),
-			'tag'      => $this->tag->all(),
-		];
+		$validator = Validator::make($request->all(), ['tags' => 'required']);
+
+		if ($validator->fails()) {
+			$errors = $validator->errors();
+			foreach ($errors->all() as $message) {
+				$meserror = $message;
+			}
+
+			$this->response->setContent(['message' => $message]);
+
+			return $this->response->setStatusCode(400, $meserror);
+		}
+
+		$userData    = $this->user->find($request->user_id);
+		$userGroupId = $userData->role_id;
+		$dataset     = $this->content->filter($request->tags, $userGroupId);
+
+		$positions = DB::table('storypositions')->select('positions')->get();
+		$positions = json_decode($positions, true);
+		$position  = $positions[0]['positions'];
+
+		$limit  = (12 / $position);
+		$offset = 0;
+		if ($request->has('page')) {
+			$pageno = $request->page;
+			$offset = $limit * ($pageno - 1);
+		}
+
+		$custom_story = DB::table('content__custom_contentstories as cus')
+					->join('content__custommulticategories as cuc', 'cuc.custom_content_id', '=', 'cus.id')
+					->where('cuc.category_id', '=', $request->category_id)
+					->offset($offset)
+					->limit($limit)
+					->get();
+
+		if (!count($custom_story)) {
+			$custom_story = DB::table('content__custom_contentstories as cus')
+					->join('content__custommulticategories as cuc', 'cuc.custom_content_id', '=', 'cus.id')
+					->where('cuc.category_id', '=', $request->category_id)
+					->limit($limit)
+					->get();
+		}
+
+		$custom_story = json_decode($custom_story, true);
+		$custom       = [];
+		$i            = 0;
+		$k            = 0;
+		$mul          = 2;
+		$positions    = $position;
+
+		foreach ($dataset as $key => $value) {             
+			unset($value->category_id);              
+			$value->like_count = $this->likestory->checkLikeorNot($value, $request->user_id);
+			$value->islike     = ($value->like_count) ? 1 : 0;
+
+			$custom[$i] = $value;
+			if ($i == $positions-1 && count($custom_story)) {
+				$k            = ($k >= count($custom_story)) ? 0 : $k;
+				$custom[$i++] = $custom_story[$k++];
+				$custom[$i]   = $value;
+				$positions    = $position*$mul;
+
+				$mul += 1;
+			}
+
+			unset($dataset[$key]);
+
+			$i++;
+		}
+
+		$dataset['total_Count'] = sizeof($custom);
+		$dataset['all_data']    = $custom;
+
+		return $dataset;
 	}
 
 }
