@@ -64,8 +64,8 @@ $router->group(['prefix' => '/search'], function (Router $router) {
 			'uses' => 'SearchController@categoryAndTaglist',
 		]);
 
-		$router->get('/searchNews', [
-			'as'   => 'SearchController.api.searchNews',
+		$router->get('/storyByTag', [
+			'as'   => 'SearchController.api.storyByTag',
 			'uses' => 'SearchController@searchNews',
 		]);
 	});
