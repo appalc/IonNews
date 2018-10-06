@@ -80,7 +80,7 @@ class SearchController extends BasePublicController
 
 			return $this->response->setStatusCode(400, $meserror);
 		}
-echo '<pre>$request';print_r($request);
+echo '<pre>$request';print_r([$request->tags, $request->user_id]);
 		$userData    = $this->user->find($request->user_id);
 		$userGroupId = $userData->role_id;
 		$dataset     = $this->content->filter($request->tags, $userGroupId);
