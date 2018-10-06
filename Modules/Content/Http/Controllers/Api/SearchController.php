@@ -80,11 +80,11 @@ class SearchController extends BasePublicController
 
 			return $this->response->setStatusCode(400, $meserror);
 		}
-
+echo '<pre>$request';print_r($request);
 		$userData    = $this->user->find($request->user_id);
 		$userGroupId = $userData->role_id;
 		$dataset     = $this->content->filter($request->tags, $userGroupId);
-
+echo '$dataset';print_r($dataset);
 		$positions = DB::table('storypositions')->select('positions')->get();
 		$positions = json_decode($positions, true);
 		$position  = $positions[0]['positions'];
@@ -101,7 +101,7 @@ class SearchController extends BasePublicController
 					->offset($offset)
 					->limit($limit)
 					->get();
-
+echo '$dataset';print_r($dataset);
 		$custom_story = json_decode($custom_story, true);
 		$custom       = [];
 		$i            = 0;
