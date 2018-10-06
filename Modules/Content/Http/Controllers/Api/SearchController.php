@@ -97,19 +97,10 @@ class SearchController extends BasePublicController
 		}
 
 		$custom_story = DB::table('content__custom_contentstories as cus')
-					->join('content__custommulticategories as cuc', 'cuc.custom_content_id', '=', 'cus.id')
-					->where('cuc.category_id', '=', $request->category_id)
+					->where('cus.tags', 'LIKE', $request->tags)
 					->offset($offset)
 					->limit($limit)
 					->get();
-
-		if (!count($custom_story)) {
-			$custom_story = DB::table('content__custom_contentstories as cus')
-					->join('content__custommulticategories as cuc', 'cuc.custom_content_id', '=', 'cus.id')
-					->where('cuc.category_id', '=', $request->category_id)
-					->limit($limit)
-					->get();
-		}
 
 		$custom_story = json_decode($custom_story, true);
 		$custom       = [];

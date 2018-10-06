@@ -180,200 +180,169 @@ class StoryController extends BasePublicController
 	       return response($dataresponse);
 	}
 
-        public function story_like(Request $request)
-        { 
-                 $validator = Validator::make($request->all(), [
-                 'content_id' => 'required']);
-       
-                 
-                   if ($validator->fails()) {
-                    $errors = $validator->errors();
-                    foreach ($errors->all() as $message) {
-                        $meserror =$message;
-                    }
-                    $this->response->setContent(array('message'=> $message));
-                    return $this->response->setStatusCode(400,$meserror);
-                  }else{
-                         
-                    $user_id=$request->user_id;  
-                   $content_id=$request->content_id;       
-                   $data=DB::table('content__contentlikestories')
-                              ->where('content_id','=',$content_id)
-                               ->where('user_id','=',$user_id)
-                               ->get();
+	public function story_like(Request $request)
+	{ 
+		$validator = Validator::make($request->all(), ['content_id' => 'required']);
 
-                   if(sizeof($data)>0)
-                   { 
-                    $data=DB::table('content__contentlikestories')
-                        ->where('content_id','=',$content_id)
-                        ->where('user_id','=',$user_id)
-                        ->delete();
+		if ($validator->fails()) {
+			$errors   = $validator->errors();
+			foreach ($errors->all() as $message) {
+				$meserror = $message;
+			}
 
-                   }
-                  else {
-                           
-                    $abc['user_id']=$user_id;
-                    $abc['content_id']=$content_id;
-                    $data=$this->likestory->create($abc); 
-                    }
-                    $response['status']="successful";
-              return response($response);
-        }
-        }
-        public function getAllLikeStory(Request $request)
-        { 
-          $current_date=date('Y-m-d');      
-          $dataset=DB::table('content__contents as cc')
-                  ->join('content__contentlikestories as ccl', 'cc.id','=','ccl.content_id')
-                   ->select('cc.*' )
-                   ->where('cc.expiry_date','>=',$current_date)
-                   ->where('ccl.user_id','=',$request->user_id)                        
-                   ->paginate(12);
-                 foreach ($dataset as $key => $value) {             
-                   $value->islike=1;
-               
-                  }              
-                  return response($dataset);
+			$this->response->setContent(['message'=> $message]);
 
-        }
+			return $this->response->setStatusCode(400, $meserror);
+		} else {
+			$user_id    = $request->user_id;
+			$content_id = $request->content_id;
+			$data       = DB::table('content__contentlikestories')
+				->where('content_id', '=', $content_id)
+				->where('user_id', '=', $user_id)
+				->get();
 
-    public function move_to_archive(Request $request){
-      $current_date=date('Y-m-d');
-      $exipre_story=DB::table('content__contents')
-                            ->where('expiry_date','<',$current_date)
-                            ->orderBy('id', 'desc')
-                            ->get();   
+			if (sizeof($data) > 0) {
+				$data = DB::table('content__contentlikestories')
+					->where('content_id', '=', $content_id)
+					->where('user_id', '=', $user_id)
+					->delete();
+			} else {
+				$abc['user_id']    = $user_id;
+				$abc['content_id'] = $content_id;
+				$data              = $this->likestory->create($abc);
+			}
 
-     $categories = $this->category->getByAttributes(['status' => 1, 'slug_name'=>'archive']);
-      $categories=json_decode($categories);
-      $category_id=$categories[0]->id;
-      $cat[]=$category_id;      
-      foreach ($exipre_story as $key => $value) {
-      DB::table('content__contents')
-            ->where('id', $value->id)
-            ->update(['category_id' => $category_id, 'all_category'=>json_encode($cat)]);
-        $categoryID=DB::table('content__multiplecategorycontents')                        
-                          ->where('content_id','=',$value->id)->delete();
+			$response['status'] = "successful";
 
-              $abc['category_id']=$category_id;
-              $abc['content_id']=$value->id;       
-              $this->multiContCategory->create($abc); 
-       }
+			return response($response);
+		}
+	}
 
-        return $exipre_story;
+	public function getAllLikeStory(Request $request)
+	{
+		$current_date = date('Y-m-d');      
+		$dataset      = DB::table('content__contents as cc')
+			->join('content__contentlikestories as ccl', 'cc.id', '=', 'ccl.content_id')
+			->select('cc.*' )
+			->where('cc.expiry_date', '>=', $current_date)
+			->where('ccl.user_id', '=', $request->user_id)
+			->paginate(12);
 
-    }
+			foreach ($dataset as $key => $value) {
+				$value->islike = 1;
+			}
 
-    public function updateDatabase(Request $request)
-    {     
-      $current_date=date('Y-m-d');
-      $exipre_story=DB::table('content__contents')
-                            ->where('expiry_date','<',$current_date)
-                            ->orderBy('id', 'desc')
-                            ->get();   
+		return response($dataset);
+	}
 
-     $categories = $this->category->getByAttributes(['status' => 1, 'slug_name'=>'archive']);
-     print_r($categories); exit;
+	public function move_to_archive(Request $request)
+	{
+		$current_date = date('Y-m-d');
+		$exipre_story = DB::table('content__contents')
+							->where('expiry_date', '<', $current_date)
+							->orderBy('id', 'desc')
+							->get();
 
-      $categories=json_decode($categories);
-      $category_id=$categories[0]->id;
-      $cat[]=$category_id;      
-      foreach ($exipre_story as $key => $value) {
-      DB::table('content__contents')
-            ->where('id', $value->id)
-            ->update(['category_id' => $category_id, 'all_category'=>json_encode($cat)]);
-        $categoryID=DB::table('content__multiplecategorycontents')                        
-                          ->where('content_id','=',$value->id)->delete();
+		$categories  = $this->category->getByAttributes(['status' => 1, 'slug_name' => 'archive']);
+		$categories  = json_decode($categories);
+		$category_id = $categories[0]->id;
+		$cat[]       = $category_id;
 
-              $abc['category_id']=$category_id;
-              $abc['content_id']=$value->id;       
-              $this->multiContCategory->create($abc); 
-       }
+		foreach ($exipre_story as $key => $value) {
+			DB::table('content__contents')
+				->where('id', $value->id)
+				->update(['category_id' => $category_id, 'all_category' => json_encode($cat)]);
 
-        return $exipre_story;
-        exit;
+			$categoryID = DB::table('content__multiplecategorycontents')->where('content_id', '=', $value->id)->delete();
 
-       //  $update=DB::table('users')
-       //            ->get();
-       // $update=json_decode($update,true);
-       //      foreach ($update as $key => $value) {
-       //        if($value['role'])
-       //        {
-       //          DB::table("users")
-       //            ->where('role', '=','user')
-       //            ->update(['role' => 'user','role_id'=>2]);  
-       //        }
-             
-       //      }
+			$abc['category_id'] = $category_id;
+			$abc['content_id']  = $value->id;
+			$this->multiContCategory->create($abc);
+		}
 
-       //      DB::table("users")
-       //            ->where('id', '=',1)
-       //            ->update(['role' => 'admin','role_id'=>1]);  
-       //  return $update;
+		return $exipre_story;
+	}
 
+	public function updateDatabase(Request $request)
+	{
+		$current_date = date('Y-m-d');
+		$exipre_story = DB::table('content__contents')
+							->where('expiry_date', '<', $current_date)
+							->orderBy('id', 'desc')
+							->get();
 
+		$categories = $this->category->getByAttributes(['status' => 1, 'slug_name' => 'archive']);
+		print_r($categories); exit;
 
+		$categories  = json_decode($categories);
+		$category_id = $categories[0]->id;
+		$cat[]       = $category_id;
+		foreach ($exipre_story as $key => $value) {
+			DB::table('content__contents')
+				->where('id', $value->id)
+				->update(['category_id' => $category_id, 'all_category' => json_encode($cat)]);
 
+			$categoryID = DB::table('content__multiplecategorycontents')->where('content_id', '=', $value->id)->delete();
 
+			$abc['category_id'] = $category_id;
+			$abc['content_id']  = $value->id;
+			$this->multiContCategory->create($abc);
+		}
 
+		return $exipre_story;
+		exit;
 
+		//	$update = DB::table('users')->get();
+		//	$update = json_decode($update, true);
+		//	foreach ($update as $key => $value) {
+		//		if ($value['role']) {
+		//			DB::table("users")->where('role', '=', 'user')->update(['role' => 'user', 'role_id' => 2]);
+		//		}
+		//	}
 
-      $categorylist = $this->category->getByAttributes(['status' => 1],'priority');
+		//	DB::table("users")->where('id', '=', 1)->update(['role' => 'admin', 'role_id' => 1]);
+		//	return $update;
 
-         $AllContent=$this->content->all();
-         $now=date("Y-m-d H:i:s");
-         $allRoles=DB::table('roles')
-                  ->get();
-                  
-          foreach ($allRoles as $key => $value) {
-             if($value->id!=1)
-              $roles[]=$value->id;
-          }
-      
+		$categorylist = $this->category->getByAttributes(['status' => 1], 'priority');
+		$AllContent   = $this->content->all();
+		$now          = date("Y-m-d H:i:s");
+		$allRoles     = DB::table('roles')->get();
 
-    
-  
-       
-                        
-             foreach ($AllContent as $content) {
-                   foreach ($roles as $role) {
-                      $data1=DB::table('content__usergroups')
-                          ->where('role_id' ,'=' ,$role)
-                          ->where('content_id','=' , $content->id)
-                          ->get();
-                         
-                      if(sizeof($data1)==0)
-                      {
-                    DB::table('content__usergroups')->insert(
-                        ['role_id' => $role, 'content_id' => $content->id,
-                        'created_at'=>$now,'updated_at'=>$now]
-                       );
-                  }
-                    
-                   }
-                       
-              } 
-             foreach ($categorylist as $category) {
-                  $Allcategory[]=$category->id;
-                   foreach ($AllContent as $content) {
+		foreach ($allRoles as $key => $value) {
+			if ($value->id != 1)
+				$roles[] = $value->id;
+		}
 
-                     $data=DB::table('content__multiplecategorycontents')
-                          ->where('category_id' ,'=' ,$category->id)
-                          ->where('content_id','=' , $content->id)
-                          ->get();
-                      if(sizeof($data)==0)
-                      {
-                    DB::table('content__multiplecategorycontents')->insert(
-                            ['category_id' => $category->id, 'content_id' => $content->id,'created_at'=>$now,'updated_at'=>$now]
-                        );
-                  }
-                    
-                   }                       
-                }
-        
+		foreach ($AllContent as $content) {
+			foreach ($roles as $role) {
+				$data1 = DB::table('content__usergroups')
+							->where('role_id', '=', $role)
+							->where('content_id', '=', $content->id)
+							->get();
 
-            return "successful update"; 
+				if (sizeof($data1) == 0) {
+					DB::table('content__usergroups')->insert(['role_id' => $role, 'content_id' => $content->id, 'created_at' => $now,'updated_at' => $now]);
+				}
+			}
+		}
 
+		foreach ($categorylist as $category) {
+			$Allcategory[] = $category->id;
+			foreach ($AllContent as $content) {
+				$data = DB::table('content__multiplecategorycontents')
+							->where('category_id', '=', $category->id)
+							->where('content_id', '=', $content->id)
+							->get();
 
-    }
+				if (sizeof($data) == 0) {
+					DB::table('content__multiplecategorycontents')->insert(
+						['category_id' => $category->id, 'content_id' => $content->id, 'created_at' => $now, 'updated_at' => $now]
+					);
+				}
+			}
+		}
+
+		return 'successful update';
+	}
+
 }

@@ -66,7 +66,7 @@ $router->group(['prefix' => '/search'], function (Router $router) {
 
 		$router->get('/storyByTag', [
 			'as'   => 'SearchController.api.storyByTag',
-			'uses' => 'SearchController@searchNews',
+			'uses' => 'SearchController@storyByTag',
 		]);
 	});
 });
