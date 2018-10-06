@@ -64,7 +64,7 @@ $router->group(['prefix' => '/search'], function (Router $router) {
 			'uses' => 'SearchController@categoryAndTaglist',
 		]);
 
-		$router->get('/storyByTag', [
+		$router->POST('/storyByTag', [
 			'as'   => 'SearchController.api.storyByTag',
 			'uses' => 'SearchController@storyByTag',
 		]);
