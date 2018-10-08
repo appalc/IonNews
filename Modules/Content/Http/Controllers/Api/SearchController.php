@@ -52,8 +52,15 @@ class SearchController extends BasePublicController
 	public function categoryAndTaglist(Request $request, Client $http)
 	{
 		return [
-			'category' => $this->category->getByAttributes(['status' => 1]),
-			'tag'      => collect($this->content->extractTags())->pluck('tags')->toArray(),
+			'test' => DB::table('category')->select('id', 'name', 'slug_name')->where('status', '=', 1)->get(),
+			'category' => collect($this->category->getByAttributes(['status' => 1]))->map(function ($cat) {
+				return [
+					'id'        => $cat['id'],
+					'name'      => $cat['name'],
+					'slug_name' => $cat['slug_name'],
+				];
+			}),
+			'tag'      => collect($this->content->extractTags())->pluck('tags'),
 		];
 	}
 
