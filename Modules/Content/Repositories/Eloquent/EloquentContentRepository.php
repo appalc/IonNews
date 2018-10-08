@@ -61,7 +61,7 @@ class EloquentContentRepository extends EloquentBaseRepository implements Conten
 				->select('cc.id', 'cc.tags')
 				->groupBy('cc.tags')
 				->orderBy('cc.id', 'desc')
-				->all();
+				->get();
 	}
 
 }
