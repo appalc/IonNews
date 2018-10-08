@@ -16,7 +16,6 @@ use Modules\User\Events\UserHasBegunResetProcess;
 use Modules\User\Http\Requests\LoginRequest;
 use Modules\User\Repositories\RoleRepository;
 use Modules\User\Repositories\UserRepository;
-use Modules\Tag\Repositories\TagRepository;
 use Modules\User\Services\UserResetter;
 use Modules\Content\Repositories\ContentLikeStoryRepository;
 use Modules\Content\Entities\ContentLikeStory;
@@ -28,7 +27,7 @@ class SearchController extends BasePublicController
 {
     protected $guard;
 
-	public function __construct(Response $response, Guard $guard, UserRepository $user, CategoryRepository $category, RoleRepository $role, TagRepository $tag, ContentRepository $content, ContentLikeStoryRepository $likestory)
+	public function __construct(Response $response, Guard $guard, UserRepository $user, CategoryRepository $category, RoleRepository $role, ContentRepository $content, ContentLikeStoryRepository $likestory)
 	{
 		parent::__construct();
 
@@ -54,7 +53,7 @@ class SearchController extends BasePublicController
 	{
 		return [
 			'category' => $this->category->getByAttributes(['status' => 1]),
-			'tag'      => $this->tag->all(),
+			'tag'      => $this->content->extractTags(),
 		];
 	}
 
@@ -80,12 +79,10 @@ class SearchController extends BasePublicController
 
 			return $this->response->setStatusCode(400, $meserror);
 		}
-echo '<pre>$request';print_r([$request->tags, $request->user_id]);
+
 		$userData    = $this->user->find($request->user_id);
-echo '$userData'; print_r($userData);
-	//	$dataset     = $this->content->filter($request->tags, $userData->role_id);
 		$dataset     = $this->content->searchByTag($request->tags, $userData->role_id);
-echo '$dataset';print_r($dataset);
+
 		$positions = DB::table('storypositions')->select('positions')->get();
 		$positions = json_decode($positions, true);
 		$position  = $positions[0]['positions'];
@@ -102,7 +99,7 @@ echo '$dataset';print_r($dataset);
 					->offset($offset)
 					->limit($limit)
 					->get();
-echo '$dataset';print_r($dataset);
+
 		$custom_story = json_decode($custom_story, true);
 		$custom       = [];
 		$i            = 0;
@@ -110,8 +107,8 @@ echo '$dataset';print_r($dataset);
 		$mul          = 2;
 		$positions    = $position;
 
-		foreach ($dataset as $key => $value) {             
-			unset($value->category_id);              
+		foreach ($dataset as $key => $value) {
+			unset($value->category_id);
 			$value->like_count = $this->likestory->checkLikeorNot($value, $request->user_id);
 			$value->islike     = ($value->like_count) ? 1 : 0;
 

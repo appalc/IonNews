@@ -46,13 +46,22 @@ class EloquentContentRepository extends EloquentBaseRepository implements Conten
 		$story       = DB::table('content__contents as cc')
 				->join('content__usergroups as cug', 'cug.content_id', '=', 'cc.id')
 				->select('cc.*')
-				->where('cc.tags', '=', $tag)
+				->where('cc.tags', 'like', '%' . $tag . '%')
 				->where('cc.expiry_date', '>=', $currentDate)
 				->where('cug.role_id', '=', $roleId)
 				->orderBy('cc.id', 'desc')
 				->paginate(12);
 
 		return $story;
+	}
+
+	public function extractTags()
+	{
+		return DB::table('content__contents as cc')
+				->select('cc.id', 'cc.tags')
+				->groupBy('cc.tags')
+				->orderBy('cc.id', 'desc')
+				->all();
 	}
 
 }
