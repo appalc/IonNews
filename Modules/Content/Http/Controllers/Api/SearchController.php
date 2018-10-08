@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Modules\Authentication\Events\Confirmnotify;
 use Modules\Content\Repositories\CategoryRepository;
@@ -52,7 +53,7 @@ class SearchController extends BasePublicController
 	{
 		return [
 			'category' => $this->category->getByAttributes(['status' => 1]),
-			'tag'      => $this->content->extractTags(),
+			'tag'      => collect($this->content->extractTags())->pluck('tags')->toArray(),
 		];
 	}
 

@@ -57,10 +57,10 @@ class EloquentContentRepository extends EloquentBaseRepository implements Conten
 
 	public function extractTags()
 	{
-		return DB::table('content__contents as cc')
-				->groupBy('cc.tags')
-				->orderBy('cc.id', 'desc')
-				->lists('cc.tags');
+		return DB::table('content__contents')
+				->select('tags')
+				->groupBy('tags')
+				->get();
 	}
 
 }
