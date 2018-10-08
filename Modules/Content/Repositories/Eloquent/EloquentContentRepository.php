@@ -40,4 +40,19 @@ class EloquentContentRepository extends EloquentBaseRepository implements Conten
 
 	}
 
+	public function searchByTag($tag, $roleId)
+	{
+		$currentDate = date('Y-m-d');
+		$story       = DB::table('content__contents as cc')
+				->join('content__usergroups as cug', 'cug.content_id', '=', 'cc.id')
+				->select('cc.*')
+				->where('cc.tags', '=', $tag)
+				->where('cc.expiry_date', '>=', $currentDate)
+				->where('cug.role_id', '=', $roleId)
+				->orderBy('cc.id', 'desc')
+				->paginate(12);
+
+		return $story;
+	}
+
 }

@@ -82,8 +82,9 @@ class SearchController extends BasePublicController
 		}
 echo '<pre>$request';print_r([$request->tags, $request->user_id]);
 		$userData    = $this->user->find($request->user_id);
-		$userGroupId = $userData->role_id;
-		$dataset     = $this->content->filter($request->tags, $userGroupId);
+echo '$userData'; print_r($userData);
+	//	$dataset     = $this->content->filter($request->tags, $userData->role_id);
+		$dataset     = $this->content->searchByTag($request->tags, $userData->role_id);
 echo '$dataset';print_r($dataset);
 		$positions = DB::table('storypositions')->select('positions')->get();
 		$positions = json_decode($positions, true);
