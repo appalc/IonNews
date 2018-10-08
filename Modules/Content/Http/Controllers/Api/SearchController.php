@@ -36,7 +36,6 @@ class SearchController extends BasePublicController
 		$this->user      = $user;
 		$this->category  = $category;
 		$this->role      = $role;
-		$this->tag       = $tag;
 		$this->content   = $content;
 		$this->likestory = $likestory;
 	}
