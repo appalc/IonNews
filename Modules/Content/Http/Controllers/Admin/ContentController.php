@@ -236,117 +236,106 @@ class ContentController extends AdminBaseController
 		return $crawlResult;
 	}
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param Request $request
-     * @return Response
-     */
-    public function store(Request  $request)
-    {
-      $Alldata=$request->all(); 
-      $tags="";
-      $user_roles=$Alldata['user_roles'];     
-      $Alldata['all_users']=json_encode($user_roles);
-      if(!$Alldata['tags']){
-          $category_name=$this->category->find($Alldata['category_id']);    
-          $i=0; 
-          $category_name=json_decode($category_name,true);
-          if(sizeof($category_name)){
-              
-              foreach ( $category_name as $value) {
-                  $tags=$tags."#".$value['name'];                 
-                  break;
-                        
-              }
-           
-          }
-          $Alldata['tags']=$tags;
-      }
+	/**
+	* Store a newly created resource in storage.
+	*
+	* @param Request $request
+	* @return Response
+	*/
+	public function store(Request  $request)
+	{
+		$Alldata    = $request->all();
+		$tags       = "";
+		$user_roles = $Alldata['user_roles'];
 
+		$Alldata['all_users'] = json_encode($user_roles);
+		if (!$Alldata['tags']) {
+			$categoryName = $this->category->find($Alldata['category_id']);
+			$categoryName = json_decode($categoryName, true);
+			$i = 0;
+			if (sizeof($categoryName)) {
+				foreach ($categoryName as $value) {
+					$tags = $tags . "#" . $value['name'];
+					break;
+				}
+			}
 
-      $Alldata['content']=trim( $Alldata['content']); 
-      $image="";
+			$Alldata['tags'] = $tags;
+		}
 
-      if ($request->hasFile('img')){  
-          $image_name=$_FILES['img']['name'];
-          $request->file('img')->move(env('IMG_URL').'/crawle_image',$image_name);
-          $image=env('IMG_URL1').'/crawle_image/'.$image_name;  
-          $Alldata['image']=$image;
-      }
-      else {
-          if(!array_key_exists('image', $Alldata)){
-              if(array_key_exists('img1', $Alldata))
-              $Alldata['image']=$Alldata['img1'];        
-              else
-              $Alldata['image']=$image;
-          }
-      }
+		$Alldata['content'] = trim($Alldata['content']);
+		$image              = "";
 
-      $sizeofCategories=sizeof($Alldata['category_id']);
-      $multiContCategoryData=$Alldata['category_id'];
+		if ($request->hasFile('img')) {
+			$image_name = $_FILES['img']['name'];
+			$request->file('img')->move(env('IMG_URL') . '/crawle_image', $image_name);
 
-      $Alldata['all_category']=json_encode($Alldata['category_id']);
-      $Alldata['category_id']=$sizeofCategories;      
-      $ids=$this->content->create($Alldata); 
+			$image            = env('IMG_URL1') . '/crawle_image/' . $image_name;
+			$Alldata['image'] = $image;
+		} elseif (!array_key_exists('image', $Alldata)) {
+			$Alldata['image'] = (array_key_exists('img1', $Alldata)) ? $Alldata['img1'] : $image;
+		}
 
-      $id=json_decode($ids,true);        
-      $id=$ids['id'];
-   
-      
-      if(!in_array(-1,$user_roles) ){           
-          foreach ($user_roles as $key => $value){
-              $abc['role_id']=$value;
-              $abc['content_id']=$id;       
-              $this->userGroup->create($abc); 
-          }
-      }
-      else{
-          $all_roles=json_decode($this->role->all(),true);
-              foreach ($all_roles as $key => $value){
-                  if($value['id']!=1)
-                  {
-                      $abc['role_id']=$value['id'];
-                      $abc['content_id']=$id;       
-                      $this->userGroup->create($abc); 
-                  }
-                }
-          }
+		$sizeofCategories        = sizeof($Alldata['category_id']);
+		$multiContCategoryData   = $Alldata['category_id'];
+		$Alldata['all_category'] = json_encode($Alldata['category_id']);
+		$Alldata['category_id']  = $sizeofCategories;
 
-    
+		$ids = $this->content->create($Alldata);
 
-      if(sizeof($multiContCategoryData)){
-          foreach ($multiContCategoryData as $value) {
-              $abc['category_id']=$value;
-              $abc['content_id']=$id;       
-              $this->multiContCategory->create($abc); 
-          }
-      }        
+		$id = json_decode($ids, true);
+		$id = $ids['id'];
 
-      $company_name=array();
-      $i=0;  
-      $device_code=array(); 
-      $users =json_decode(User::all(),true); 
+		if (!in_array(-1, $user_roles)) {
+			foreach ($user_roles as $key => $value) {
+				$abc['role_id']    = $value;
+				$abc['content_id'] = $id;
 
-      $role_ids=$Alldata['user_roles'];
-      $final_users=array();
-      
-      if(!in_array(-1,$role_ids) ){  
-          $user_roll=$this->role->find($role_ids);
-          $all_roles=json_decode($user_roll,true);
+				$this->userGroup->create($abc);
+			}
+		} else {
+			$all_roles = json_decode($this->role->all(), true);
+			foreach ($all_roles as $key => $value) {
+				if($value['id'] != 1) {
+					$abc['role_id']    = $value['id'];
+					$abc['content_id'] = $id;
+					$this->userGroup->create($abc);
+				}
+			}
+		}
 
-          foreach ($all_roles as $key => $value) {
-              $find[]=$value['slug'];             
-          }    
-          foreach ($users as $key => $value) { 
-              if(in_array($value['role'], $find)){
-                  $final_users[]=$value;
-              }
-          }
-      }
-      else {
-          $final_users =$users; 
-      }
+		if (sizeof($multiContCategoryData)) {
+			foreach ($multiContCategoryData as $value) {
+				$abc['category_id'] = $value;
+				$abc['content_id']  = $id;
+
+				$this->multiContCategory->create($abc);
+			}
+		}
+
+		$company_name = [];
+		$i            = 0;  
+		$device_code  = []; 
+		$users        = json_decode(User::all(), true);
+		$role_ids     = $Alldata['user_roles'];
+		$final_users  = [];
+
+		if (!in_array(-1, $role_ids)) {
+			$user_roll = $this->role->find($role_ids);
+			$all_roles = json_decode($user_roll, true);
+
+			foreach ($all_roles as $key => $value) {
+				$find[] = $value['slug'];
+			}
+
+			foreach ($users as $key => $value) { 
+				if (in_array($value['role'], $find)) {
+					$final_users[] = $value;
+				}
+			}
+		} else {
+			$final_users = $users;
+		}
 
 		foreach ($users as $key => $value) {
 			if (!empty($final_users[$i]) && ($value['id'] == $final_users[$i]['id'])) {
@@ -360,50 +349,42 @@ class ContentController extends AdminBaseController
 				break;
 		}
 
-      // for ($i=0;$i<sizeof($company_name);$i++) {               
-      //     $ContentCompany= new ContentCompany;
-      //     $ContentCompany->content_id=$id;
-      //     $ContentCompany->company_name=$company_name[$i];
-      //     $ContentCompany->save();
-      // }
-      $message=array();
+		// for ($i=0; $i<sizeof($company_name); $i++) {
+		//     $ContentCompany               = new ContentCompany;
+		//     $ContentCompany->content_id   = $id;
+		//     $ContentCompany->company_name = $company_name[$i];
+		//     $ContentCompany->save();
+		// }
 
+		$message = [
+			'title'     => $Alldata['title'],
+			'message'   => $Alldata['content'],
+			'imageUrl'  => (array_key_exists('image', $Alldata)) ? $Alldata['image'] : '',
+			'crawl_url' => $Alldata['crawl_url'],
+		];
 
-      $message['title']=$Alldata['title'];
-      $message['message']=$Alldata['content'];
-      if(array_key_exists('image', $Alldata))
-          $message['imageUrl']=$Alldata['image'];
-      else $message['imageUrl']="";
-          $message['crawl_url']=$Alldata['crawl_url'];
+		// Log::info($device_code);
 
+		foreach ($device_code as $device_type => $value) {
+			if ($device_type == "iphone") {
+				foreach ($value as $device_iphone) {
+				if ($value)
+					$this->push_notificationsIOS($message, $device_iphone);
+					// Log::info("IOS");
+					// Log::info($device_iphone);
+				}
+			} elseif ($device_type == "android") {
+				foreach ($value as $device_andriod) {
+					if($value)
+						$this->push_notifications($message, $device_andriod);
+				}
+			}
+		}
 
-      // Log::info($device_code);
-
-
-      foreach ($device_code as $device_type=>$value) {
-          if($device_type=="iphone"){
-              foreach ($value as $device_iphone) {
-                if($value)
-                  $this->push_notificationsIOS($message,$device_iphone);
-                  // Log::info("IOS");
-                  // Log::info($device_iphone);
-
-              }
-          }
-          else if($device_type=="android"){
-              foreach ($value as  $device_andriod) {
-                if($value)
-                  $this->push_notifications($message,$device_andriod);              
-              }
-          }
-      }
-  
-
-           
-
-      return redirect()->route('admin.content.content.index')
-            ->withSuccess(trans('core::core.messages.resource created', ['name' => trans('content::contents.title.contents')]));
-    }
+		return redirect()->route('admin.content.content.index')->withSuccess(
+			trans('core::core.messages.resource created', ['name' => trans('content::contents.title.contents')])
+		);
+	}
 
     /**
      * Show the form for editing the specified resource.
