@@ -53,7 +53,7 @@ class SearchController extends BasePublicController
 	{
 		return [
 			'category' => DB::table('content__categories')->select('id', 'name', 'slug_name')->where('status', '=', 1)->get(),
-			'tag'      => collect($this->content->extractTags())->pluck('tags')->toJson(),
+			'tag'      => collect($this->content->extractTags())->pluck('tags'),
 		];
 	}
 
@@ -80,9 +80,8 @@ class SearchController extends BasePublicController
 			return $this->response->setStatusCode(400, $meserror);
 		}
 
-		$userData    = $this->user->find($request->user_id);
-		$dataset     = $this->content->searchByTag($request->tags, $userData->role_id);
-
+		$userData  = $this->user->find($request->user_id);
+		$dataset   = $this->content->searchByTag($request->tags, $userData->role_id);
 		$positions = DB::table('storypositions')->select('positions')->get();
 		$positions = json_decode($positions, true);
 		$position  = $positions[0]['positions'];
@@ -108,16 +107,17 @@ class SearchController extends BasePublicController
 		$positions    = $position;
 
 		foreach ($dataset as $key => $value) {
+			$categoryName = $this->category->where('category_id', '=', $value->category_id)->first()->name;
 			unset($value->category_id);
 			$value->like_count = $this->likestory->checkLikeorNot($value, $request->user_id);
 			$value->islike     = ($value->like_count) ? 1 : 0;
 
-			$custom[$i] = $value;
-			if ($i == $positions-1 && count($custom_story)) {
-				$k            = ($k >= count($custom_story)) ? 0 : $k;
-				$custom[$i++] = $custom_story[$k++];
-				$custom[$i]   = $value;
-				$positions    = $position*$mul;
+			$custom[$categoryName][$i] = $value;
+			if ($i == ($positions - 1) && count($custom_story)) {
+				$k                           = ($k >= count($custom_story)) ? 0 : $k;
+				$custom[$categoryName][$i++] = $custom_story[$k++];
+				$custom[$categoryName][$i]   = $value;
+				$positions                   = ($position * $mul);
 
 				$mul += 1;
 			}
