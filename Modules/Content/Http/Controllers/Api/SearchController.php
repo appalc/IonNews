@@ -111,9 +111,10 @@ class SearchController extends BasePublicController
 			$primaryCategory = DB::table('content__categories')->where('id', '=', $allCategory[0])->first();
 			$categoryName    = $primaryCategory->name;
 
-			$value->priority   = $primaryCategory->priority;
-			$value->like_count = $this->likestory->checkLikeorNot($value, $request->user_id);
-			$value->islike     = ($value->like_count) ? 1 : 0;
+			$value->category_id = $primaryCategory->id;
+			$value->priority    = $primaryCategory->priority;
+			$value->like_count  = $this->likestory->checkLikeorNot($value, $request->user_id);
+			$value->islike      = ($value->like_count) ? 1 : 0;
 
 			$custom[$categoryName][$i] = $value;
 			if ($i == ($positions - 1) && count($custom_story)) {
