@@ -53,7 +53,7 @@ class SearchController extends BasePublicController
 	{
 		return [
 			'category' => DB::table('content__categories')->select('id', 'name', 'slug_name')->where('status', '=', 1)->get(),
-			'tag'      => collect($this->content->extractTags())->pluck('tags'),
+			'tag'      => collect($this->content->extractTags())->pluck('tags')->toJson(),
 		];
 	}
 
