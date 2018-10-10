@@ -107,9 +107,11 @@ class SearchController extends BasePublicController
 		$positions    = $position;
 
 		foreach ($dataset as $key => $value) {
-			$allCategory  = json_decode($value->all_category, true);
-			$categoryName = DB::table('content__categories')->where('id', '=', $allCategory[0])->first()->name;
-			unset($value->category_id);
+			$allCategory     = json_decode($value->all_category, true);
+			$primaryCategory = DB::table('content__categories')->where('id', '=', $allCategory[0])->first();
+			$categoryName    = $primaryCategory->name;
+
+			$value->priority   = $primaryCategory->priority;
 			$value->like_count = $this->likestory->checkLikeorNot($value, $request->user_id);
 			$value->islike     = ($value->like_count) ? 1 : 0;
 
