@@ -129,6 +129,8 @@ class SearchController extends BasePublicController
 			unset($dataset[$key]);
 
 			$i++;
+
+			$custom[$categoryName] = array_values($custom[$categoryName]);
 		}
 
 		$dataset['total_Count'] = sizeof($custom);
