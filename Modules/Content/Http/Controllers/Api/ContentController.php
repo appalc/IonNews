@@ -53,7 +53,7 @@ class ContentController extends BasePublicController
 	 *
 	 * @return array Array of tags and category
 	 */
-	public function create(Request $request, Client $http)
+	public function createStory(Request $request, Client $http)
 	{
 		$Alldata    = $request->all();
 		$tags       = '';
