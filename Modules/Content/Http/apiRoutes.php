@@ -73,7 +73,7 @@ $router->group(['prefix' => '/search'], function (Router $router) {
 
 $router->group(['prefix' => '/content'], function (Router $router) {
 	Route::group(['middleware' => 'cors'], function(Router $router){
-		$router->get('/createStory', [
+		$router->POST('/createStory', [
 			'as'   => 'ContentController.api.createStory',
 			'uses' => 'ContentController@createStory',
 		]);
