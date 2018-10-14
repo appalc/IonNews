@@ -381,11 +381,12 @@ class ContentController extends AdminBaseController
 			}
 		}
 
-		$pushMsg = '';
-		try {
-			$this->_pushToProductionInstance($request);
-		} catch (Exception $e) {
-			$pushMsg = ' But not pushed To Production Instance';
+		if (env('STORY_PUSH_ENABLE') && $request->pushToProd) {
+			try {
+				$this->_pushToProductionInstance($request);
+			} catch (Exception $e) {
+				echo 'Failed to push to Production Instance';
+			}
 		}
 
 		return redirect()->route('admin.content.content.index')->withSuccess(
@@ -814,7 +815,7 @@ $output='{
 	 */
 	private function _pushToProductionInstance(Request $request)
 	{
-		$ch = curl_init('http://50.112.57.146/api/content/createStory');
+		$ch = curl_init('http://34.212.156.81/api/content/createStory');
 
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 		'Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vNTAuMTEyLjU3LjE0Ni9hcGkvYXV0aGVudGljYXRpb24vbG9naW4iLCJpYXQiOjE1MzgwNDM4NzcsImV4cCI6MTU1MTM3OTQ3NywibmJmIjoxNTM4MDQzODc3LCJqdGkiOiJZNU14MktHbzRZWVhzSEtUIiwic3ViIjo4NX0.2YqoK4rVT1jEbpkUx0DopH5ZIhFCk-UXl_asT7V4xsY',
