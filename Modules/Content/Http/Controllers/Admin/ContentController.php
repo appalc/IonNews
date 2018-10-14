@@ -386,46 +386,41 @@ class ContentController extends AdminBaseController
 		);
 	}
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  Content $content
-     * @return Response
-     */
-    public function edit(Content $content)
-    {    
-         $find_group_type=$this->content->find($content->id);
-         $find_group_type=$find_group_type->all_users;
-         $user_type=json_decode($find_group_type,true);
+	/**
+	* Show the form for editing the specified resource.
+	*
+	* @param  Content $content
+	* @return Response
+	*/
+	public function edit(Content $content)
+	{
+		$find_group_type = $this->content->find($content->id);
+		$find_group_type = $find_group_type->all_users;
+		$user_type       = json_decode($find_group_type, true);
 
-        $categories = $this->category->getByAttributes(['status' => 1],'priority','desc');
-        $roles=json_decode($this->role->all());
-          
-          $user_roles[-1]['id']=-1;       
-          $user_roles[-1]['type']='All';
-             
-         foreach ($roles as $value) { 
-          if($value->name!='Admin')
-          {                
-          $user_roles[$value->id]['id']=$value->id;        
-          $user_roles[$value->id]['type']=$value->name;
-        
-          }
-         } 
+		$categories = $this->category->getByAttributes(['status' => 1], 'priority', 'desc');
+		$roles      = json_decode($this->role->all());
 
-         foreach ($user_roles as $key => $value) {
-           if( sizeof($user_type) and in_array($value['id'], $user_type))
-            $user_roles[$value['id']]['checked']=1;
-           else $user_roles[$value['id']]['checked']=0;
+		$user_roles[-1]['id']   = -1;
+		$user_roles[-1]['type'] = 'All';
 
-         }
-          // Log::info($user_roles); die;
+		foreach ($roles as $value) {
+			if ($value->name != 'Admin') {
+				$user_roles[$value->id]['id']   = $value->id;
+				$user_roles[$value->id]['type'] = $value->name;
+			}
+		}
 
+		foreach ($user_roles as $key => $value) {
+			if(sizeof($user_type) and in_array($value['id'], $user_type))
+				$user_roles[$value['id']]['checked'] = 1;
+			else
+				$user_roles[$value['id']]['checked'] = 0;
+		}
+		// Log::info($user_roles); die;
 
-
-            
-        return view('content::admin.contents.edit', compact('content','categories','user_roles'));
-    }
+		return view('content::admin.contents.edit', compact('content','categories','user_roles'));
+	}
 
     /**
      * Update the specified resource in storage.
