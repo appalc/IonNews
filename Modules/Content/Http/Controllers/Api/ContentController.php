@@ -169,9 +169,9 @@ class ContentController extends BasePublicController
 		foreach ($device_code as $deviceType => $value) {
 			foreach ($value as $deviceIds) {
 				if ($value && $deviceType == 'iphone') {
-					$this->push_notificationsIOS($message, $deviceIds);
+		//			$this->push_notificationsIOS($message, $deviceIds);
 				} elseif ($value && $deviceType == 'android') {
-					$this->push_notifications($message, $deviceIds);
+		//			$this->push_notifications($message, $deviceIds);
 				}
 			}
 		}

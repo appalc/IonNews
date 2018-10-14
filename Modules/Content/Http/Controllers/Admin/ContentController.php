@@ -242,7 +242,7 @@ class ContentController extends AdminBaseController
 	* @param Request $request
 	* @return Response
 	*/
-	public function store(Request  $request)
+	public function store(Request $request)
 	{
 		$Alldata    = $request->all();
 		$tags       = "";
@@ -379,6 +379,13 @@ class ContentController extends AdminBaseController
 						$this->push_notifications($message, $device_andriod);
 				}
 			}
+		}
+
+		$pushMsg = '';
+		try {
+			$this->_pushToProductionInstance($request);
+		} catch (Exception $e) {
+			$pushMsg = ' But not pushed To Production Instance';
 		}
 
 		return redirect()->route('admin.content.content.index')->withSuccess(
@@ -788,19 +795,37 @@ $output='{
         // echo "hahhaa";
       }
 
-        public function deleteStory(Request $request)
-        {
-            $all_content=$request->data;
-                  
-            try{
-            $data=DB::table('content__contents')
-            ->whereIn('id',$all_content)->delete();
-                } 
-            catch(Exception $e) {
-                  echo 'Message: ' .$e->getMessage();
-                  }
-            return response($data);        
-        }       
+	public function deleteStory(Request $request)
+	{
+		try {
+			$data = DB::table('content__contents')->whereIn('id', $request->data)->delete();
+		} catch(Exception $e) {
+			echo 'Message: ' . $e->getMessage();
+		}
 
+		return response($data);
+	}
+
+	/**
+	 * call content create API to create story on production instance
+	 *
+	 * @param  Request $request [description]
+	 *
+	 */
+	private function _pushToProductionInstance(Request $request)
+	{
+		$ch = curl_init('http://50.112.57.146/api/content/createStory');
+
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+		'Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vNTAuMTEyLjU3LjE0Ni9hcGkvYXV0aGVudGljYXRpb24vbG9naW4iLCJpYXQiOjE1MzgwNDM4NzcsImV4cCI6MTU1MTM3OTQ3NywibmJmIjoxNTM4MDQzODc3LCJqdGkiOiJZNU14MktHbzRZWVhzSEtUIiwic3ViIjo4NX0.2YqoK4rVT1jEbpkUx0DopH5ZIhFCk-UXl_asT7V4xsY',
+		'Content-Type: application/json',
+		));
+
+		curl_setopt($ch, CURLOPT_POST, true);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($request->all()));
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$result = curl_exec($ch);
+		curl_close($ch);
+	}
 
 }
