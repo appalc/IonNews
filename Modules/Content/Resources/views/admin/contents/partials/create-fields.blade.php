@@ -133,13 +133,15 @@
 			</div>
 		</div>
 
-		<div class="col-sm-12">
-			<div class="form-group">
-				{!! Form::label('pushToProd', trans('Push To Production Instance')) !!}
-				&nbsp;&nbsp;&nbsp;&nbsp;
-				{!! Form::checkbox('pushToProd', 1, false, ['id' => 'pushToProd']) !!}
-			<div>
-		</div>
+		<?php if (env('STORY_PUSH_ENABLE')) { ?>
+			<div class="col-sm-12">
+				<div class="form-group">
+					{!! Form::label('pushToProd', trans('Push To Production Instance')) !!}
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					{!! Form::checkbox('pushToProd', 1, false, ['id' => 'pushToProd']) !!}
+				<div>
+			</div>
+		<?php } ?>
 
 		<!--
 			<div class ="form-group user-types form_grp_relative" style="">
