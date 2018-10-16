@@ -177,7 +177,7 @@ class StoryController extends BasePublicController
 
 		// To sort it by decending order of created date
 		$dataresponse = collect($dataresponse)->sortByDesc(function ($story, $category) {
-		    return strtotime($story[0]['created_at']);
+		    return strtotime($story[0]->created_at);
 		});
 
 		if(sizeof($dataresponse) == 0)
