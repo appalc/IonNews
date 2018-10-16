@@ -1,28 +1,29 @@
 <?php
 namespace Modules\Content\Http\Controllers\Api;
 
-use Modules\Core\Http\Controllers\BasePublicController;
-use Illuminate\Routing\Controller;
-use Illuminate\Http\Request;
-use Modules\User\Http\Requests\LoginRequest;
-use Illuminate\Http\Response;
-use Validator;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Contracts\Auth\Guard;
-use Modules\User\Repositories\UserRepository;
-use Modules\User\Events\UserHasBegunResetProcess;
-use Modules\User\Repositories\RoleRepository;
-use Modules\User\Services\UserResetter;
-use Modules\Services\Repositories\UsertypeRepository;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Modules\Authentication\Events\Confirmnotify;
-use Modules\Content\Repositories\ContentRepository;
+use Modules\Content\Entities\ContentLikeStory;
 use Modules\Content\Repositories\CategoryRepository;
 use Modules\Content\Repositories\ContentLikeStoryRepository;
-use Modules\Content\Entities\ContentLikeStory;
+use Modules\Content\Repositories\ContentRepository;
 use Modules\Content\Repositories\MultipleCategoryContentRepository;
-use Log;
+use Modules\Core\Http\Controllers\BasePublicController;
+use Modules\Services\Repositories\UsertypeRepository;
+use Modules\User\Events\UserHasBegunResetProcess;
+use Modules\User\Http\Requests\LoginRequest;
+use Modules\User\Repositories\RoleRepository;
+use Modules\User\Repositories\UserRepository;
+use Modules\User\Services\UserResetter;
 use DB;
+use Log;
+use Validator;
 
 class StoryController extends BasePublicController
 {
@@ -174,10 +175,15 @@ class StoryController extends BasePublicController
 			}
 		}
 
+		// To sort it by decending order of created date
+		$dataresponse = collect($dataresponse)->sortByDesc(function ($story, $category) {
+		    return strtotime($story[0]['created_at']);
+		});
+
 		if(sizeof($dataresponse) == 0)
 			$dataresponse["status"] = "No Story";
 
-	       return response($dataresponse);
+		return response($dataresponse);
 	}
 
 	public function story_like(Request $request)
