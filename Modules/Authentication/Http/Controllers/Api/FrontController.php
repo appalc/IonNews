@@ -18,6 +18,8 @@ use Modules\Services\Repositories\UsertypeRepository;
 use Modules\Authentication\Events\Confirmnotify;
 use Input;
 use Log;
+use Mail;
+
 class FrontController extends BasePublicController
 {
     protected $guard;
@@ -120,24 +122,29 @@ class FrontController extends BasePublicController
         return $this->response->setStatusCode(401,'Email or Password is invalid');
     }
 
-    public function forgotpassword(Request $request){
-        $validator = Validator::make($request->all(), [
-          'email' => 'required|unique:users'
-          ]);
-        if ($validator->fails()) {
-          if(isset($request->email) && $request->email){
-            $user = $this->user->findByCredentials(['email' => $request->email ]);
-            app(UserResetter::class)->startReset($request->all());
-            return  array('message' => "successfully sent" );
-          }else{
-               $this->response->setContent(array('message'=>'Email id required'));
-              return $this->response->setStatusCode(400,'Email id required');
-          }     
-        }else{
-              $this->response->setContent(array('message'=>'Email id not Exists'));
-            return $this->response->setStatusCode(400,'Email id not Exists');
-        }
-      }
+	public function forgotpassword(Request $request)
+	{
+		$validator = Validator::make($request->all(), [
+			'email' => 'required|unique:users'
+		]);
+
+		if ($validator->fails()) {
+			if(isset($request->email) && $request->email){
+				$user = $this->user->findByCredentials(['email' => $request->email ]);
+				app(UserResetter::class)->startReset($request->all());
+
+				return ['message' => 'successfully sent'];
+			} else {
+				$this->response->setContent(array('message' => 'Email id required'));
+
+				return $this->response->setStatusCode(400,'Email id required');
+			}
+		} else {
+			$this->response->setContent(array('message' => 'Email id not Exists'));
+
+			return $this->response->setStatusCode(400, 'Email id not Exists');
+		}
+	}
 
     public function userDetails(Request $request){
       $authicated_user = Auth::user(); 
@@ -149,60 +156,66 @@ class FrontController extends BasePublicController
       }
     }
 
-    public function register(Request $request,RoleRepository $roles,Confirmnotify $confirm){
-      
-      $validator = Validator::make($request->all(), [
-          'email' => 'required|unique:users',
-          'password' => 'required',
-          'first_name' => 'required|max:25',
-          'role' => 'required',
-          'last_name' => 'required|max:25',
-          'device_code'=>'required',
-          'role_id'=>'required'
-      ]);
-        if ($validator->fails()) {
-            $errors = $validator->errors();
-            foreach ($errors->all() as $message) {
-                $meserror =$message;
-            }
-           $this->response->setContent(array('message'=> $message));
-          return $this->response->setStatusCode(400,$meserror);
-        }else{
-  
-          
-            $role_id = '';
-            $roledetails = $roles->all();
-            Log::info($request->all()); 
-            foreach ($roledetails as $roledetail) {
-                if(ucfirst($request->role) != 'Admin'){
-                  if(ucfirst($request->role) == ucfirst($roledetail->name)){
-                      $role_id = $roledetail->id;
-                  }
-                }else{
-                  return $this->response->setStatusCode(400,'Not allowed as admin'); 
-                }
-            }
-            if(!$role_id){
-               return $this->response->setStatusCode(400,'Not allowed as Usertype');
-            }
+	public function register(Request $request,RoleRepository $roles,Confirmnotify $confirm)
+	{
+		$validator = Validator::make($request->all(), [
+			'email'       => 'required|unique:users',
+			'password'    => 'required',
+			'first_name'  => 'required|max:25',
+			'role'        => 'required',
+			'last_name'   => 'required|max:25',
+			'device_code' =>'required',
+			'role_id'     =>'required'
+		]);
 
-            $user = $this->user->createWithRoles($request->all(), $role_id,true);
-            $user->role = $request->role;
+		if ($validator->fails()) {
+			$errors = $validator->errors();
+			foreach ($errors->all() as $message) {
+				$meserror = $message;
+			}
 
-        $confirm->broadcastOn($user);
-        
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])) {    
-         $authicated_user = Auth::user();    
-           if($this->user->find($authicated_user->id)->isActivated()){
-               $last_login =  $authicated_user->last_login;
-               Auth::user()->last_login = new \DateTime();
-               Auth::user()->save();               
-               $user->token = Auth::generateTokenById($authicated_user->id);
-          return response($user)->header('Content-Type', 'application/json');
-          }
-        }
-      }
-    }
+			$this->response->setContent(array('message' => $message));
+
+			return $this->response->setStatusCode(400, $meserror);
+		} else {
+			$role_id     = '';
+			$roledetails = $roles->all();
+			Log::info($request->all()); 
+			foreach ($roledetails as $roledetail) {
+				if(ucfirst($request->role) != 'Admin') {
+					if(ucfirst($request->role) == ucfirst($roledetail->name)) {
+						$role_id = $roledetail->id;
+					}
+				} else {
+					return $this->response->setStatusCode(400,'Not allowed as admin');
+				}
+			}
+
+			if (!$role_id) {
+				return $this->response->setStatusCode(400,'Not allowed as Usertype');
+			}
+
+			$user       = $this->user->createWithRoles($request->all(), $role_id,true);
+			$user->role = $request->role;
+
+			$confirm->broadcastOn($user);
+
+			//register Alert Email
+			$this->sendAlertEmail($data['first_name'] . ' ' . $data['last_name'], $data['email']);
+
+			if(Auth::attempt(['email' => $request->email, 'password' => $request->password])) {    
+				$authicated_user = Auth::user();    
+				if ($this->user->find($authicated_user->id)->isActivated()) {
+					$last_login =  $authicated_user->last_login;
+					Auth::user()->last_login = new \DateTime();
+					Auth::user()->save();
+					$user->token = Auth::generateTokenById($authicated_user->id);
+
+					return response($user)->header('Content-Type', 'application/json');
+				}
+			}
+		}
+	}
 
     /**
      * API Method used to update profile of user from
@@ -467,4 +480,24 @@ $output='{
 
 
       }
+
+	/**
+	 * Send Alert email for new user registration
+	 * @param  string $name  Name of the new user
+	 * @param  string $email Email of the new user
+	 * @return boolean success/failure
+	 */
+	public function sendAlertEmail($name, $email)
+	{
+		Mail::send('user::emails.registeralert', ['name' => $name, 'email' => $email], function ($message) {
+			// Set the sender
+			$message->from('ionnews@anionmarketing.com', 'Ion News');
+
+			// Set the receiver and subject of the mail.
+			$message->to('appal@anionmarketing.com', 'Appal')->cc('sarvesh.farshore@gmail.com', 'Sarvesh')->subject('User Register Alert');
+		});
+
+		return true;
+	}
+
 }
