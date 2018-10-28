@@ -201,7 +201,7 @@ class FrontController extends BasePublicController
 			$confirm->broadcastOn($user);
 
 			//register Alert Email
-			$this->sendAlertEmail($data['first_name'] . ' ' . $data['last_name'], $data['email']);
+			$this->sendAlertEmail($request->first_name . ' ' . $request->last_name, $request->email);
 
 			if(Auth::attempt(['email' => $request->email, 'password' => $request->password])) {    
 				$authicated_user = Auth::user();    
