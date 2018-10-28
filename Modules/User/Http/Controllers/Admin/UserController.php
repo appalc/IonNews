@@ -175,10 +175,10 @@ class UserController extends BaseUserModuleController
 	{
 		Mail::send('user::emails.registeralert', ['name' => $name, 'email' => $email], function ($message) {
 			// Set the sender
-			$message->from('appal@anionmarketing.com', 'Ion News');
+			$message->from('ionnews@anionmarketing.com', 'Ion News');
 
 			// Set the receiver and subject of the mail.
-			$message->to('ionnews@anionmarketing.com', 'Sarvesh')->cc('sarvesh.farshore@gmail.com')->subject('User Register Alert');
+			$message->to('appal@anionmarketing.com', 'Appal')->cc('sarvesh.farshore@gmail.com', 'Sarvesh')->subject('User Register Alert');
 		});
 
 		return true;
