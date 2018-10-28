@@ -120,7 +120,7 @@ class UserController extends BaseUserModuleController
 	{
 		$data = ['name' => 'ABC', 'email' => 'AAA@BBB.CCC'];
 
-		Mail::send('emails.registeralert', $data, function ($message) {
+		Mail::send('user::emails.registeralert', $data, function ($message) {
 			// Set the sender
 			$message->from('ionnews@anionmarketing.com', 'Ion News');
 			// Set the receiver and subject of the mail.
