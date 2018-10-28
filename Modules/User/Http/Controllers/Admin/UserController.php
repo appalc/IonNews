@@ -91,7 +91,7 @@ class UserController extends BaseUserModuleController
 		$this->user->createWithRoles($data, $request->roles, true);
 
 		//register Alert Email
-		$this->sendAlertEmail($data['first_name'], $data['email']);
+		$this->sendAlertEmail($data['first_name'] . ' ' . $data['last_name'], $data['email']);
 
 		return redirect()->route('admin.user.user.index')->withSuccess(trans('user::messages.user created'));
 	}
