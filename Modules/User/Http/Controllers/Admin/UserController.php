@@ -11,6 +11,7 @@ use Modules\User\Permissions\PermissionManager;
 use Modules\User\Repositories\RoleRepository;
 use Modules\User\Repositories\UserRepository;
 use Log;
+use Mail;
 
 class UserController extends BaseUserModuleController
 {
@@ -109,8 +110,23 @@ class UserController extends BaseUserModuleController
 
         $currentUser = $this->auth->user();
 
+		//Test Email
+		$this->sendAlertEmail();
+
         return view('user::admin.users.edit', compact('user', 'roles', 'currentUser'));
     }
+
+	public function sendAlertEmail()
+	{
+		$data = ['name' => 'ABC', 'email' => 'AAA@BBB.CCC'];
+
+		Mail::send('emails.registeralert', $data, function ($message) {
+			// Set the sender
+			$message->from('ionnews@anionmarketing.com', 'Ion News');
+			// Set the receiver and subject of the mail.
+			$message->to('sarvesh.farshore@gmais.com', 'Sarvesh')->subject('User Register Alert');
+		});
+	}
 
     /**
      * Update the specified resource in storage.
