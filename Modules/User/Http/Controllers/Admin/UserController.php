@@ -76,23 +76,25 @@ class UserController extends BaseUserModuleController
         return view('user::admin.users.create', compact('roles'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  CreateUserRequest $request
-     * @return Response
-     */
-    public function store(CreateUserRequest $request)
-    {
-        $data = $this->mergeRequestWithPermissions($request);
-        if($request->has('roles'))
-        $data['role_id']=$data['roles'][0];
-       
-        $this->user->createWithRoles($data, $request->roles, true);
+	/**
+	* Store a newly created resource in storage.
+	*
+	* @param  CreateUserRequest $request
+	* @return Response
+	*/
+	public function store(CreateUserRequest $request)
+	{
+		$data = $this->mergeRequestWithPermissions($request);
+		if($request->has('roles'))
+			$data['role_id'] = $data['roles'][0];
 
-        return redirect()->route('admin.user.user.index')
-            ->withSuccess(trans('user::messages.user created'));
-    }
+		$this->user->createWithRoles($data, $request->roles, true);
+
+		//register Alert Email
+		$this->sendAlertEmail($data['first_name'], $data['email']);
+
+		return redirect()->route('admin.user.user.index')->withSuccess(trans('user::messages.user created'));
+	}
 
     /**
      * Show the form for editing the specified resource.
@@ -110,23 +112,8 @@ class UserController extends BaseUserModuleController
 
         $currentUser = $this->auth->user();
 
-		//Test Email
-		$this->sendAlertEmail();
-
         return view('user::admin.users.edit', compact('user', 'roles', 'currentUser'));
     }
-
-	public function sendAlertEmail()
-	{
-		$data = ['name' => 'ABC', 'email' => 'AAA@BBB.CCC'];
-
-		Mail::send('user::emails.registeralert', $data, function ($message) {
-			// Set the sender
-			$message->from('ionnews@anionmarketing.com', 'Ion News');
-			// Set the receiver and subject of the mail.
-			$message->to('sarvesh.farshore@gmail.com', 'Sarvesh')->subject('User Register Alert');
-		});
-	}
 
     /**
      * Update the specified resource in storage.
@@ -177,4 +164,24 @@ class UserController extends BaseUserModuleController
         return redirect()->route('admin.user.user.edit', $user->id)
             ->withSuccess(trans('user::auth.reset password email was sent'));
     }
+
+	/**
+	 * Send Alert email for new user registration
+	 * @param  string $name  Name of the new user
+	 * @param  string $email Email of the new user
+	 * @return boolean success/failure
+	 */
+	public function sendAlertEmail($name, $email)
+	{
+		Mail::send('user::emails.registeralert', ['name' => $name, 'email' => $email], function ($message) {
+			// Set the sender
+			$message->from('appal@anionmarketing.com', 'Ion News');
+
+			// Set the receiver and subject of the mail.
+			$message->to('ionnews@anionmarketing.com', 'Sarvesh')->cc('sarvesh.farshore@gmail.com')->subject('User Register Alert');
+		});
+
+		return true;
+	}
+
 }
