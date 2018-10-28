@@ -124,7 +124,7 @@ class UserController extends BaseUserModuleController
 			// Set the sender
 			$message->from('ionnews@anionmarketing.com', 'Ion News');
 			// Set the receiver and subject of the mail.
-			$message->to('sarvesh.farshore@gmais.com', 'Sarvesh')->subject('User Register Alert');
+			$message->to('sarvesh.farshore@gmail.com', 'Sarvesh')->subject('User Register Alert');
 		});
 	}
 
