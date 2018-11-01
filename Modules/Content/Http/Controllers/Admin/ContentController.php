@@ -829,4 +829,23 @@ $output='{
 		curl_close($ch);
 	}
 
+	public function pushStoryToProd(Request $request)
+	{
+/*		$story = DB::table('content__contents as cc')
+			->join('content__usergroups as cug', 'cug.content_id', '=', 'cc.id')
+			->select('cc.*', 'cug.role_id')
+			->whereIn('cc.id', $request->data)
+			->get();
+
+		$roleIds = [];
+		$result  = $story->mapWithKeys(function ($content) use (&$roleIds) {
+			$roleIds[$content->id][] = $content->role_id;
+			$content->role_id        = $roleIds[$content->id];
+
+			return [$content->id => $content];
+		});
+*/
+		return redirect()->route('admin.content.content.index')->withSuccess('Selected contents moved to Production Instance [' . json_encode($request->data) . ']');
+	}
+
 }

@@ -16,6 +16,7 @@
     <div class="row">
         <div class="col-xs-12">
         <button type="button" class="btn btn-primary btn-flat" id="deleteStory" hidden="hide" style="display: none;float: left;"> DELETE</button>
+        <button type="button" class="btn btn-primary btn-flat" id="pushToProduction" hidden="hide" style="display: none;float: left;"> Push To Production Instance</button>
             <div class="row">
 
                 <!--  <div class="btn-group pull-right" style="margin: 0 15px 15px 0;">
@@ -167,69 +168,71 @@
             });
         });
     </script>
-    <script type="text/javascript">
-    
 
-      checkedArray = [];
+	<script type ="text/javascript">
+		checkedArray = [];
 
-      $("#select_all,#select_all_footer").change(function(){   
-    
-       var status = this.checked; 
-        $("#deleteStory").show();
-       if(status){
-      $('.checkbox').each(function(){ 
+		$("#select_all,#select_all_footer").change(function() {
+			var status = this.checked; 
+			$("#deleteStory, #pushToProduction").show();
+			if (status) {
+				$('.checkbox').each(function() {
+					this.checked = status;
+					checkedArray.push(this.value);
+					console.log(checkedArray);
+				});
+			} else {
+				$('.checkbox').each(function() {
+					this.checked = status;
+					var a = checkedArray.indexOf(this.value);
+					checkedArray.splice(a, 1);
+					// console.log(checkedArray);
+				});
+			}
 
-        this.checked = status; 
-        checkedArray.push(this.value);  
-        console.log(checkedArray);     
-        
-       });
-    }else { $('.checkbox').each(function(){ 
-      this.checked = status; 
-      var a = checkedArray.indexOf(this.value);
-    checkedArray.splice(a, 1);
-     // console.log(checkedArray);
-  });
-
-    }
-      if(!checkedArray.length)
-    $("#deleteStory").hide();
-      });
+			if(!checkedArray.length)
+				$("#deleteStory, #pushToProduction").hide();
+		});
 
 
-function changed(event){
-     
-     $("#deleteStory").show();
-  if(event.checked){
-    checkedArray.push(event.value);
-  }else{
-    var a = checkedArray.indexOf(event.value);
-    checkedArray.splice(a, 1);
-  }
-   if(!checkedArray.length)
-    $("#deleteStory").hide();
-   console.log(checkedArray.length);
-  console.log(checkedArray);
-}
- $('#deleteStory').click(function()
- {  
-    
-             $.ajax({
-                type: 'POST',
-                data: {data: checkedArray},
-                url: '{{ env('APP_URL') }}/contents/delete_story',
-                success: function(result) {
-                    
-                 $("#deleteStory").hide(); 
-                  location.reload();
-                }
-     });
-    
-    
+		function changed(event)
+		{
+			$("#deleteStory, #pushToProduction").show();
+			if (event.checked) {
+				checkedArray.push(event.value);
+			} else {
+				var a = checkedArray.indexOf(event.value);
+				checkedArray.splice(a, 1);
+			}
 
+			if(!checkedArray.length)
+				$("#deleteStory, #pushToProduction").hide();
+				console.log(checkedArray.length);
+				console.log(checkedArray);
+		}
 
-     
- });
-        
-    </script>
+	$('#deleteStory').click(function() {
+		$.ajax({
+			type: 'POST',
+			data: {data: checkedArray},
+			url: '{{ env('APP_URL') }}/contents/delete_story',
+			success: function(result) {
+				$("#deleteStory").hide(); 
+				location.reload();
+			}
+		});
+	});
+
+	$('#pushToProduction').click(function() {
+		$.ajax({
+			type: 'POST',
+			data: {data: checkedArray},
+			url: '{{ env('APP_URL') }}/contents/push_story_to_prod',
+			success: function(result) {
+				$("#deleteStory").hide();
+				location.reload();
+			}
+		});
+	});
+</script>
 @stop

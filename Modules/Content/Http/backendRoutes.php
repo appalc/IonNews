@@ -20,6 +20,12 @@ $router->group(['prefix' =>'/content'], function (Router $router) {
         // 'middleware' => 'can:content.contents.delete_Story'
     ]);
 
+	$router->post('contents/push_story_to_prod', [
+		'as'   => 'admin.content.content.pushStoryToProd',
+		'uses' => 'ContentController@pushStoryToProd'
+		// 'middleware' => 'can:content.contents.delete_Story'
+	]);
+
     $router->get('users', [
         'as' => 'Content.all.users', 
         'uses' => 'ContentController@getAllUsers'
@@ -34,14 +40,12 @@ $router->group(['prefix' =>'/content'], function (Router $router) {
         'as' => 'Content.all.all_users', 
         'uses' => 'ContentController@getAllUsersInfo'
         // 'middleware' => 'can:content.contents.getAllUsers'
-
- ]);
-           $router->get('storeUserInfo', [
+	 ]);
+	$router->get('storeUserInfo', [
         'as' => 'Content.all.storeUserInfo', 
         'uses' => 'ContentController@store_user_info'
         // 'middleware' => 'can:content.contents.getAllUsers'
-
- ]);
+	]);
 
     $router->get('contents/create', [
         'as' => 'admin.content.content.create',
@@ -92,8 +96,7 @@ $router->group(['prefix' =>'/content'], function (Router $router) {
         'as' => 'Category.all.updatePriority', 
         'uses' => 'CategoryController@update_priority'
         // 'middleware' => 'can:content.contents.getAllUsers'
-
- ]);
+	]);
 
     $router->post('categories', [
         'as' => 'admin.content.category.store',

@@ -156,8 +156,8 @@ class StoryController extends BasePublicController
 		$users        = $this->user->find($request->user_id);
 		$user_groupId = $users->role_id;
 
-	    Log::info($user_groupId);
-	    
+		Log::info($user_groupId);
+
 		$dataresponse = [];
 		$current_date = date('Y-m-d');
 		$user_id      = $request->user_id;
