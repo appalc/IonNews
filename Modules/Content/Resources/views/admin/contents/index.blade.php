@@ -16,7 +16,11 @@
     <div class="row">
         <div class="col-xs-12">
         <button type="button" class="btn btn-primary btn-flat" id="deleteStory" hidden="hide" style="display: none;float: left;"> DELETE</button>
-        <button type="button" class="btn btn-primary btn-flat" id="pushToProduction" hidden="hide" style="display: none;float: left;"> Push To Production Instance</button>
+        <?php if (env('STORY_PUSH_ENABLE')) { ?>
+	        <button type="button" class="btn btn-primary btn-flat" id="pushToProduction" hidden="hide" style="margin-left:10px; display: none;float: left;">
+	        	Push To Production Instance
+	        </button>
+	    <?php } ?>
             <div class="row">
 
                 <!--  <div class="btn-group pull-right" style="margin: 0 15px 15px 0;">
@@ -229,7 +233,8 @@
 			data: {data: checkedArray},
 			url: '{{ env('APP_URL') }}/contents/push_story_to_prod',
 			success: function(result) {
-				$("#deleteStory").hide();
+				$("#pushToProduction").hide();
+				alert('Selected Stories are moved to Production Instance');
 				location.reload();
 			}
 		});
