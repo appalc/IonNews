@@ -55,7 +55,6 @@ class ContentController extends AdminBaseController
         // Log::info(json_decode($categories,true)); 
         $contents = $this->content->all(); 
         // Log::info(json_decode($contents,true)); die;
-        
 
         return view('content::admin.contents.index', compact('contents','categories'));
     }
@@ -383,7 +382,7 @@ class ContentController extends AdminBaseController
 
 		if (env('STORY_PUSH_ENABLE') && $request->pushToProd) {
 			try {
-				$this->_pushToProductionInstance($request);
+				$this->_pushToProductionInstance($request->all());
 			} catch (Exception $e) {
 				echo 'Failed to push to Production Instance';
 			}
@@ -810,12 +809,13 @@ $output='{
 	/**
 	 * call content create API to create story on production instance
 	 *
-	 * @param  Request $request [description]
+	 * @param array $data [description]
 	 *
 	 */
-	private function _pushToProductionInstance(Request $request)
+	private function _pushToProductionInstance(array $data)
 	{
-		$ch = curl_init('http://34.212.156.81/api/content/createStory');
+	//	$ch = curl_init('http://34.212.156.81/api/content/createStory');
+		$ch = curl_init('http://50.112.57.146/api/content/createStory');
 
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 		'Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vNTAuMTEyLjU3LjE0Ni9hcGkvYXV0aGVudGljYXRpb24vbG9naW4iLCJpYXQiOjE1MzgwNDM4NzcsImV4cCI6MTU1MTM3OTQ3NywibmJmIjoxNTM4MDQzODc3LCJqdGkiOiJZNU14MktHbzRZWVhzSEtUIiwic3ViIjo4NX0.2YqoK4rVT1jEbpkUx0DopH5ZIhFCk-UXl_asT7V4xsY',
@@ -823,29 +823,53 @@ $output='{
 		));
 
 		curl_setopt($ch, CURLOPT_POST, true);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($request->all()));
+		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$result = curl_exec($ch);
 		curl_close($ch);
 	}
 
+	/**
+	 * Push multiple story to production instance by Ajax Call
+	 * @param  Request $request [description]
+	 * @return [type]           [description]
+	 */
 	public function pushStoryToProd(Request $request)
 	{
-/*		$story = DB::table('content__contents as cc')
+		$storiesToProcess = DB::table('content__contents as cc')
 			->join('content__usergroups as cug', 'cug.content_id', '=', 'cc.id')
 			->select('cc.*', 'cug.role_id')
 			->whereIn('cc.id', $request->data)
 			->get();
 
 		$roleIds = [];
-		$result  = $story->mapWithKeys(function ($content) use (&$roleIds) {
+		$storiesToProcess = $storiesToProcess->mapWithKeys(function ($content) use (&$roleIds) {
 			$roleIds[$content->id][] = $content->role_id;
 			$content->role_id        = $roleIds[$content->id];
 
 			return [$content->id => $content];
 		});
-*/
-		return redirect()->route('admin.content.content.index')->withSuccess('Selected contents moved to Production Instance [' . json_encode($request->data) . ']');
+
+		$storiesToProcess = $storiesToProcess->map(function ($content) {
+			$this->_pushToProductionInstance([
+				'_token'      => 'NNWS3STN00nXOLV2O0GIa3wVP0eqR8ceS' . rand(1111, 9999),
+				'crawl_url'   => $content->crawl_url,
+				'title'       => $content->title,
+				'sub_title'   => $content->sub_title,
+				'tags'        => $content->tags,
+				'category_id' => json_decode($content->all_category),
+				'expiry_date' => $content->expiry_date,
+				'content'     => $content->content,
+				'image'       => $content->image,
+				'img1'        => $content->image,
+				'img2'        => '',
+				'img3'        => '',
+				'img4'        => '',
+				'user_roles'  => $content->role_id,
+			]);
+		});
+
+		return response('Selected contents moved to Production Instance [' . json_encode($request->data) . ']');
 	}
 
 }
