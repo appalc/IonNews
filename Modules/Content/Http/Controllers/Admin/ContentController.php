@@ -843,14 +843,16 @@ $output='{
 			->get();
 
 		$roleIds          = [];
-		$storiesToProcess = $stories->mapWithKeys(function ($content) use (&$roleIds) {
-			$roleIds[$content->id][] = $content->role_id;
-			$content->role_id        = $roleIds[$content->id];
+		$storiesToProcess = [];
+		foreach (json_decode($stories, true) as $key => $story) {
+			$roleIds[$story['id'][] = $story['role_id'];
+			$story['role_id']       = $roleIds[$story['id']];
 
-			return [$content->id => $content];
-		});
+			$storiesToProcess[$story['id']] = $story;
+		}
+
 print_r($storiesToProcess);exit;
-		$storiesToProcess = $storiesToProcess->map(function ($content) {
+		$storiesToProcess = collect($storiesToProcess)->map(function ($content) {
 			$this->_pushToProductionInstance([
 				'_token'      => 'NNWS3STN00nXOLV2O0GIa3wVP0eqR8ceS' . rand(1111, 9999),
 				'crawl_url'   => $content->crawl_url,
