@@ -58,59 +58,52 @@
                             <tbody>
                             <?php if (isset($contents)): ?>
 
-                            <?php foreach ($contents as $content):
-                                    $all_category="";
-                                   if($content->all_category)
-                                   {  $all_categories=json_decode($content->all_category);
-                                     
+							<?php
+								foreach ($contents as $content):
+									$all_category = "";
+									if ($content->all_category) {
+										$all_categories =json_decode($content->all_category);
 
-                                    foreach ($all_categories as $value) {
-                                        foreach ($categories as $category) {
-                                            
-                                         if($category->id==$value)
-                                         $all_category=$all_category."".$category->name.", ";
-                                     }
-                                    }
-                                   }
-                                    else {
-                                        foreach ($categories as $category) {
-                                            
-                                         if($category->id==$content->category_id)
-                                         $all_category=$all_category."".$category->name.", ";
-                                     }                                    
-                                    }
+										foreach ($all_categories as $value) {
+											foreach ($categories as $category) {
+												if($category->id == $value)
+													$all_category = $all_category . "" . $category->name . ", ";
+											}
+										}
+									} else {
+										foreach ($categories as $category) {
+											if($category->id ==$content->category_id)
+												$all_category =$all_category."".$category->name.", ";
+										}
+									}
 
-                                   $all_category=rtrim($all_category,', ');                             
-                            ?>
-                            <tr>
-                                <td>
-                                        <input class="checkbox" type="checkbox" onchange="changed(this);" name="check[]" value="{{ $content->id }}"> 
-                                        
-                                       
-                                </td>
-                                <td>
-                                        {{ $content->id }}
-                                        
-                                       
-                                </td>
-                                <td>
-                                        {{ $content->title }}
-                                </td>
-                                <td> 
-                                        {{ $all_category }}
-                                </td>
-                                <td>
-                                    <a href="{{ route('admin.content.content.edit', [$content->id]) }}">
-                                        {{ $content->created_at }}
-                                    </a>
-                                </td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a href="{{ route('admin.content.content.edit', [$content->id]) }}" class="btn btn-default btn-flat"><i class="fa fa-pencil"></i></a>
-                                        <button class="btn btn-danger btn-flat" data-toggle="modal" data-target="#modal-delete-confirmation" data-action-target="{{ route('admin.content.content.destroy', [$content->id]) }}"><i class="fa fa-trash"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
+									$all_category =rtrim($all_category,', ');
+							?>
+							<tr>
+								<td>
+									<input class ="checkbox" type="checkbox" onchange="changed(this);" name="check[]" value="{{ $content->id }}">
+								</td>
+								<td>
+									{{ $content->id }}
+								</td>
+								<td>
+									{{ $content->title }}
+								</td>
+								<td>
+									{{ $all_category }}
+								</td>
+								<td>
+									<a href ="{{ route('admin.content.content.edit', [$content->id]) }}">
+										{{ $content->created_at }}
+									</a>
+								</td>
+								<td>
+									<div class ="btn-group">
+										<a href ="{{ route('admin.content.content.edit', [$content->id]) }}" class="btn btn-default btn-flat"><i class="fa fa-pencil"></i></a>
+										<button class ="btn btn-danger btn-flat" data-toggle="modal" data-target="#modal-delete-confirmation" data-action-target="{{ route('admin.content.content.destroy', [$content->id]) }}"><i class="fa fa-trash"></i></button>
+									</div>
+								</td>
+							</tr>
                             <?php endforeach; ?>
                             <?php endif; ?>
                             </tbody>

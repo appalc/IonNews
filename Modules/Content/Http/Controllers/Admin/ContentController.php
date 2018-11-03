@@ -51,7 +51,7 @@ class ContentController extends AdminBaseController
      */
     public function index()
     {   
-    	$data = DB::table('content__contents')->whereIn('id', [342])->delete();
+    	$data = DB::table('content__contents')->whereIn('id', [171, 172, 173, 174, 175, 176, 177, 178, 179, 180])->delete();
 
         $categories = $this->category->getByAttributes(['status' => 1]);
         // Log::info(json_decode($categories,true)); 
