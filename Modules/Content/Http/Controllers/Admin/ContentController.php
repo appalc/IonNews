@@ -845,8 +845,8 @@ $output='{
 		$roleIds          = [];
 		$storiesToProcess = [];
 		foreach (json_decode($stories, true) as $key => $story) {
-			$roleIds[$story['id'][] = $story['role_id'];
-			$story['role_id']       = $roleIds[$story['id']];
+			$roleIds[$story['id']][] = $story['role_id'];
+			$story['role_id']        = $roleIds[$story['id']];
 
 			$storiesToProcess[$story['id']] = $story;
 		}
