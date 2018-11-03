@@ -853,13 +853,13 @@ $output='{
 		}
 
 		$storiesToProcess = collect($storiesToProcess)->map(function ($content) {
-			$this->_pushToProductionInstance([
+			$this->_pushToProductionInstance(collect([
 				'_token'      => 'NNWS3STN00nXOLV2O0GIa3wVP0eqR8ceS' . rand(1111, 9999),
 				'crawl_url'   => $content['crawl_url'],
 				'title'       => $content['title'],
 				'sub_title'   => $content['sub_title'],
 				'tags'        => $content['tags'],
-				'category_id' => json_encode($content['all_category']),
+				'category_id' => $content['all_category'],
 				'expiry_date' => $content['expiry_date'],
 				'content'     => $content['content'],
 				'image'       => $content['image'],
@@ -868,7 +868,7 @@ $output='{
 				'img3'        => '',
 				'img4'        => '',
 				'user_roles'  => $content['role_id'],
-			]);
+			]));
 		});
 
 		return response('Selected contents moved to Production Instance [' . json_encode($request->data) . ']');
