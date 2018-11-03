@@ -851,8 +851,6 @@ $output='{
 			return [$content->id => $content];
 		})->reverse()->unique('id');
 
-print_r($storiesToProcess);exit;
-
 		$storiesToProcess = $storiesToProcess->map(function ($content) {
 			$this->_pushToProductionInstance([
 				'_token'      => 'NNWS3STN00nXOLV2O0GIa3wVP0eqR8ceS' . rand(1111, 9999),
@@ -860,7 +858,7 @@ print_r($storiesToProcess);exit;
 				'title'       => $content->title,
 				'sub_title'   => $content->sub_title,
 				'tags'        => $content->tags,
-				'category_id' => $content->all_category,
+				'category_id' => json_decode($content->all_category),
 				'expiry_date' => $content->expiry_date,
 				'content'     => $content->content,
 				'image'       => $content->image,
