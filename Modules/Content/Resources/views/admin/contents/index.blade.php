@@ -230,6 +230,10 @@
 	});
 
 	$('#pushToProduction').click(function() {
+		if (!confirm("Are you sure, You want to move the selected stories to Production Instance?")) {
+			return false;
+		}
+
 		$.ajax({
 			type: 'POST',
 			data: {data: checkedArray},

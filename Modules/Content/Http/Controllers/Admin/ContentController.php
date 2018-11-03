@@ -814,8 +814,7 @@ $output='{
 	 */
 	private function _pushToProductionInstance(array $data)
 	{
-	//	$ch = curl_init('http://34.212.156.81/api/content/createStory');
-		$ch = curl_init('http://50.112.57.146/api/content/createStory');
+		$ch = curl_init(env('PROD_SERVER_URL') . '/api/content/createStory');
 
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 		'Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vNTAuMTEyLjU3LjE0Ni9hcGkvYXV0aGVudGljYXRpb24vbG9naW4iLCJpYXQiOjE1MzgwNDM4NzcsImV4cCI6MTU1MTM3OTQ3NywibmJmIjoxNTM4MDQzODc3LCJqdGkiOiJZNU14MktHbzRZWVhzSEtUIiwic3ViIjo4NX0.2YqoK4rVT1jEbpkUx0DopH5ZIhFCk-UXl_asT7V4xsY',
@@ -851,7 +850,6 @@ $output='{
 			$storiesToProcess[$story['id']] = $story;
 		}
 
-print_r($storiesToProcess);exit;
 		$storiesToProcess = collect($storiesToProcess)->map(function ($content) {
 			$this->_pushToProductionInstance([
 				'_token'      => 'NNWS3STN00nXOLV2O0GIa3wVP0eqR8ceS' . rand(1111, 9999),
