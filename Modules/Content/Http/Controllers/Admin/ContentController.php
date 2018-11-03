@@ -51,6 +51,8 @@ class ContentController extends AdminBaseController
      */
     public function index()
     {   
+    	$data = DB::table('content__contents')->whereIn('id', [342])->delete();
+
         $categories = $this->category->getByAttributes(['status' => 1]);
         // Log::info(json_decode($categories,true)); 
         $contents = $this->content->all(); 
@@ -857,7 +859,7 @@ $output='{
 				'title'       => $content['title'],
 				'sub_title'   => $content['sub_title'],
 				'tags'        => $content['tags'],
-				'category_id' => $content['all_category'],
+				'category_id' => json_encode($content['all_category']),
 				'expiry_date' => $content['expiry_date'],
 				'content'     => $content['content'],
 				'image'       => $content['image'],
