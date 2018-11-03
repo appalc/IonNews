@@ -811,10 +811,10 @@ $output='{
 	/**
 	 * call content create API to create story on production instance
 	 *
-	 * @param array $data [description]
+	 * @param mixed $data [description]
 	 *
 	 */
-	private function _pushToProductionInstance(array $data)
+	private function _pushToProductionInstance($data)
 	{
 		$ch = curl_init(env('PROD_SERVER_URL') . '/api/content/createStory');
 
