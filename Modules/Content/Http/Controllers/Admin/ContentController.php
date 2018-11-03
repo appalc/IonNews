@@ -44,22 +44,22 @@ class ContentController extends AdminBaseController
         $this->userGroup=$userGroup;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
-    public function index()
-    {   
-    	$data = DB::table('content__contents')->whereIn('id', [181, 182, 183, 184])->delete();
+	/**
+	* Display a listing of the resource.
+	*
+	* @return Response
+	*/
+	public function index()
+	{
+	//	$data = DB::table('content__contents')->whereIn('id', [181, 182, 183, 184])->delete();
 
-        $categories = $this->category->getByAttributes(['status' => 1]);
-        // Log::info(json_decode($categories,true)); 
-        $contents = $this->content->all(); 
-        // Log::info(json_decode($contents,true)); die;
+		$categories = $this->category->getByAttributes(['status' => 1]);
+		// Log::info(json_decode($categories,true));
+		$contents = $this->content->all();
+		// Log::info(json_decode($contents,true)); die;
 
-        return view('content::admin.contents.index', compact('contents','categories'));
-    }
+		return view('content::admin.contents.index', compact('contents','categories'));
+	}
 
     /**
      * Show the form for creating a new resource.
