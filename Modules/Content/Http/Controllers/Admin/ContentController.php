@@ -51,7 +51,7 @@ class ContentController extends AdminBaseController
      */
     public function index()
     {   
-    	$data = DB::table('content__contents')->whereIn('id', [171, 172, 173, 174, 175, 176, 177, 178, 179, 180])->delete();
+    	$data = DB::table('content__contents')->whereIn('id', [181, 182, 183, 184])->delete();
 
         $categories = $this->category->getByAttributes(['status' => 1]);
         // Log::info(json_decode($categories,true)); 
@@ -844,31 +844,32 @@ $output='{
 			->get();
 
 		$roleIds          = [];
-		$storiesToProcess = [];
-		foreach (json_decode($stories, true) as $key => $story) {
-			$roleIds[$story['id']][] = $story['role_id'];
-			$story['role_id']        = $roleIds[$story['id']];
+		$storiesToProcess = $stories->mapWithKeys(function ($content) use (&$roleIds) {
+			$roleIds[$content->id][] = $content->role_id;
+			$content->role_id        = $roleIds[$content->id];
 
-			$storiesToProcess[$story['id']] = $story;
-		}
+			return [$content->id => $content];
+		})->reverse()->unique('id');
 
-		$storiesToProcess = collect($storiesToProcess)->map(function ($content) {
-			$this->_pushToProductionInstance(collect([
+print_r($storiesToProcess);exit;
+
+		$storiesToProcess = $storiesToProcess->map(function ($content) {
+			$this->_pushToProductionInstance([
 				'_token'      => 'NNWS3STN00nXOLV2O0GIa3wVP0eqR8ceS' . rand(1111, 9999),
-				'crawl_url'   => $content['crawl_url'],
-				'title'       => $content['title'],
-				'sub_title'   => $content['sub_title'],
-				'tags'        => $content['tags'],
-				'category_id' => $content['all_category'],
-				'expiry_date' => $content['expiry_date'],
-				'content'     => $content['content'],
-				'image'       => $content['image'],
-				'img1'        => $content['image'],
+				'crawl_url'   => $content->crawl_url,
+				'title'       => $content->title,
+				'sub_title'   => $content->sub_title,
+				'tags'        => $content->tags,
+				'category_id' => $content->all_category,
+				'expiry_date' => $content->expiry_date,
+				'content'     => $content->content,
+				'image'       => $content->image,
+				'img1'        => $content->image,
 				'img2'        => '',
 				'img3'        => '',
 				'img4'        => '',
-				'user_roles'  => $content['role_id'],
-			]));
+				'user_roles'  => $content->role_id,
+			]);
 		});
 
 		return response('Selected contents moved to Production Instance [' . json_encode($request->data) . ']');
