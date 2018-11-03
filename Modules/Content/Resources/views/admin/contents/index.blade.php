@@ -148,6 +148,8 @@
 @section('scripts')
     <script type="text/javascript">
         $( document ).ready(function() {
+			$('input:checkbox').removeAttr('checked');
+
             $(document).keypressAction({
                 actions: [
                     { key: 'c', route: "<?= route('admin.content.content.create') ?>" }

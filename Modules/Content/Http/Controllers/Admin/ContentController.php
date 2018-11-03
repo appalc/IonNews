@@ -836,20 +836,20 @@ $output='{
 	 */
 	public function pushStoryToProd(Request $request)
 	{
-		$storiesToProcess = DB::table('content__contents as cc')
+		$stories = DB::table('content__contents as cc')
 			->join('content__usergroups as cug', 'cug.content_id', '=', 'cc.id')
 			->select('cc.*', 'cug.role_id')
 			->whereIn('cc.id', $request->data)
 			->get();
 
-		$roleIds = [];
-		$storiesToProcess = $storiesToProcess->mapWithKeys(function ($content) use (&$roleIds) {
+		$roleIds          = [];
+		$storiesToProcess = $stories->mapWithKeys(function ($content) use (&$roleIds) {
 			$roleIds[$content->id][] = $content->role_id;
 			$content->role_id        = $roleIds[$content->id];
 
 			return [$content->id => $content];
 		});
-
+print_r($storiesToProcess);exit;
 		$storiesToProcess = $storiesToProcess->map(function ($content) {
 			$this->_pushToProductionInstance([
 				'_token'      => 'NNWS3STN00nXOLV2O0GIa3wVP0eqR8ceS' . rand(1111, 9999),
