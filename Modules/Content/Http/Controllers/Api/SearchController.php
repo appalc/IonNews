@@ -94,7 +94,7 @@ class SearchController extends BasePublicController
 		}
 
 		$custom_story = DB::table('content__custom_contentstories as cus')
-					->where('cus.tags', 'LIKE', $request->tags)
+					->where('cus.tags', 'LIKE', '%' . $request->tags . '%')
 					->offset($offset)
 					->limit($limit)
 					->get();
