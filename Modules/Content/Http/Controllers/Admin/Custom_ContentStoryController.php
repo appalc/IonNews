@@ -149,7 +149,7 @@ class Custom_ContentStoryController extends AdminBaseController
 		$categoryID = DB::table('content__custommulticategories')->where('custom_content_id', '=', $custom_contentstory->id)->delete();
 
 		$setData['all_category'] = json_encode($setData['category_id']);
-		foreach ($setData['all_category'] as $catId) {
+		foreach ($setData['category_id'] as $catId) {
 			$this->multiCustomCategory->create(['category_id' => $catId, 'custom_content_id' => $custom_contentstory->id]);
 		}
 
