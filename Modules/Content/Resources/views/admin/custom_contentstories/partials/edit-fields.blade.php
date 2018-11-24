@@ -41,6 +41,7 @@
 							<div class="form-group">
 								{!! Form::label('category_id', trans('Service Provider Name')) !!}
 					<!--			<select multiple="" class="form-control" name="category_id[]">	-->
+								<div class="form-control" style="width: 20em;height: 10em;border: 1px solid rgb(192, 192, 192);overflow: auto;">
 									<?php
 									$allContentCategory = array();
 									$allcategory        = $custom_contentstory->all_category;
@@ -58,7 +59,8 @@
 										</label>
 
 									<?php endforeach; ?>
-								</select>
+					<!--			</select>	-->
+								</div>
 							</div>
 						</div>
 					</div>

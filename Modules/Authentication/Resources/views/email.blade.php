@@ -58,25 +58,32 @@
 	<table class="body-wrap" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; width: 100%; background: #f6f6f6; margin: 0; padding: 0;">
 		<tr style ="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0; padding: 0;">
 			<td style ="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0;" valign="top"></td>
-			<td class ="container" width="800" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; display: block !important; max-width: 800px !important; clear: both !important; margin: 0 auto; padding: 0;" valign="top">
-				<div class ="content" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; max-width: 800px; display: block; margin: 0 auto; padding: 20px;">
+			<td class ="container" width="80%" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; display: block !important; max-width: 900px !important; clear: both !important; margin: 0 auto; padding: 0;" valign="top">
+				<div class ="content" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; max-width: 900px; display: block; margin: 0 auto; padding: 20px;">
 					<table class ="main" width="100%" cellpadding="0" cellspacing="0" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; border-radius: 3px; background: #fff; margin: 0; padding: 0; border: 1px solid #e9e9e9;">
 						<tr style ="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0; padding: 0;">
 							<td class ="content-wrap" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 20px;" valign="top">
 								<table width ="100%" cellpadding="0" cellspacing="0" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0; padding: 0;">
-										
+
 									<td colspan="2" style="width:7.75in;border-left:none;border-bottom:solid #7030a0 6.0pt;border-right:none;padding:.0in;width="744" valign="top">
 										<p class="MsoNormal"><u></u><u></u></p>
 									</td>
 
 									<tr style="height:109.2pt">
-										<td style="width:5.0in;border:none;border-bottom:solid #7030a0 1.0pt;padding:.05in .1in .05in .1in;height:109.2pt" width="480" valign="top">
+										<td style="width:5.0in;border-top:solid #7030a0 5.0pt;border:none;border-bottom:solid #7030a0 1.0pt;padding:.05in .1in .05in .1in;height:109.2pt" width="480" valign="top">
 										<p class="MsoNormal"><span>{{ $user->first_name }},<u></u><u></u></span></p>
 										<p class="MsoNormal"><u></u>&nbsp;<u></u></p>
-										<p class="MsoNormal">Welcome to Ion News – the central information portal for all your industry information. The latest industry news, trends, technologies and information collateral are all now right at your fingertips. Enjoy!<u></u><u></u></p>
-										<p class="MsoNormal">Your account has been created using&nbsp; <span>
-										<a href="mailto:{{ $user->email }}" target="_blank">{{ $user->email }}</a>.</span><u></u><u></u></p>
-										<p class="MsoNormal">Access to the various categories of content will be determined by your company administrators.<u></u><u></u></p>
+										<p class="MsoNormal" style="padding-bottom: 10px;">
+											Welcome to Ion News – the central information portal for all your industry information. The latest industry news, trends, technologies and information collateral are all now right at your fingertips. Enjoy!
+											<u></u><u></u>
+										</p>
+										<p class="MsoNormal" style="padding-bottom: 10px;">
+											Your account has been created using&nbsp; 
+											<span><a href="mailto:{{ $user->email }}" target="_blank">{{ $user->email }}</a>.</span><u></u><u></u>
+										</p>
+										<p class="MsoNormal" style="padding-bottom: 10px;">
+											Access to the various categories of content will be determined by your company administrators.<u></u><u></u>
+										</p>
 										<p class="MsoNormal"><u></u>&nbsp;<u></u></p>
 										<p class="MsoNormal">- Ion News Team<u></u><u></u></p>
 										</td>
@@ -93,7 +100,8 @@
 					<div class ="footer" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; width: 100%; clear: both; color: #999; margin: 0; padding: 20px;">
 						<table width ="100%" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0; padding: 0;">
 						</table>
-					</div></div>
+					</div>
+				</div>
 			</td>
 			<td style ="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0;" valign="top"></td>
 		</tr>
