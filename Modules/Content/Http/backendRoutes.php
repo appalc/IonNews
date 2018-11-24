@@ -6,19 +6,21 @@ use Illuminate\Routing\Router;
 // content/users
 
 $router->group(['prefix' =>'/content'], function (Router $router) {
-    $router->bind('content', function ($id) {
-        return app('Modules\Content\Repositories\ContentRepository')->find($id);
-    });
-    $router->get('contents', [
-        'as' => 'admin.content.content.index',
-        'uses' => 'ContentController@index',
-        'middleware' => 'can:content.contents.index'
-    ]); 
-    $router->post('contents/delete_story', [
-        'as' => 'admin.content.content.delete_story',
-        'uses' => 'ContentController@deleteStory'
-        // 'middleware' => 'can:content.contents.delete_Story'
-    ]);
+	$router->bind('content', function ($id) {
+		return app('Modules\Content\Repositories\ContentRepository')->find($id);
+	});
+
+	$router->get('contents', [
+		'as'         => 'admin.content.content.index',
+		'uses'       => 'ContentController@index',
+		'middleware' => 'can:content.contents.index'
+	]);
+
+	$router->post('contents/delete_story', [
+		'as'            => 'admin.content.content.delete_story',
+		'uses'          => 'ContentController@deleteStory'
+		// 'middleware' => 'can:content.contents.delete_Story'
+	]);
 
 	$router->post('contents/push_story_to_prod', [
 		'as'   => 'admin.content.content.pushStoryToProd',
@@ -26,57 +28,54 @@ $router->group(['prefix' =>'/content'], function (Router $router) {
 		// 'middleware' => 'can:content.contents.delete_Story'
 	]);
 
-    $router->get('users', [
-        'as' => 'Content.all.users', 
-        'uses' => 'ContentController@getAllUsers'
-        // 'middleware' => 'can:content.contents.getAllUsers'
-
-      ]);
-
-
-    
-
-      $router->get('all_users', [
-        'as' => 'Content.all.all_users', 
-        'uses' => 'ContentController@getAllUsersInfo'
-        // 'middleware' => 'can:content.contents.getAllUsers'
-	 ]);
-	$router->get('storeUserInfo', [
-        'as' => 'Content.all.storeUserInfo', 
-        'uses' => 'ContentController@store_user_info'
-        // 'middleware' => 'can:content.contents.getAllUsers'
+	$router->get('users', [
+		'as'   => 'Content.all.users', 
+		'uses' => 'ContentController@getAllUsers'
+		// 'middleware' => 'can:content.contents.getAllUsers'
 	]);
 
-    $router->get('contents/create', [
-        'as' => 'admin.content.content.create',
-        'uses' => 'ContentController@create',
-        'middleware' => 'can:content.contents.create'
-    ]);
-    $router->get('contents/ajaxcall', [
-        'as' => 'admin.content.content.ajaxcall',
-        'uses' => 'ContentController@ajaxcall',
-        'middleware' => 'can:content.contents.ajaxcall'
-    ]);
-    $router->post('contents', [
-        'as' => 'admin.content.content.store',
-        'uses' => 'ContentController@store',
-        'middleware' => 'can:content.contents.create'
-    ]);
-    $router->get('contents/{content}/edit', [
-        'as' => 'admin.content.content.edit',
-        'uses' => 'ContentController@edit',
-        'middleware' => 'can:content.contents.edit'
-    ]);
-    $router->put('contents/{content}', [
-        'as' => 'admin.content.content.update',
-        'uses' => 'ContentController@update',
-        'middleware' => 'can:content.contents.edit'
-    ]);
-    $router->delete('contents/{content}', [
-        'as' => 'admin.content.content.destroy',
-        'uses' => 'ContentController@destroy',
-        'middleware' => 'can:content.contents.destroy'
-    ]);
+	$router->get('all_users', [
+		'as'   => 'Content.all.all_users', 
+		'uses' => 'ContentController@getAllUsersInfo'
+		// 'middleware' => 'can:content.contents.getAllUsers'
+	]);
+
+	$router->get('storeUserInfo', [
+		'as'   => 'Content.all.storeUserInfo', 
+		'uses' => 'ContentController@store_user_info'
+		// 'middleware' => 'can:content.contents.getAllUsers'
+	]);
+
+	$router->get('contents/create', [
+		'as'         => 'admin.content.content.create',
+		'uses'       => 'ContentController@create',
+		'middleware' => 'can:content.contents.create'
+	]);
+	$router->get('contents/ajaxcall', [
+		'as'         => 'admin.content.content.ajaxcall',
+		'uses'       => 'ContentController@ajaxcall',
+		'middleware' => 'can:content.contents.ajaxcall'
+	]);
+	$router->post('contents', [
+		'as'         => 'admin.content.content.store',
+		'uses'       => 'ContentController@store',
+		'middleware' => 'can:content.contents.create'
+	]);
+	$router->get('contents/{content}/edit', [
+		'as'         => 'admin.content.content.edit',
+		'uses'       => 'ContentController@edit',
+		'middleware' => 'can:content.contents.edit'
+	]);
+	$router->put('contents/{content}', [
+		'as'         => 'admin.content.content.update',
+		'uses'       => 'ContentController@update',
+		'middleware' => 'can:content.contents.edit'
+	]);
+	$router->delete('contents/{content}', [
+		'as'         => 'admin.content.content.destroy',
+		'uses'       => 'ContentController@destroy',
+		'middleware' => 'can:content.contents.destroy'
+	]);
     $router->bind('category', function ($id) {
         return app('Modules\Content\Repositories\CategoryRepository')->find($id);
     });

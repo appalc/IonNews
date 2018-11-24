@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+
 use Modules\Authentication\Events\Confirmnotify;
 use Modules\Content\Entities\ContentLikeStory;
 use Modules\Content\Repositories\CategoryRepository;
@@ -22,6 +23,7 @@ use Modules\User\Http\Requests\LoginRequest;
 use Modules\User\Repositories\RoleRepository;
 use Modules\User\Repositories\UserRepository;
 use Modules\User\Services\UserResetter;
+use Modules\User\Entities\Sentinel\User;
 use DB;
 use Log;
 use Validator;

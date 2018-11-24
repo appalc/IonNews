@@ -52,42 +52,75 @@
 @stop
 
 @section('scripts')
-    <script type="text/javascript">
-        $( document ).ready(function() {
-            $(document).keypressAction({
-                actions: [
-                    { key: 'b', route: "<?= route('admin.content.custom_contentstory.index') ?>" }
-                ]
-            });
-        });
-    </script>
-    <script>
-        $( document ).ready(function() {
-            $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
-                checkboxClass: 'icheckbox_flat-blue',
-                radioClass: 'iradio_flat-blue'
-            });
-        });
+	<script type="text/javascript">
+		$( document ).ready(function() {
+			$(document).keypressAction({
+				actions: [
+					{ key: 'b', route: "<?= route('admin.content.custom_contentstory.index') ?>" }
+				]
+			});
+		});
+	</script>
+	<script>
+		$( document ).ready(function() {
+			$('input[type ="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
+				checkboxClass: 'icheckbox_flat-blue',
+				radioClass: 'iradio_flat-blue'
+			});
+		});
 
-   function previewFile(){
-    
-       var preview = document.querySelector('img.img_preview'); //selects the query named img
-       var file    = document.querySelector('input[type=file]').files[0]; //sames as here
-       // console.log(file);
+		function previewFile() {
+			var preview = document.querySelector('img.img_preview'); //selects the query named img
+			var file    = document.querySelector('input[type=file]').files[0]; //sames as here
+			// console.log(file);
 
-       var reader  = new FileReader();
+			var reader = new FileReader();
 
-       reader.onloadend = function () {
-           // preview.src = reader.result;
-           // console.log(reader.result);
-           $(".img_preview").attr("src",reader.result);
-       }
+			reader.onloadend = function () {
+				// preview.src = reader.result;
+				// console.log(reader.result);
+				$(".img_preview").attr("src",reader.result);
+			}
 
-       if (file) {
-           reader.readAsDataURL(file); //reads the data as a URL
-       } else {
-           preview.src = "";
-       }
-  }
-    </script>
+			if (file) {
+				reader.readAsDataURL(file); //reads the data as a URL
+			} else {
+				preview.src = "";
+			}
+		}
+	</script>
+
+	<script language="javascript">
+		var form_checker = 0;
+
+		function formValidator() {
+			if (checkedArray.length>0 || check==0)
+				return true;
+			else {
+				alert("Please Assign category for this Story");
+
+				return false;
+			}
+		}
+
+		var check        = 0;
+		var checkedArray = [];
+		function selectCategory(event) {
+			if (check == 0) {
+				checkedArray = <?= $content->all_category ?>;
+				check        = 1;
+			}
+
+			if (!checkedArray.includes(event)) {
+				checkedArray.push(event);
+			} else {
+				var a = checkedArray.indexOf(event);
+				console.log(a);
+				checkedArray.splice(a, 1);
+			}
+
+			console.log(checkedArray);
+		}
+	</script>
+
 @stop

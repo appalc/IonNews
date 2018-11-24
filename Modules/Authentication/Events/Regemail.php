@@ -1,5 +1,4 @@
 <?php
-
 namespace Modules\Authentication\Events;
 
 use Illuminate\Bus\Queueable;
@@ -10,34 +9,34 @@ use Modules\User\Entities\UserInterface;
 
 class Regemail extends Mailable implements ShouldQueue
 {
-    use Queueable, SerializesModels;
+	use Queueable, SerializesModels;
 
-    /**
-     * @var UserInterface
-     */
-    public $user;
-    public $order;
-    /**
-     * @var
-     */
-    public $msg;
+	/**
+	* @var UserInterface
+	*/
+	public $user;
+	public $order;
 
-    // public $subject = 'Order placed in doober.';
+	/**
+	* @var
+	*/
+	public $msg;
 
-    public function __construct(UserInterface $user, $msg)
-    {
-        $this->user = $user;
-        $this->msg = $msg;
-        $this->subject = 'Welcome to ION News ';
-    }
-
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
-    public function build()
-    {
-        return $this->view('authentication::email');
-    }
+	// public $subject = 'Order placed in doober.';
+	public function __construct(UserInterface $user, $msg)
+	{
+		$this->user    = $user;
+		$this->msg     = $msg;
+		$this->subject = 'Welcome to ION News ';
+	}
+	
+	/**
+	* Build the message.
+	*
+	* @return $this
+	*/
+	public function build()
+	{
+		return $this->view('authentication::email');
+	}
 }

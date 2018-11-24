@@ -489,6 +489,10 @@ $output='{
 	 */
 	public function sendAlertEmail($name, $email)
 	{
+		if (env('APP_ENV_INSTANCE') == 'dev') {
+			return false;
+		}
+
 		Mail::send('user::emails.registeralert', ['name' => $name, 'email' => $email], function ($message) {
 			// Set the sender
 			$message->from('ionnews@anionmarketing.com', 'Ion News');

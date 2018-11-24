@@ -431,85 +431,77 @@ class ContentController extends AdminBaseController
 		return view('content::admin.contents.edit', compact('content','categories','user_roles'));
 	}
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  Content $content
-     * @param  Request $request
-     * @param  ContentUser $contentUser
-     * @return Response
-     */
-    public function update(Content $content, Request $request,ContentUser $contentUser )
-    { 
-         $content_data=json_decode($content,true);
-         $data=$request->all();   
+	/**
+	* Update the specified resource in storage.
+	*
+	* @param  Content $content
+	* @param  Request $request
+	* @param  ContentUser $contentUser
+	* @return Response
+	*/
+	public function update(Content $content, Request $request, ContentUser $contentUser)
+	{
+		$content_data = json_decode($content, true);
+		$data         = $request->all();
 
-         $data['all_users']=json_encode($data['user_roles']);
-         $content_id=$content_data['id'];
+		$data['all_users'] = json_encode($data['user_roles']);
+		$content_id        = $content_data['id'];
 
-         $sizeofCategories=sizeof($data['category_id']);
-         $Allcategory=$data['category_id'];
+		$sizeofCategories = sizeof($data['category_id']);
+		$Allcategory      = $data['category_id'];
 
-         $data['all_category']=json_encode($data['category_id']);
-         $data['category_id']=$sizeofCategories;      
-        
-         $categoryID=DB::table('content__multiplecategorycontents')                        
-                          ->where('content_id','=',$content_id)->delete();
+		$data['all_category'] = json_encode($data['category_id']);
+		$data['category_id']  = $sizeofCategories;
 
-          foreach ($Allcategory as $value) {           
-              $abc['category_id']=$value;
-              $abc['content_id']=$content_id;
-              $this->multiContCategory->create($abc);        
-            }
+		$categoryID = DB::table('content__multiplecategorycontents')->where('content_id', '=', $content_id)->delete();
 
+		foreach ($Allcategory as $value) {
+			$abc['category_id'] = $value;
+			$abc['content_id']  = $content_id;
+			$this->multiContCategory->create($abc);
+		}
 
-          if ($request->hasFile('img')){  
-          $image_name=$content_id.$_FILES['img']['name'];
-          $request->file('img')->move(env('IMG_URL').'/crawle_image',$image_name);
-          $image=env('IMG_URL1').'/crawle_image/'.$image_name;   
-           }
-          else {
-            $image = $content->image;
-           } 
-         
-           $request->merge(['image' => $image]);
-           $data['image']=$image;
+		if ($request->hasFile('img')) {
+			$image_name = $content_id . $_FILES['img']['name'];
+			$request->file('img')->move(env('IMG_URL') . '/crawle_image', $image_name);
+			$image = env('IMG_URL1') . '/crawle_image/' . $image_name;
+		} else {
+			$image = $content->image;
+		}
 
-           DB::table('content__usergroups')
-                ->where('content_id','=',$content_id)->delete();
-            $role_ids=$data['user_roles'];
-            $final_users=array();
-            if(!in_array(-1,$role_ids) ){  
-             $user_roll=$this->role->find($role_ids);
+		$request->merge(['image' => $image]);
+		$data['image'] = $image;
 
-                $all_roles=json_decode($user_roll,true);
-                // Log::info($all_roles);
-                foreach ($all_roles as $key => $value) {
-                   $abc['role_id']=$value['id'];
-                   $abc['content_id']=$content_id;
-                   $this->userGroup->create($abc);
-                }    
-            
-            }
-            else {
-                 $user_roll=$this->role->all();
-                 // Log::info(json_decode($user_roll,true));
-                 foreach ($user_roll as $key => $value) {
-                 if($value->id!=1)
-                 {
-                   $abc['role_id']=$value->id;
-                   $abc['content_id']=$content_id;
-                   $this->userGroup->create($abc);
-                }
-                
-              }
-              }
-          
+		DB::table('content__usergroups')->where('content_id', '=', $content_id)->delete();
+		$role_ids    = $data['user_roles'];
+		$final_users = array();
+		if (!in_array(-1, $role_ids)) {
+			$user_roll = $this->role->find($role_ids);
 
-        $this->content->update($content, $data);
-        return redirect()->route('admin.content.content.index')
+			$all_roles = json_decode($user_roll, true);
+			// Log::info($all_roles);
+			foreach ($all_roles as $key => $value) {
+				$abc['role_id']    = $value['id'];
+				$abc['content_id'] = $content_id;
+				$this->userGroup->create($abc);
+			}
+		} else {
+			$user_roll = $this->role->all();
+			// Log::info(json_decode($user_roll,true));
+			foreach ($user_roll as $key => $value) {
+				if ($value->id !=1) {
+					$abc['role_id']    = $value->id;
+					$abc['content_id'] = $content_id;
+					$this->userGroup->create($abc);
+				}
+			}
+		}
+
+		$this->content->update($content, $data);
+
+		return redirect()->route('admin.content.content.index')
             ->withSuccess(trans('core::core.messages.resource updated', ['name' => trans('content::contents.title.contents')]));
-    }
+	}
 
     /**
      * Remove the specified resource from storage.
