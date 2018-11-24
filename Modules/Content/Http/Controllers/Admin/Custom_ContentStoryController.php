@@ -146,11 +146,11 @@ class Custom_ContentStoryController extends AdminBaseController
 
 		$setData['image'] = $image;
 
-		$categoryID = DB::table('content__custommulticategories')->where('custom_content_id', '=', $setData['id'])->delete();
+		$categoryID = DB::table('content__custommulticategories')->where('custom_content_id', '=', $custom_contentstory->id)->delete();
 
 		$setData['all_category'] = json_encode($setData['category_id']);
 		foreach ($setData['all_category'] as $catId) {
-			$this->multiCustomCategory->create(['category_id' => $catId, 'custom_content_id' => $setData['id']]);
+			$this->multiCustomCategory->create(['category_id' => $catId, 'custom_content_id' => $custom_contentstory->id]);
 		}
 
 		$this->custom_contentstory->update($custom_contentstory, $setData);
