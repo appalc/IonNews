@@ -30,6 +30,6 @@ class Confirmnotify
 	*/
 	public function broadcastOn($user)
 	{
-		return $this->mailer->to($user->email)->send(new Regemail($user, "Successfully registered with Brigade poll"));
+		return $this->mailer->to($user->email)->send(new Regemail($user, 'Successfully registered with Ion News'));
 	}
 }

@@ -70,7 +70,7 @@
 									</td>
 
 									<tr style="height:109.2pt">
-										<td style="width:5.0in;border-top:solid #7030a0 5.0pt;border:none;border-bottom:solid #7030a0 1.0pt;padding:.05in .1in .05in .1in;height:109.2pt" width="480" valign="top">
+										<td style="width:5.0in;border:none;border-top:solid #7030a0 5.0pt;border-bottom:solid #7030a0 1.0pt;padding:.05in .1in .05in .1in;height:109.2pt; color:#000000;" width="480" valign="top">
 										<p class="MsoNormal"><span>{{ $user->first_name }},<u></u><u></u></span></p>
 										<p class="MsoNormal"><u></u>&nbsp;<u></u></p>
 										<p class="MsoNormal" style="padding-bottom: 10px;">

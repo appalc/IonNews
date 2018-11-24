@@ -35,7 +35,6 @@ class WelcomeEmail extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        return $this->view('user::emails.welcome')
-            ->subject(trans('user::messages.welcome'));
+        return $this->view('user::emails.welcome')->subject(trans('user::messages.welcome'));
     }
 }
