@@ -107,7 +107,7 @@
 		var checkedArray = [];
 		function selectCategory(event) {
 			if (check == 0) {
-				checkedArray = <?= $content->all_category ?>;
+				checkedArray = <?= $custom_contentstory->all_category ?>;
 				check        = 1;
 			}
 
