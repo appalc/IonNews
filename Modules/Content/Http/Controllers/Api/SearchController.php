@@ -53,7 +53,13 @@ class SearchController extends BasePublicController
 	{
 		return [
 			'category' => DB::table('content__categories')->select('id', 'name', 'slug_name')->where('status', '=', 1)->get(),
-			'tag'      => collect($this->content->extractTags())->pluck('tags'),
+			'tag'      => collect($this->content->extractTags())->map(function($tag) {
+				$parsedTag = str_replace('#', ',', $tag->tags);
+				$parsedTag = str_replace(' ,', ',', $parsedTag);
+				$parsedTag = str_replace(', ', ',', $parsedTag);
+
+				return explode(',', trim($parsedTag));
+			})->flatten(1)->filter()->values(),
 		];
 	}
 
