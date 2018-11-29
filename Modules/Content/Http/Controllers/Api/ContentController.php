@@ -59,7 +59,7 @@ class ContentController extends BasePublicController
 	{
 		$Alldata    = $request->all();
 		$tags       = '';
-		$user_roles = $Alldata['user_roles'];
+		$user_roles = !empty($Alldata['user_roles']) ? $Alldata['user_roles'] : [-1];
 
 		$Alldata['all_users'] = json_encode($user_roles);
 		if (!$Alldata['tags']) {

@@ -14,7 +14,7 @@
     <div class="row">
         <div class="col-xs-12">
         <div>
-        <level> select story Possition </level><br>
+        <level> select story Position </level><br>
         <select class="btn btn-primary btn-flat selectpicker" id="slectPossition">
 
         <option>2</option>
