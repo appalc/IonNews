@@ -52,6 +52,7 @@
                                 <th>{{ trans('Title') }}</th>
                                 <th>{{ trans('Category') }}</th>
                                 <th>{{ trans('Created At') }}</th>
+                                <th>{{ 'Expire At' }}</th>
                                 <th data-sortable="false">{{ trans('core::core.table.actions') }}</th>
                             </tr>
                             </thead>
@@ -83,20 +84,15 @@
 								<td>
 									<input class ="checkbox" type="checkbox" onchange="changed(this);" name="check[]" value="{{ $content->id }}">
 								</td>
-								<td>
-									{{ $content->id }}
-								</td>
-								<td>
-									{{ $content->title }}
-								</td>
-								<td>
-									{{ $all_category }}
-								</td>
+								<td> {{ $content->id }} </td>
+								<td> {{ $content->title }} </td>
+								<td> {{ $all_category }} </td>
 								<td>
 									<a href ="{{ route('admin.content.content.edit', [$content->id]) }}">
 										{{ $content->created_at }}
 									</a>
 								</td>
+								<td> {{ $content->expiry_date }} </td>
 								<td>
 									<div class ="btn-group">
 										<a href ="{{ route('admin.content.content.edit', [$content->id]) }}" class="btn btn-default btn-flat"><i class="fa fa-pencil"></i></a>
@@ -114,6 +110,7 @@
                                 <th>{{ trans('Title') }}</th>
                                 <th>{{ trans('Category') }}</th>
                                 <th>{{ trans('Created At') }}</th>
+                                <th>{{ 'Expire At' }}</th>
                                 <th>{{ trans('core::core.table.actions') }}</th>
                             </tr>
                             </tfoot>
