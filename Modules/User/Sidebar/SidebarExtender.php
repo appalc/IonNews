@@ -35,26 +35,22 @@ class SidebarExtender implements \Maatwebsite\Sidebar\SidebarExtender
 			$group->item('Company', function (Item $item) {
 				$item->weight(0);
 				$item->icon('fa fa-building');
-				$item->authorize(
-					$this->auth->hasAccess('user.users.index') or $this->auth->hasAccess('user.roles.index')
-				);
-				
+				$item->authorize($this->auth->hasAccess('user.companies.index'));
+
 				$item->item('Company Group', function (Item $item) {
 					$item->weight(0);
 					$item->icon('fa fa-sitemap');
-					$item->route('admin.user.user.index');
-					$item->authorize(
-						$this->auth->hasAccess('user.users.index')
-					);
+					$item->append('admin.user.company.create');
+					$item->route('admin.user.company.index');
+					$item->authorize($this->auth->hasAccess('user.companies.index'));
 				});
-				
+
 				$item->item('User Group', function (Item $item) {
 					$item->weight(1);
 					$item->icon('fa fa-group');
-					$item->route('admin.user.role.index');
-					$item->authorize(
-						$this->auth->hasAccess('user.roles.index')
-					);
+					$item->append('admin.user.company.create');
+					$item->route('admin.user.company.index');
+					$item->authorize($this->auth->hasAccess('user.companies.index'));
 				});
 			});
 		});
@@ -66,7 +62,7 @@ class SidebarExtender implements \Maatwebsite\Sidebar\SidebarExtender
 				$item->authorize(
 					$this->auth->hasAccess('user.users.index') or $this->auth->hasAccess('user.roles.index')
 				);
-				
+
 				$item->item(trans('user::users.title.users'), function (Item $item) {
 					$item->weight(0);
 					$item->icon('fa fa-users');
@@ -75,7 +71,7 @@ class SidebarExtender implements \Maatwebsite\Sidebar\SidebarExtender
 						$this->auth->hasAccess('user.users.index')
 					);
 				});
-				
+
 				$item->item(trans('user::roles.title.roles'), function (Item $item) {
 					$item->weight(1);
 					$item->icon('fa fa-flag-o');
@@ -94,6 +90,7 @@ class SidebarExtender implements \Maatwebsite\Sidebar\SidebarExtender
 				$item->icon('fa fa-user');
 				$item->route('admin.account.profile.edit');
 			});
+
 			$group->item(trans('user::users.api-keys'), function (Item $item) {
 				$item->weight(1);
 				$item->icon('fa fa-key');
