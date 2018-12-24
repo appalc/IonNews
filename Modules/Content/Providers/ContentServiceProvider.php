@@ -139,18 +139,6 @@ class ContentServiceProvider extends ServiceProvider
             }
         );
         $this->app->bind(
-            'Modules\Content\Repositories\UserGroupRepository',
-            function () {
-                $repository = new \Modules\Content\Repositories\Eloquent\EloquentUserGroupRepository(new \Modules\Content\Entities\UserGroup());
-
-                if (! config('app.cache')) {
-                    return $repository;
-                }
-
-                return new \Modules\Content\Repositories\Cache\CacheUserGroupDecorator($repository);
-            }
-        );
-        $this->app->bind(
             'Modules\Content\Repositories\CustomMultiCategoryRepository',
             function () {
                 $repository = new \Modules\Content\Repositories\Eloquent\EloquentCustomMultiCategoryRepository(new \Modules\Content\Entities\CustomMultiCategory());
@@ -175,6 +163,33 @@ class ContentServiceProvider extends ServiceProvider
 				return new \Modules\Content\Repositories\Cache\CacheCompanyDecorator($repository);
 			}
 		);
+
+		$this->app->bind(
+			'Modules\Content\Repositories\CompanyGroupRepository',
+			function () {
+				$repository = new \Modules\Content\Repositories\Eloquent\EloquentCompanyGroupRepository(new \Modules\Content\Entities\CompanyGroup());
+
+				if (! config('app.cache')) {
+					return $repository;
+				}
+
+				return new \Modules\Content\Repositories\Cache\CacheCompanyGroupDecorator($repository);
+			}
+		);
+
+		$this->app->bind(
+			'Modules\Content\Repositories\UserGroupRepository',
+			function () {
+				$repository = new \Modules\Content\Repositories\Eloquent\EloquentUserGroupRepository(new \Modules\Content\Entities\UserGroup());
+
+				if (! config('app.cache')) {
+					return $repository;
+				}
+
+				return new \Modules\Content\Repositories\Cache\CacheUserGroupDecorator($repository);
+			}
+		);
+
 // add bindings
 
 

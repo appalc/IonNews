@@ -32,25 +32,34 @@ class SidebarExtender implements \Maatwebsite\Sidebar\SidebarExtender
 	public function extendWith(Menu $menu)
 	{
 		$menu->group('Company', function (Group $group) {
-			$group->item('Company', function (Item $item) {
+			$group->item('Company Board', function (Item $item) {
 				$item->weight(0);
 				$item->icon('fa fa-building');
 				$item->authorize($this->auth->hasAccess('content.companies.index'));
 
-				$item->item('Company Group', function (Item $item) {
+				$item->item('Company', function (Item $item) {
 					$item->weight(0);
-					$item->icon('fa fa-sitemap');
+					$item->icon('fa fa-building');
 					$item->append('admin.content.company.create');
 					$item->route('admin.content.company.index');
 					$item->authorize($this->auth->hasAccess('content.companies.index'));
 				});
 
+				$item->item('Company Group', function (Item $item) {
+					$item->weight(0);
+					$item->icon('fa fa-sitemap');
+					$item->append('admin.content.companygroup.create');
+					$item->route('admin.content.companygroup.index');
+					$item->authorize($this->auth->hasAccess('content.companygroups.index'));
+				});
+
 				$item->item('User Group', function (Item $item) {
 					$item->weight(1);
 					$item->icon('fa fa-group');
-					$item->append('admin.content.company.create');
-					$item->route('admin.content.company.index');
-					$item->authorize($this->auth->hasAccess('content.companies.index'));
+					$item->weight(0);
+					$item->append('admin.content.usergroup.create');
+					$item->route('admin.content.usergroup.index');
+					$item->authorize($this->auth->hasAccess('content.usergroups.index'));
 				});
 			});
 		});

@@ -10,7 +10,7 @@ class CacheUserGroupDecorator extends BaseCacheDecorator implements UserGroupRep
     public function __construct(UserGroupRepository $usergroup)
     {
         parent::__construct();
-        $this->entityName = 'content.usergroups';
+        $this->entityName = 'user_groups';
         $this->repository = $usergroup;
     }
 }

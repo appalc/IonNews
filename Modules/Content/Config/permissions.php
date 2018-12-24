@@ -50,12 +50,6 @@ return [
         'edit' => 'content::custom_contentstories.edit resource',
         'destroy' => 'content::custom_contentstories.destroy resource',
     ],
-    'content.usergroups' => [
-        'index' => 'content::usergroups.list resource',
-        'create' => 'content::usergroups.create resource',
-        'edit' => 'content::usergroups.edit resource',
-        'destroy' => 'content::usergroups.destroy resource',
-    ],
     'content.custommulticategories' => [
         'index' => 'content::custommulticategories.list resource',
         'create' => 'content::custommulticategories.create resource',
@@ -67,6 +61,18 @@ return [
 		'create'  => 'content::companies.create resource',
 		'edit'    => 'content::companies.edit resource',
 		'destroy' => 'content::companies.destroy resource',
+	],
+	'content.companygroups' => [
+		'index'   => 'content::companygroups.list resource',
+		'create'  => 'content::companygroups.create resource',
+		'edit'    => 'content::companygroups.edit resource',
+		'destroy' => 'content::companygroups.destroy resource',
+	],
+	'content.usergroups' => [
+		'index'   => 'content::usergroups.list resource',
+		'create'  => 'content::usergroups.create resource',
+		'edit'    => 'content::usergroups.edit resource',
+		'destroy' => 'content::usergroups.destroy resource',
 	],
 // append
 

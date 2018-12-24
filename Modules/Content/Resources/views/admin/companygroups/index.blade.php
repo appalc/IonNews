@@ -2,11 +2,11 @@
 
 @section('content-header')
     <h1>
-        {{ trans('content::usergroups.title.usergroups') }}
+        Company Groups
     </h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('dashboard.index') }}"><i class="fa fa-dashboard"></i> {{ trans('core::core.breadcrumb.home') }}</a></li>
-        <li class="active">{{ trans('content::usergroups.title.usergroups') }}</li>
+        <li class="active">CompanyGroup</li>
     </ol>
 @stop
 
@@ -15,8 +15,8 @@
         <div class="col-xs-12">
             <div class="row">
                 <div class="btn-group pull-right" style="margin: 0 15px 15px 0;">
-                    <a href="{{ route('admin.content.usergroup.create') }}" class="btn btn-primary btn-flat" style="padding: 4px 10px;">
-                        <i class="fa fa-pencil"></i> {{ trans('content::usergroups.button.create usergroup') }}
+                    <a href="{{ route('admin.content.companygroup.create') }}" class="btn btn-primary btn-flat" style="padding: 4px 10px;">
+                        <i class="fa fa-pencil"></i> Create Company Group
                     </a>
                 </div>
             </div>
@@ -31,35 +31,39 @@
 							<tr>
 								<td>Id</td>
 								<th>Name</th>
-								<th>Company Group</th>
-								<th>Category</th>
+								<th>User Limit</th>
+								<th>Company</th>
+								<th>Skin</th>
 								<th>{{ trans('core::core.table.created at') }}</th>
 								<th data-sortable ="false">{{ trans('core::core.table.actions') }}</th>
-							</tr>
+                            </tr>
 							</thead>
 							<tbody>
-							<?php if (isset($usergroups)): ?>
-							<?php foreach ($usergroups as $usergroup): ?>
+							<?php if (isset($companygroups)): ?>
+							<?php foreach ($companygroups as $companygroup): ?>
 							<tr>
 								<td>
-									<a href="{{ URL::route('admin.content.usergroup.edit', [$usergroup->id]) }}"> {{ $usergroup->id }} </a>
+									<a href="{{ URL::route('admin.content.companygroup.edit', [$companygroup->id]) }}"> {{ $companygroup->id }} </a>
 								</td>
 								<td>
-									<a href="{{ URL::route('admin.content.usergroup.edit', [$usergroup->id]) }}"> {{ $usergroup->name }} </a>
+									<a href="{{ URL::route('admin.content.companygroup.edit', [$companygroup->id]) }}"> {{ $companygroup->name }} </a>
 								</td>
 								<td>
-									<a href="{{ URL::route('admin.content.usergroup.edit', [$usergroup->id]) }}"> {{ $usergroup->company_group_id }} </a>
+									<a href="{{ URL::route('admin.content.companygroup.edit', [$companygroup->id]) }}"> {{ $companygroup->user_limit }} </a>
 								</td>
 								<td>
-									<a href="{{ URL::route('admin.content.usergroup.edit', [$usergroup->id]) }}"> {{ $usergroup->category_id }} </a>
+									<a href="{{ URL::route('admin.content.companygroup.edit', [$companygroup->id]) }}"> {{ $companygroup->company_id }} </a>
 								</td>
 								<td>
-									<a href="{{ URL::route('admin.content.usergroup.edit', [$usergroup->id]) }}"> {{ $usergroup->created_at }} </a>
+									<a href="{{ URL::route('admin.content.companygroup.edit', [$companygroup->id]) }}"> {{ $companygroup->skin_id }} </a>
+								</td>
+								<td>
+									<a href="{{ URL::route('admin.content.companygroup.edit', [$companygroup->id]) }}"> {{ $companygroup->created_at }} </a>
 								</td>
 								<td>
 									<div class="btn-group">
-										<a href="{{ route('admin.content.usergroup.edit', [$usergroup->id]) }}" class="btn btn-default btn-flat"><i class="fa fa-pencil"></i></a>
-										<button class="btn btn-danger btn-flat" data-toggle="modal" data-target="#modal-delete-confirmation" data-action-target="{{ route('admin.content.usergroup.destroy', [$usergroup->id]) }}"><i class="fa fa-trash"></i></button>
+										<a href="{{ route('admin.content.companygroup.edit', [$companygroup->id]) }}" class="btn btn-default btn-flat"><i class="fa fa-pencil"></i></a>
+										<button class="btn btn-danger btn-flat" data-toggle="modal" data-target="#modal-delete-confirmation" data-action-target="{{ route('admin.content.companygroup.destroy', [$companygroup->id]) }}"><i class="fa fa-trash"></i></button>
 									</div>
 								</td>
 							</tr>
@@ -70,8 +74,9 @@
 								<tr>
 									<td>Id</td>
 									<th>Name</th>
-									<th>Company Group</th>
-									<th>Category</th>
+									<th>User Limit</th>
+									<th>Company</th>
+									<th>Skin</th>
 									<th>{{ trans('core::core.table.created at') }}</th>
 									<th>{{ trans('core::core.table.actions') }}</th>
 								</tr>
@@ -93,7 +98,7 @@
 @section('shortcuts')
     <dl class="dl-horizontal">
         <dt><code>c</code></dt>
-        <dd>{{ trans('content::usergroups.title.create usergroup') }}</dd>
+        <dd>Create Company Group</dd>
     </dl>
 @stop
 
@@ -102,7 +107,7 @@
         $( document ).ready(function() {
             $(document).keypressAction({
                 actions: [
-                    { key: 'c', route: "<?= route('admin.content.usergroup.create') ?>" }
+                    { key: 'c', route: "<?= route('admin.content.companygroup.create') ?>" }
                 ]
             });
         });
