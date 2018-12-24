@@ -98,10 +98,6 @@ class UserServiceProvider extends ServiceProvider
 			"Modules\\User\\Repositories\\{$driver}\\{$driver}RoleRepository"
 		);
 		$this->app->bind(
-			CompanyRepository::class,
-			"Modules\\User\\Repositories\\{$driver}\\{$driver}CompanyRepository"
-		);
-		$this->app->bind(
 			Authentication::class,
 			"Modules\\User\\Repositories\\{$driver}\\{$driver}Authentication"
 		);
