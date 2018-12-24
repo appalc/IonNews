@@ -81,7 +81,7 @@ class CompanyController extends AdminBaseController
         $this->contentcompany->update($contentcompany, $request->all());
 
         return redirect()->route('admin.content.company.index')
-            ->withSuccess('Company updated', ['name' => 'Company']));
+            ->withSuccess('Company updated', ['name' => 'Company']);
     }
 
     /**
