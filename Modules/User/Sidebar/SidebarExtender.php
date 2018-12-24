@@ -35,14 +35,14 @@ class SidebarExtender implements \Maatwebsite\Sidebar\SidebarExtender
 			$group->item('Company Board', function (Item $item) {
 				$item->weight(0);
 				$item->icon('fa fa-building');
-				$item->authorize($this->auth->hasAccess('content.companies.index'));
+				$item->authorize($this->auth->hasAccess('companies.index'));
 
 				$item->item('Company', function (Item $item) {
 					$item->weight(0);
 					$item->icon('fa fa-building');
 					$item->append('admin.content.company.create');
 					$item->route('admin.content.company.index');
-					$item->authorize($this->auth->hasAccess('content.companies.index'));
+					$item->authorize($this->auth->hasAccess('companies.index'));
 				});
 
 				$item->item('Company Group', function (Item $item) {
@@ -50,7 +50,7 @@ class SidebarExtender implements \Maatwebsite\Sidebar\SidebarExtender
 					$item->icon('fa fa-sitemap');
 					$item->append('admin.content.companygroup.create');
 					$item->route('admin.content.companygroup.index');
-					$item->authorize($this->auth->hasAccess('content.companygroups.index'));
+					$item->authorize($this->auth->hasAccess('companygroups.index'));
 				});
 
 				$item->item('User Group', function (Item $item) {
@@ -59,7 +59,7 @@ class SidebarExtender implements \Maatwebsite\Sidebar\SidebarExtender
 					$item->weight(0);
 					$item->append('admin.content.usergroup.create');
 					$item->route('admin.content.usergroup.index');
-					$item->authorize($this->auth->hasAccess('content.usergroups.index'));
+					$item->authorize($this->auth->hasAccess('usergroups.index'));
 				});
 			});
 		});

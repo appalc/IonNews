@@ -39,8 +39,8 @@
                             </tr>
 							</thead>
 							<tbody>
-							<?php if (isset($companygroups)): ?>
-							<?php foreach ($companygroups as $companygroup): ?>
+							<?php if (isset($companyGroups)): ?>
+							<?php foreach ($companyGroups as $companygroup): ?>
 							<tr>
 								<td>
 									<a href="{{ URL::route('admin.content.companygroup.edit', [$companygroup->id]) }}"> {{ $companygroup->id }} </a>

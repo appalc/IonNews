@@ -358,32 +358,32 @@ $router->group(['prefix' =>'/content'], function (Router $router) {
 	$router->get('companies', [
 		'as'         => 'admin.content.company.index',
 		'uses'       => 'CompanyController@index',
-		'middleware' => 'can:content.companies.index',
+		'middleware' => 'can:companies.index',
 	]);
 	$router->get('companies/create', [
 		'as'         => 'admin.content.company.create',
 		'uses'       => 'CompanyController@create',
-		'middleware' => 'can:content.companies.create',
+		'middleware' => 'can:companies.create',
 	]);
 	$router->post('companies', [
 		'as'         => 'admin.content.company.store',
 		'uses'       => 'CompanyController@store',
-		'middleware' => 'can:content.companies.create',
+		'middleware' => 'can:companies.create',
 	]);
 	$router->get('companies/{companies}/edit', [
 		'as'         => 'admin.content.company.edit',
 		'uses'       => 'CompanyController@edit',
-		'middleware' => 'can:content.companies.edit',
+		'middleware' => 'can:companies.edit',
 	]);
 	$router->put('companies/{companies}/edit', [
 		'as'         => 'admin.content.company.update',
 		'uses'       => 'CompanyController@update',
-		'middleware' => 'can:content.companies.edit',
+		'middleware' => 'can:companies.edit',
 	]);
 	$router->delete('companies/{companies}', [
 		'as'         => 'admin.content.company.destroy',
 		'uses'       => 'CompanyController@destroy',
-		'middleware' => 'can:content.companies.destroy',
+		'middleware' => 'can:companies.destroy',
 	]);
 
 	// Company Group related routes
@@ -393,32 +393,32 @@ $router->group(['prefix' =>'/content'], function (Router $router) {
 	$router->get('companygroups', [
 		'as'         => 'admin.content.companygroup.index',
 		'uses'       => 'CompanyGroupController@index',
-		'middleware' => 'can:content.companygroups.index'
+		'middleware' => 'can:companygroups.index'
 	]);
 	$router->get('companygroups/create', [
 		'as'         => 'admin.content.companygroup.create',
 		'uses'       => 'CompanyGroupController@create',
-		'middleware' => 'can:content.companygroups.create'
+		'middleware' => 'can:companygroups.create'
 	]);
 	$router->post('companygroups', [
 		'as'         => 'admin.content.companygroup.store',
 		'uses'       => 'CompanyGroupController@store',
-		'middleware' => 'can:content.companygroups.create'
+		'middleware' => 'can:companygroups.create'
 	]);
 	$router->get('companygroups/{companygroup}/edit', [
 		'as'         => 'admin.content.companygroup.edit',
 		'uses'       => 'CompanyGroupController@edit',
-		'middleware' => 'can:content.companygroups.edit'
+		'middleware' => 'can:companygroups.edit'
 	]);
 	$router->put('companygroups/{companygroup}', [
 		'as'         => 'admin.content.companygroup.update',
 		'uses'       => 'CompanyGroupController@update',
-		'middleware' => 'can:content.companygroups.edit'
+		'middleware' => 'can:companygroups.edit'
 	]);
 	$router->delete('companygroups/{companygroup}', [
 		'as'         => 'admin.content.companygroup.destroy',
 		'uses'       => 'CompanyGroupController@destroy',
-		'middleware' => 'can:content.companygroups.destroy'
+		'middleware' => 'can:companygroups.destroy'
 	]);
 
 	// User Group related routes
@@ -428,32 +428,32 @@ $router->group(['prefix' =>'/content'], function (Router $router) {
 	$router->get('usergroups', [
 		'as'         => 'admin.content.usergroup.index',
 		'uses'       => 'UserGroupController@index',
-		'middleware' => 'can:content.usergroups.index'
+		'middleware' => 'can:usergroups.index'
 	]);
 	$router->get('usergroups/create', [
 		'as'         => 'admin.content.usergroup.create',
 		'uses'       => 'UserGroupController@create',
-		'middleware' => 'can:content.usergroups.create'
+		'middleware' => 'can:usergroups.create'
 	]);
 	$router->post('usergroups', [
 		'as'         => 'admin.content.usergroup.store',
 		'uses'       => 'UserGroupController@store',
-		'middleware' => 'can:content.usergroups.create'
+		'middleware' => 'can:usergroups.create'
 	]);
 	$router->get('usergroups/{usergroup}/edit', [
 		'as'         => 'admin.content.usergroup.edit',
 		'uses'       => 'UserGroupController@edit',
-		'middleware' => 'can:content.usergroups.edit'
+		'middleware' => 'can:usergroups.edit'
 	]);
 	$router->put('usergroups/{usergroup}', [
 		'as'         => 'admin.content.usergroup.update',
 		'uses'       => 'UserGroupController@update',
-		'middleware' => 'can:content.usergroups.edit'
+		'middleware' => 'can:usergroups.edit'
 	]);
 	$router->delete('usergroups/{usergroup}', [
 		'as'         => 'admin.content.usergroup.destroy',
 		'uses'       => 'UserGroupController@destroy',
-		'middleware' => 'can:content.usergroups.destroy'
+		'middleware' => 'can:usergroups.destroy'
 	]);
 // append
 

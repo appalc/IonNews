@@ -29,7 +29,7 @@ class CompanyGroupController extends AdminBaseController
 	*/
 	public function index()
 	{
-		$companyGroups = $this->companyGroup->all();
+		$companyGroups = $this->companygroup->all();
 
 		return view('content::admin.companygroups.index', compact('companyGroups'));
 	}
