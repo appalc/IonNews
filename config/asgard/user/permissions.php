@@ -13,12 +13,6 @@ return [
 		'edit'    => 'user::roles.edit resource',
 		'destroy' => 'user::roles.destroy resource',
 	],
-	'user.companies' => [
-		'index'   => 'user::companies.list resource',
-		'create'  => 'user::companies.create resource',
-		'edit'    => 'user::companies.edit resource',
-		'destroy' => 'user::companies.destroy resource',
-	],
 	'account.api-keys' => [
 		'index'   => 'user::users.list api key',
 		'create'  => 'user::users.create api key',

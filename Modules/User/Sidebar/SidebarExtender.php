@@ -35,22 +35,22 @@ class SidebarExtender implements \Maatwebsite\Sidebar\SidebarExtender
 			$group->item('Company', function (Item $item) {
 				$item->weight(0);
 				$item->icon('fa fa-building');
-				$item->authorize($this->auth->hasAccess('user.companies.index'));
+				$item->authorize($this->auth->hasAccess('content.companies.index'));
 
 				$item->item('Company Group', function (Item $item) {
 					$item->weight(0);
 					$item->icon('fa fa-sitemap');
-					$item->append('admin.user.company.create');
-					$item->route('admin.user.company.index');
-					$item->authorize($this->auth->hasAccess('user.companies.index'));
+					$item->append('admin.content.company.create');
+					$item->route('admin.content.company.index');
+					$item->authorize($this->auth->hasAccess('content.companies.index'));
 				});
 
 				$item->item('User Group', function (Item $item) {
 					$item->weight(1);
 					$item->icon('fa fa-group');
-					$item->append('admin.user.company.create');
-					$item->route('admin.user.company.index');
-					$item->authorize($this->auth->hasAccess('user.companies.index'));
+					$item->append('admin.content.company.create');
+					$item->route('admin.content.company.index');
+					$item->authorize($this->auth->hasAccess('content.companies.index'));
 				});
 			});
 		});

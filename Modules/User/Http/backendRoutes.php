@@ -70,37 +70,6 @@ $router->group(['prefix' => '/user'], function (Router $router) {
 		'uses'       => 'RolesController@destroy',
 		'middleware' => 'can:user.roles.destroy',
 	]);
-
-	$router->get('companies', [
-		'as'         => 'admin.user.company.index',
-		'uses'       => 'CompaniesController@index',
-		'middleware' => 'can:user.companies.index',
-	]);
-	$router->get('companies/create', [
-		'as'         => 'admin.user.company.create',
-		'uses'       => 'CompaniesController@create',
-		'middleware' => 'can:user.companies.create',
-	]);
-	$router->post('companies', [
-		'as'         => 'admin.user.company.store',
-		'uses'       => 'CompaniesController@store',
-		'middleware' => 'can:user.companies.create',
-	]);
-	$router->get('companies/{companies}/edit', [
-		'as'         => 'admin.user.company.edit',
-		'uses'       => 'CompaniesController@edit',
-		'middleware' => 'can:user.companies.edit',
-	]);
-	$router->put('companies/{companies}/edit', [
-		'as'         => 'admin.user.company.update',
-		'uses'       => 'CompaniesController@update',
-		'middleware' => 'can:user.companies.edit',
-	]);
-	$router->delete('companies/{companies}', [
-		'as'         => 'admin.user.company.destroy',
-		'uses'       => 'CompaniesController@destroy',
-		'middleware' => 'can:user.companies.destroy',
-	]);
 });
 
 $router->group(['prefix' => '/account'], function (Router $router) {

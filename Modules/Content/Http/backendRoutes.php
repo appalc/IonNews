@@ -385,10 +385,40 @@ $router->group(['prefix' =>'/content'], function (Router $router) {
         'uses' => 'CustomMultiCategoryController@destroy',
         'middleware' => 'can:content.custommulticategories.destroy'
     ]);
+
+   // Company related routes
+	$router->get('companies', [
+		'as'         => 'admin.content.company.index',
+		'uses'       => 'CompaniesController@index',
+		'middleware' => 'can:content.companies.index',
+	]);
+	$router->get('companies/create', [
+		'as'         => 'admin.content.company.create',
+		'uses'       => 'CompaniesController@create',
+		'middleware' => 'can:content.companies.create',
+	]);
+	$router->post('companies', [
+		'as'         => 'admin.content.company.store',
+		'uses'       => 'CompaniesController@store',
+		'middleware' => 'can:content.companies.create',
+	]);
+	$router->get('companies/{companies}/edit', [
+		'as'         => 'admin.content.company.edit',
+		'uses'       => 'CompaniesController@edit',
+		'middleware' => 'can:content.companies.edit',
+	]);
+	$router->put('companies/{companies}/edit', [
+		'as'         => 'admin.content.company.update',
+		'uses'       => 'CompaniesController@update',
+		'middleware' => 'can:content.companies.edit',
+	]);
+	$router->delete('companies/{companies}', [
+		'as'         => 'admin.content.company.destroy',
+		'uses'       => 'CompaniesController@destroy',
+		'middleware' => 'can:content.companies.destroy',
+	]);
+
 // append
-
-
-
 
 
 
