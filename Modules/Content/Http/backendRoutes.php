@@ -389,32 +389,32 @@ $router->group(['prefix' =>'/content'], function (Router $router) {
    // Company related routes
 	$router->get('companies', [
 		'as'         => 'admin.content.company.index',
-		'uses'       => 'CompaniesController@index',
+		'uses'       => 'CompanyController@index',
 		'middleware' => 'can:content.companies.index',
 	]);
 	$router->get('companies/create', [
 		'as'         => 'admin.content.company.create',
-		'uses'       => 'CompaniesController@create',
+		'uses'       => 'CompanyController@create',
 		'middleware' => 'can:content.companies.create',
 	]);
 	$router->post('companies', [
 		'as'         => 'admin.content.company.store',
-		'uses'       => 'CompaniesController@store',
+		'uses'       => 'CompanyController@store',
 		'middleware' => 'can:content.companies.create',
 	]);
 	$router->get('companies/{companies}/edit', [
 		'as'         => 'admin.content.company.edit',
-		'uses'       => 'CompaniesController@edit',
+		'uses'       => 'CompanyController@edit',
 		'middleware' => 'can:content.companies.edit',
 	]);
 	$router->put('companies/{companies}/edit', [
 		'as'         => 'admin.content.company.update',
-		'uses'       => 'CompaniesController@update',
+		'uses'       => 'CompanyController@update',
 		'middleware' => 'can:content.companies.edit',
 	]);
 	$router->delete('companies/{companies}', [
 		'as'         => 'admin.content.company.destroy',
-		'uses'       => 'CompaniesController@destroy',
+		'uses'       => 'CompanyController@destroy',
 		'middleware' => 'can:content.companies.destroy',
 	]);
 
