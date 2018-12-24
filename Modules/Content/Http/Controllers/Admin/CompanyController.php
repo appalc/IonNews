@@ -64,7 +64,7 @@ class CompanyController extends AdminBaseController
 	* @param  Company $company
 	* @return Response
 	*/
-	public function edit(ContentCompany $company)
+	public function edit(Company $company)
 	{
 		return view('content::admin.companies.edit', compact('company'));
 	}
@@ -76,7 +76,7 @@ class CompanyController extends AdminBaseController
 	* @param  Request $request
 	* @return Response
 	*/
-	public function update(ContentCompany $company, Request $request)
+	public function update(Company $company, Request $request)
 	{
 		$this->company->update($company, $request->all());
 
@@ -90,7 +90,7 @@ class CompanyController extends AdminBaseController
 	* @param  Company $company
 	* @return Response
 	*/
-	public function destroy(ContentCompany $company)
+	public function destroy(Company $company)
 	{
 		$this->company->destroy($company);
 
