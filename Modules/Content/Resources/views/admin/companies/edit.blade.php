@@ -6,13 +6,13 @@
 </h1>
 <ol class="breadcrumb">
     <li><a href="{{ URL::route('dashboard.index') }}"><i class="fa fa-dashboard"></i> {{ trans('core::core.breadcrumb.home') }}</a></li>
-    <li class=""><a href="{{ URL::route('admin.user.company.index') }}">{{ trans('user::companies.breadcrumb.companies') }}</a></li>
-    <li class="active">{{ trans('user::companies.breadcrumb.edit') }}</li>
+    <li class=""><a href="{{ URL::route('admin.content.company.index') }}">Companies</a></li>
+    <li class="active">Company edit</li>
 </ol>
 @stop
 
 @section('content')
-{!! Form::open(['route' => ['admin.user.company.update', $company->id], 'method' => 'put']) !!}
+{!! Form::open(['route' => ['admin.content.company.update', $company->id], 'method' => 'put']) !!}
 <div class="row">
     <div class="col-md-12">
         <div class="nav-tabs-custom">
@@ -55,7 +55,7 @@
                 </div>
                 <div class="box-footer">
                     <button type="submit" class="btn btn-primary btn-flat">{{ trans('user::button.update') }}</button>
-                    <a class="btn btn-danger pull-right btn-flat" href="{{ URL::route('admin.user.company.index')}}"><i class="fa fa-times"></i> {{ trans('user::button.cancel') }}</a>
+                    <a class="btn btn-danger pull-right btn-flat" href="{{ URL::route('admin.content.company.index')}}"><i class="fa fa-times"></i> {{ trans('user::button.cancel') }}</a>
                 </div>
             </div>
         </div>
@@ -69,7 +69,7 @@
 @section('shortcuts')
     <dl class="dl-horizontal">
         <dt><code>b</code></dt>
-        <dd>{{ trans('user::companies.navigation.back to index') }}</dd>
+        <dd>back to index</dd>
     </dl>
 @stop
 @section('scripts')
@@ -77,7 +77,7 @@
 $( document ).ready(function() {
     $(document).keypressAction({
         actions: [
-            { key: 'b', route: "<?= route('admin.user.company.index') ?>" }
+            { key: 'b', route: "<?= route('admin.content.company.index') ?>" }
         ]
     });
     $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({

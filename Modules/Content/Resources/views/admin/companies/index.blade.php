@@ -4,7 +4,7 @@
 <h1> Company Board </h1>
 <ol class="breadcrumb">
 	<li><a href="{{ URL::route('dashboard.index') }}"><i class="fa fa-dashboard"></i> {{ trans('core::core.breadcrumb.home') }}</a></li>
-	<li class="active">{{ trans('user::companies.breadcrumb.companies') }}</li>
+	<li class="active">Companies</li>
 </ol>
 @stop
 
@@ -13,7 +13,7 @@
 	<div class="col-xs-12">
 		<div class="row">
 			<div class="btn-group pull-right" style="margin: 0 15px 15px 0;">
-				<a href="{{ URL::route('admin.user.company.create') }}" class="btn btn-primary btn-flat" style="padding: 4px 10px;">
+				<a href="{{ URL::route('admin.content.company.create') }}" class="btn btn-primary btn-flat" style="padding: 4px 10px;">
 					<i class="fa fa-pencil"></i> New Company
 				</a>
 			</div>
@@ -38,23 +38,23 @@
 						<?php foreach ($companies as $company): ?>
 							<tr>
 								<td>
-									<a href="{{ URL::route('admin.user.company.edit', [$company->id]) }}"> {{ $company->id }} </a>
+									<a href="{{ URL::route('admin.content.company.edit', [$company->id]) }}"> {{ $company->id }} </a>
 								</td>
 								<td>
-									<a href="{{ URL::route('admin.user.company.edit', [$company->id]) }}"> {{ $company->name }} </a>
+									<a href="{{ URL::route('admin.content.company.edit', [$company->id]) }}"> {{ $company->name }} </a>
 								</td>
 								<td>
-									<a href="{{ URL::route('admin.user.company.edit', [$company->id]) }}"> {{ $company->status }} </a>
+									<a href="{{ URL::route('admin.content.company.edit', [$company->id]) }}"> {{ $company->status }} </a>
 								</td>
 								<td>
-									<a href="{{ URL::route('admin.user.company.edit', [$company->id]) }}"> {{ $company->user_limit }} </a>
+									<a href="{{ URL::route('admin.content.company.edit', [$company->id]) }}"> {{ $company->user_limit }} </a>
 								</td>
 								<td>
-									<a href="{{ URL::route('admin.user.company.edit', [$company->id]) }}"> {{ $company->created_at }} </a>
+									<a href="{{ URL::route('admin.content.company.edit', [$company->id]) }}"> {{ $company->created_at }} </a>
 								</td>
 								<td>
 									<div class="btn-group">
-										<a href="{{ route('admin.user.company.edit', [$company->id]) }}" class="btn btn-default btn-flat">
+										<a href="{{ route('admin.content.company.edit', [$company->id]) }}" class="btn btn-default btn-flat">
 											<i class="fa fa-pencil"></i>
 										</a>
 										<button class ="btn btn-danger btn-flat" data-toggle="modal" data-target="#modal-delete-confirmation" data-action-target="{{ route('admin.user.company.destroy', [$company->id]) }}"><i class="fa fa-trash"></i></button>
@@ -91,7 +91,7 @@
 	$( document ).ready(function() {
 		$(document).keypressAction({
 			actions: [
-				{ key: 'c', route: "<?= route('admin.user.company.create') ?>" }
+				{ key: 'c', route: "<?= route('admin.content.company.create') ?>" }
 			]
 		});
 	});
