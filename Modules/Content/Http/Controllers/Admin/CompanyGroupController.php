@@ -11,7 +11,7 @@ use Modules\Core\Http\Controllers\Admin\AdminBaseController;
 class CompanyGroupController extends AdminBaseController
 {
 	/**
-	* @var UserGroupRepository
+	* @var CompanyGroupRepository
 	*/
 	private $companygroup;
 
@@ -52,7 +52,7 @@ class CompanyGroupController extends AdminBaseController
 	*/
 	public function store(Request $request)
 	{
-		$this->usergroup->create($request->all());
+		$this->companygroup->create($request->all());
 
 		return redirect()->route('admin.content.companygroup.index')->withSuccess('Company Group created');
 	}
