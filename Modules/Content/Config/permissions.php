@@ -62,7 +62,7 @@ return [
         'edit' => 'content::custommulticategories.edit resource',
         'destroy' => 'content::custommulticategories.destroy resource',
     ],
-	'user.companies' => [
+	'content.companies' => [
 		'index'   => 'content::companies.list resource',
 		'create'  => 'content::companies.create resource',
 		'edit'    => 'content::companies.edit resource',
