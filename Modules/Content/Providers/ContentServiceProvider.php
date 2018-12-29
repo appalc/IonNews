@@ -190,6 +190,18 @@ class ContentServiceProvider extends ServiceProvider
 			}
 		);
 
+		$this->app->bind(
+			'Modules\Content\Repositories\SkinRepository',
+			function () {
+				$repository = new \Modules\Content\Repositories\Eloquent\EloquentSkinRepository(new \Modules\Content\Entities\Skin());
+
+				if (! config('app.cache')) {
+					return $repository;
+				}
+
+				return new \Modules\Content\Repositories\Cache\CacheSkinDecorator($repository);
+			}
+		);
 // add bindings
 
 
