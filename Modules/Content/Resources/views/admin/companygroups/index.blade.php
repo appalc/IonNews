@@ -1,3 +1,7 @@
+<?php
+use Illuminate\Support\Arr;
+?>
+
 @extends('layouts.master')
 
 @section('content-header')
@@ -49,16 +53,24 @@
 									<a href="{{ URL::route('admin.content.companygroup.edit', [$companygroup->id]) }}"> {{ $companygroup->name }} </a>
 								</td>
 								<td>
-									<a href="{{ URL::route('admin.content.companygroup.edit', [$companygroup->id]) }}"> {{ $companygroup->user_limit }} </a>
+									<a href="{{ URL::route('admin.content.companygroup.edit', [$companygroup->id]) }}">
+										{{ $companygroup->user_limit }}
+									</a>
 								</td>
 								<td>
-									<a href="{{ URL::route('admin.content.companygroup.edit', [$companygroup->id]) }}"> {{ $companygroup->company_id }} </a>
+									<a href="{{ URL::route('admin.content.companygroup.edit', [$companygroup->id]) }}">
+										{{ Arr::get($companies, $companygroup->company_id, '') }}
+									</a>
 								</td>
 								<td>
-									<a href="{{ URL::route('admin.content.companygroup.edit', [$companygroup->id]) }}"> {{ $companygroup->skin_id }} </a>
+									<a href="{{ URL::route('admin.content.companygroup.edit', [$companygroup->id]) }}">
+										{{ Arr::get($skins, $companygroup->skin_id, '') }}
+									</a>
 								</td>
 								<td>
-									<a href="{{ URL::route('admin.content.companygroup.edit', [$companygroup->id]) }}"> {{ $companygroup->created_at }} </a>
+									<a href="{{ URL::route('admin.content.companygroup.edit', [$companygroup->id]) }}">
+										{{ $companygroup->created_at }}
+									</a>
 								</td>
 								<td>
 									<div class="btn-group">

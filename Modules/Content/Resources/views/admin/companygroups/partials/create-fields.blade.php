@@ -14,19 +14,24 @@
 				{!! $errors->first('user_limit', '<span class="help-block">:message</span>') !!}
 			</div>
 		</div>
+	</div>
+	<div class="row">
 		<div class="col-sm-4">
-			<div class="form-group{{ $errors->has('company_id') ? ' has-error' : '' }}">
-				{!! Form::label('company_id', 'Company') !!}
-				{!! Form::text('company_id', old('company_id'), ['class' => 'form-control', 'placeholder' => 'Company']) !!}
-				{!! $errors->first('company_id', '<span class="help-block">:message</span>') !!}
-			</div>
+			<label>Company</label>
+			<select class="form-control" name="company_id">
+				<?php foreach ($companies as $company): ?>
+				<option value="{{ $company->id }}">{{ $company->name }}</option>
+				<?php endforeach; ?>
+			</select>
 		</div>
 		<div class="col-sm-4">
-			<div class="form-group{{ $errors->has('skin_id') ? ' has-error' : '' }}">
-				{!! Form::label('skin_id', 'Skin') !!}
-				{!! Form::text('skin_id', old('skin_id'), ['class' => 'form-control', 'placeholder' => 'Skin']) !!}
-				{!! $errors->first('skin_id', '<span class="help-block">:message</span>') !!}
-			</div>
+			<label>Skin</label>
+			<select class="form-control" name="skin_id">
+				<?php foreach ($skins as $skin): ?>
+				<option value="{{ $skin->id }}">{{ $skin->name }}</option>
+				<?php endforeach; ?>
+			</select>
 		</div>
+		<div class="col-sm-2">{{ Form::hidden('created_by', \Auth::user()->id) }}</div>
 	</div>
 </div>

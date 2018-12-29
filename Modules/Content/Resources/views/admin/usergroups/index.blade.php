@@ -1,12 +1,15 @@
+<?php
+use Illuminate\Support\Arr;
+?>
+
 @extends('layouts.master')
 
 @section('content-header')
-    <h1>
-        {{ trans('content::usergroups.title.usergroups') }}
+    <h1> User Groups
     </h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('dashboard.index') }}"><i class="fa fa-dashboard"></i> {{ trans('core::core.breadcrumb.home') }}</a></li>
-        <li class="active">{{ trans('content::usergroups.title.usergroups') }}</li>
+        <li class="active">User Group</li>
     </ol>
 @stop
 
@@ -16,7 +19,7 @@
             <div class="row">
                 <div class="btn-group pull-right" style="margin: 0 15px 15px 0;">
                     <a href="{{ route('admin.content.usergroup.create') }}" class="btn btn-primary btn-flat" style="padding: 4px 10px;">
-                        <i class="fa fa-pencil"></i> {{ trans('content::usergroups.button.create usergroup') }}
+                        <i class="fa fa-pencil"></i> Create User Group
                     </a>
                 </div>
             </div>
@@ -48,10 +51,18 @@
 									<a href="{{ URL::route('admin.content.usergroup.edit', [$usergroup->id]) }}"> {{ $usergroup->name }} </a>
 								</td>
 								<td>
-									<a href="{{ URL::route('admin.content.usergroup.edit', [$usergroup->id]) }}"> {{ $usergroup->company_group_id }} </a>
+									<a href="{{ URL::route('admin.content.usergroup.edit', [$usergroup->id]) }}">
+										{{ Arr::get($companyGroups, $usergroup->company_group_id, '') }}
+									</a>
 								</td>
 								<td>
-									<a href="{{ URL::route('admin.content.usergroup.edit', [$usergroup->id]) }}"> {{ $usergroup->category_id }} </a>
+									<a href="{{ URL::route('admin.content.usergroup.edit', [$usergroup->id]) }}">
+										<?php foreach (json_decode($usergroup->category_id, true) as $key => $categoryId) {
+											if ($key > 0) { echo ', '; }
+										?>
+											{{ Arr::get($categories, $categoryId, '') }}
+										<?php } ?>
+									</a>
 								</td>
 								<td>
 									<a href="{{ URL::route('admin.content.usergroup.edit', [$usergroup->id]) }}"> {{ $usergroup->created_at }} </a>

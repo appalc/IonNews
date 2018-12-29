@@ -8,18 +8,21 @@
 			</div>
 		</div>
 		<div class="col-sm-4">
-			<div class="form-group{{ $errors->has('company_group_id') ? ' has-error' : '' }}">
-				{!! Form::label('company_group_id', 'Company Group') !!}
-				{!! Form::text('company_group_id', old('company_group_id'), ['class' => 'form-control', 'placeholder' => 'Company Group']) !!}
-				{!! $errors->first('company_group_id', '<span class="help-block">:message</span>') !!}
-			</div>
+			<label>Company Group</label>
+			<select class="form-control" name="company_group_id">
+				<?php foreach ($companygroups as $companygroup): ?>
+				<option value="{{ $companygroup->id }}">{{ $companygroup->name }}</option>
+				<?php endforeach; ?>
+			</select>
 		</div>
 		<div class="col-sm-4">
-			<div class="form-group{{ $errors->has('category_id') ? ' has-error' : '' }}">
-				{!! Form::label('category_id', 'Category') !!}
-				{!! Form::text('category_id', old('category_id'), ['class' => 'form-control', 'placeholder' => 'Category']) !!}
-				{!! $errors->first('category_id', '<span class="help-block">:message</span>') !!}
-			</div>
+			<label>Category</label>
+			<select multiple="" class="form-control" name="category_id[]">
+				<?php foreach ($categories as $category): ?>
+				<option value="{{ $category->id }}">{{ $category->name }}</option>
+				<?php endforeach; ?>
+			</select>
 		</div>
+		<div class="col-sm-2">{{ Form::hidden('created_by', \Auth::user()->id) }}</div>
 	</div>
 </div>

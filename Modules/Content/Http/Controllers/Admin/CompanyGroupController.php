@@ -6,7 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Modules\Content\Entities\CompanyGroup;
 use Modules\Content\Repositories\CompanyGroupRepository;
+use Modules\Content\Repositories\CompanyRepository;
+use Modules\Content\Repositories\SkinRepository;
 use Modules\Core\Http\Controllers\Admin\AdminBaseController;
+use Modules\Content\Http\Requests\CreateCompanyGroupRequest;
+use Modules\Content\Http\Requests\UpdateCompanyGroupRequest;
 
 class CompanyGroupController extends AdminBaseController
 {
@@ -14,12 +18,23 @@ class CompanyGroupController extends AdminBaseController
 	* @var CompanyGroupRepository
 	*/
 	private $companygroup;
+	/**
+	* @var CompanyRepository
+	*/
+	private $company;
 
-	public function __construct(CompanyGroupRepository $companyGroup)
+	/**
+	* @var SkinRepository
+	*/
+	private $skin;
+
+	public function __construct(CompanyGroupRepository $companygroup, CompanyRepository $company, SkinRepository $skin)
 	{
 		parent::__construct();
 
-		$this->companygroup = $companyGroup;
+		$this->companygroup = $companygroup;
+		$this->company      = $company;
+		$this->skin         = $skin;
 	}
 
 	/**
@@ -29,9 +44,16 @@ class CompanyGroupController extends AdminBaseController
 	*/
 	public function index()
 	{
+		$companies     = $this->company->all()->mapWithKeys(function ($company) {
+			return [$company->id => $company->name];
+		})->toArray();
+		$skins         = $this->skin->all()->mapWithKeys(function ($skin) {
+			return [$skin->id => $skin->name];
+		})->toArray();
 		$companyGroups = $this->companygroup->all();
 
-		return view('content::admin.companygroups.index', compact('companyGroups'));
+
+		return view('content::admin.companygroups.index', compact('companyGroups', 'companies', 'skins'));
 	}
 
 	/**
@@ -41,7 +63,10 @@ class CompanyGroupController extends AdminBaseController
 	*/
 	public function create()
 	{
-		return view('content::admin.companygroups.create');
+		$companies = $this->company->all();
+		$skins     = $this->skin->all();
+
+		return view('content::admin.companygroups.create', compact('companies', 'skins'));
 	}
 
 	/**
@@ -50,7 +75,7 @@ class CompanyGroupController extends AdminBaseController
 	* @param  Request $request
 	* @return Response
 	*/
-	public function store(Request $request)
+	public function store(CreateCompanyGroupRequest $request)
 	{
 		$this->companygroup->create($request->all());
 
@@ -60,12 +85,19 @@ class CompanyGroupController extends AdminBaseController
 	/**
 	* Show the form for editing the specified resource.
 	*
-	* @param  CompanyGroup $companygroup
+	* @param  Integer $companyGroupId
 	* @return Response
 	*/
-	public function edit(CompanyGroup $companygroup)
+	public function edit($companyGroupId)
 	{
-		return view('content::admin.companygroups.edit', compact('companygroup'));
+		if (!$companygroup = $this->companygroup->find($companyGroupId)) {
+			return redirect()->route('admin.content.companygroup.index')->withError('Company Group not found');
+		}
+
+		$companies = $this->company->all();
+		$skins     = $this->skin->all();
+
+		return view('content::admin.companygroups.edit', compact('companygroup', 'companies', 'skins'));
 	}
 
 	/**
@@ -75,7 +107,7 @@ class CompanyGroupController extends AdminBaseController
 	* @param  Request      $request
 	* @return Response
 	*/
-	public function update(CompanyGroup $companygroup, Request $request)
+	public function update(CompanyGroup $companygroup, UpdateCompanyGroupRequest $request)
 	{
 		$this->companygroup->update($companygroup, $request->all());
 

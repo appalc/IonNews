@@ -27,14 +27,15 @@
             <div class="box-body">
                 <table class="data-table table table-bordered table-hover">
                     <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>{{ trans('user::users.table.first-name') }}</th>
-                            <th>{{ trans('user::users.table.last-name') }}</th>
-                            <th>{{ trans('user::users.table.email') }}</th>
-                            <th>{{ trans('user::users.table.created-at') }}</th>
-                            <th data-sortable="false">{{ trans('user::users.table.actions') }}</th>
-                        </tr>
+						<tr>
+							<th>Id</th>
+							<th>{{ trans('user::users.table.first-name') }}</th>
+							<th>{{ trans('user::users.table.last-name') }}</th>
+							<th>{{ trans('user::users.table.email') }}</th>
+							<th>User Group</th>
+							<th>{{ trans('user::users.table.created-at') }}</th>
+							<th data-sortable="false">{{ trans('user::users.table.actions') }}</th>
+						</tr>
                     </thead>
                     <tbody>
                     <?php if (isset($users)): ?>
@@ -60,6 +61,11 @@
                                         {{ $user->email }}
                                     </a>
                                 </td>
+								<td>
+									<a href="{{ URL::route('admin.user.user.edit', [$user->id]) }}">
+										{{ Arr::get($userGroups, $user->user_group_id, '') }}
+									</a>
+								</td>
                                 <td>
                                     <a href="{{ URL::route('admin.user.user.edit', [$user->id]) }}">
                                         {{ $user->created_at }}
@@ -83,6 +89,7 @@
                             <th>{{ trans('user::users.table.first-name') }}</th>
                             <th>{{ trans('user::users.table.last-name') }}</th>
                             <th>{{ trans('user::users.table.email') }}</th>
+                            <th>User Group</th>
                             <th>{{ trans('user::users.table.created-at') }}</th>
                             <th>{{ trans('user::users.table.actions') }}</th>
                         </tr>

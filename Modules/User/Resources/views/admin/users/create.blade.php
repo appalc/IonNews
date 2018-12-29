@@ -69,8 +69,16 @@
                                     {!! $errors->first('designation', '<span class="help-block">:message</span>') !!}
                                 </div>
                             </div>
+							<div class="col-sm-4">
+								<label>Company Group</label>
+								<select class="form-control" name="company_group_id">
+									<?php foreach ($companyGroups as $cGroup): ?>
+									<option value="{{ $cGroup->id }}">{{ $cGroup->name }}</option>
+									<?php endforeach; ?>
+								</select>
+							</div>
+						</div>
 
-                        </div>
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">

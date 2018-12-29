@@ -10,71 +10,83 @@ use Modules\User\Http\Requests\UpdateUserRequest;
 use Modules\User\Permissions\PermissionManager;
 use Modules\User\Repositories\RoleRepository;
 use Modules\User\Repositories\UserRepository;
+use Modules\Content\Repositories\UserGroupRepository;
 use Log;
 use Mail;
 
 class UserController extends BaseUserModuleController
 {
-    /**
-     * @var UserRepository
-     */
-    private $user;
-    /**
-     * @var RoleRepository
-     */
-    private $role;
-    /**
-     * @var Authentication
-     */
-    private $auth;
+	/**
+	* @var UserRepository
+	*/
+	private $user;
+	/**
+	* @var RoleRepository
+	*/
+	private $role;
+	/**
+	* @var Authentication
+	*/
+	private $auth;
+	/**
+	* @var Authentication
+	*/
+	private $userGroup;
 
-    /**
-     * @param PermissionManager $permissions
-     * @param UserRepository    $user
-     * @param RoleRepository    $role
-     * @param Authentication    $auth
-     */
+	/**
+	* @param PermissionManager $permissions
+	* @param UserRepository    $user
+	* @param RoleRepository    $role
+	* @param Authentication    $auth
+	* @param UserGroup         $userGroup
+	*/
     public function __construct(
-        PermissionManager $permissions,
-        UserRepository $user,
-        RoleRepository $role,
-        Authentication $auth
+		PermissionManager $permissions,
+		UserRepository $user,
+		RoleRepository $role,
+		Authentication $auth
+		UserGroupRepository $usergroup
     ) {
-        parent::__construct();
-
-        $this->permissions = $permissions;
-        $this->user = $user;
-        $this->role = $role;
-        $this->auth = $auth;
+		parent::__construct();
+		
+		$this->permissions = $permissions;
+		$this->user        = $user;
+		$this->role        = $role;
+		$this->auth        = $auth;
+		$this->userGroup   = $usergroup;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
-    public function index()
-    {
-        $users = $this->user->all();
+	/**
+	* Display a listing of the resource.
+	*
+	* @return Response
+	*/
+	public function index()
+	{
+		$users      = $this->user->all();
+		$userGroups = $this->userGroup->all()->mapWithKeys(function ($group) {
+			return [$group->id => $group->name];
+		});
+		$currentUser = $this->auth->user();
 
-        $currentUser = $this->auth->user();
+		return view('user::admin.users.index', compact('users', 'currentUser', 'userGroups'));
+	}
 
-        return view('user::admin.users.index', compact('users', 'currentUser'));
-    }
+	/**
+	* Show the form for creating a new resource.
+	*
+	* @return Response
+	*/
+	public function create()
+	{
+		$roles      = $this->role->all();
+		$userGroups = $this->userGroup->all()->mapWithKeys(function ($group) {
+			return [$group->id => $group->name];
+		});
+		// echo "<pre>";print_r(json_decode($roles)); exit;
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        $roles = $this->role->all();
-                 // echo "<pre>";print_r(json_decode($roles)); exit;
-
-
-        return view('user::admin.users.create', compact('roles'));
-    }
+		return view('user::admin.users.create', compact('roles', 'userGroups'));
+	}
 
 	/**
 	* Store a newly created resource in storage.
@@ -96,63 +108,65 @@ class UserController extends BaseUserModuleController
 		return redirect()->route('admin.user.user.index')->withSuccess(trans('user::messages.user created'));
 	}
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int      $id
-     * @return Response
-     */
-    public function edit($id)
-    {    
-        if (!$user = $this->user->find($id)) {
-            return redirect()->route('admin.user.user.index')
-                ->withError(trans('user::messages.user not found'));
-        }
-        $roles = $this->role->all();
+	/**
+	* Show the form for editing the specified resource.
+	*
+	* @param  int      $id
+	* @return Response
+	*/
+	public function edit($id)
+	{
+		if (!$user = $this->user->find($id)) {
+			return redirect()->route('admin.user.user.index')
+				->withError(trans('user::messages.user not found'));
+		}
 
-        $currentUser = $this->auth->user();
+		$roles      = $this->role->all();
+		$userGroups = $this->userGroup->all()->mapWithKeys(function ($group) {
+			return [$group->id => $group->name];
+		});
+		$currentUser = $this->auth->user();
 
-        return view('user::admin.users.edit', compact('user', 'roles', 'currentUser'));
-    }
+		return view('user::admin.users.edit', compact('user', 'roles', 'currentUser', 'userGroups'));
+	}
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int               $id
-     * @param  UpdateUserRequest $request
-     * @return Response
-     */
-    public function update($id, UpdateUserRequest $request)
-    {
-        $data = $this->mergeRequestWithPermissions($request);
-        if($request->has('roles'))
-        $data['role_id']=$data['roles'][0];
-        // Log::info($data);
+	/**
+	* Update the specified resource in storage.
+	*
+	* @param  int               $id
+	* @param  UpdateUserRequest $request
+	* @return Response
+	*/
+	public function update($id, UpdateUserRequest $request)
+	{
+		$data = $this->mergeRequestWithPermissions($request);
 
-        $this->user->updateAndSyncRoles($id, $data, $request->roles);
+		if ($request->has('roles'))
+			$data['role_id'] = $data['roles'][0];
+			// Log::info($data);
 
-        if ($request->get('button') === 'index') {
-            return redirect()->route('admin.user.user.index')
-                ->withSuccess(trans('user::messages.user updated'));
-        }
+		$this->user->updateAndSyncRoles($id, $data, $request->roles);
 
-        return redirect()->back()
-            ->withSuccess(trans('user::messages.user updated'));
-    }
+		if ($request->get('button') === 'index') {
+			return redirect()->route('admin.user.user.index')->withSuccess(trans('user::messages.user updated'));
+		}
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int      $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        $this->user->delete($id);
+		return redirect()->back()->withSuccess(trans('user::messages.user updated'));
+	}
 
-        return redirect()->route('admin.user.user.index')
+	/**
+	* Remove the specified resource from storage.
+	*
+	* @param  int      $id
+	* @return Response
+	*/
+	public function destroy($id)
+	{
+		$this->user->delete($id);
+
+		return redirect()->route('admin.user.user.index')
             ->withSuccess(trans('user::messages.user deleted'));
-    }
+	}
 
     public function sendResetPassword($user, Authentication $auth)
     {

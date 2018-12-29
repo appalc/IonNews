@@ -62,9 +62,18 @@
                                     {!! $errors->first('designation', '<span class="help-block">:message</span>') !!}
                                 </div>
                             </div>
-                           
-                            
-                        </div>
+							<div class="col-sm-4">
+								<label>User Group</label>
+								<select class="form-control" name="user_group_id">
+									<?php foreach ($userGroups as $uGroupId => $uGroupName): ?>
+									<option value="{{ $uGroupId }}" <?php echo ($uGroupId == $user->user_group_id) ? "selected" : '';?>>
+										{{ $uGroupName }}
+									</option>
+									<?php endforeach; ?>
+								</select>
+							</div>
+						</div>
+
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="checkbox{{ $errors->has('activated') ? ' has-error' : '' }}">
