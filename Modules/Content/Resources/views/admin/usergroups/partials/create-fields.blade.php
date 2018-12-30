@@ -23,6 +23,6 @@
 				<?php endforeach; ?>
 			</select>
 		</div>
-		<div class="col-sm-2">{{ Form::hidden('created_by', \Auth::user()->id) }}</div>
+		<div class="col-sm-2">{{ Form::hidden('created_by', $currentUser->id) }}</div>
 	</div>
 </div>

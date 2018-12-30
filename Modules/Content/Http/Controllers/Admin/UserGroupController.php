@@ -4,6 +4,7 @@ namespace Modules\Content\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Modules\User\Contracts\Authentication;
 use Modules\Content\Entities\UserGroup;
 use Modules\Content\Repositories\UserGroupRepository;
 use Modules\Content\Repositories\CompanyGroupRepository;
@@ -29,10 +30,15 @@ class UserGroupController extends AdminBaseController
 	*/
 	private $companyGroup;
 
-	public function __construct(UserGroupRepository $usergroup, CategoryRepository $cateogry, CompanyGroupRepository $companyGroup)
+	public function __construct(
+		UserGroupRepository $usergroup,
+		CategoryRepository $cateogry,
+		CompanyGroupRepository $companyGroup,
+		Authentication $auth)
 	{
 		parent::__construct();
 
+		$this->auth         = $auth;
 		$this->usergroup    = $usergroup;
 		$this->cateogry     = $cateogry;
 		$this->companyGroup = $companyGroup;
@@ -59,12 +65,13 @@ class UserGroupController extends AdminBaseController
 	* @param  CompanyGroupRepository  $companyGroup
 	* @return Response
 	*/
-	public function create(CategoryRepository $cateogry, CompanyGroupRepository $companyGroup)
+	public function create()
 	{
-		return view('content::admin.usergroups.create')->with([
-			'categories'    => $cateogry->all(),
-			'companygroups' => $companyGroup->all(),
-		]);
+		$categories    = $this->cateogry->all();
+		$companygroups = $this->companyGroup->all();
+		$currentUser   = $this->auth->user();
+
+		return view('content::admin.usergroups.create')->compact('categories', 'companygroups', 'currentUser');
 	}
 
 	/**
@@ -89,11 +96,12 @@ class UserGroupController extends AdminBaseController
 	*/
 	public function edit($userGroupId)
 	{
-		return view('content::admin.usergroups.edit')->with([
-			'categories'    => $this->cateogry->all(),
-			'companygroups' => $this->companyGroup->all(),
-			'usergroup'     => $this->usergroup->find($userGroupId),
-		]);
+		$categories    = $this->cateogry->all();
+		$companygroups = $this->companyGroup->all();
+		$usergroup     = $this->usergroup->find($userGroupId);
+		$currentUser   = $this->auth->user();
+
+		return view('content::admin.usergroups.edit')->compact('categories', 'companygroups', 'usergroup', 'currentUser');
 	}
 
 	/**

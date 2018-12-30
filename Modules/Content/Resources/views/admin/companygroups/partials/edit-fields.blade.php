@@ -36,7 +36,6 @@
 				<?php endforeach; ?>
 			</select>
 		</div>
-		<div class="col-sm-2">{{ Form::hidden('updated_by', \Auth::user()->id) }}</div>
-	<!--	<div class ="col-sm-2">{{ Form::hidden('id', $companygroup->id) }}</div> -->
+		<div class="col-sm-2">{{ Form::hidden('updated_by', $currentUser->id) }}</div>
 	</div>
 </div>

@@ -4,6 +4,7 @@ namespace Modules\Content\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Modules\User\Contracts\Authentication;
 use Modules\Content\Entities\CompanyGroup;
 use Modules\Content\Repositories\CompanyGroupRepository;
 use Modules\Content\Repositories\CompanyRepository;
@@ -28,10 +29,15 @@ class CompanyGroupController extends AdminBaseController
 	*/
 	private $skin;
 
-	public function __construct(CompanyGroupRepository $companygroup, CompanyRepository $company, SkinRepository $skin)
+	public function __construct(
+		CompanyGroupRepository $companygroup,
+		CompanyRepository $company,
+		SkinRepository $skin,
+		Authentication $auth)
 	{
 		parent::__construct();
 
+		$this->auth         = $auth;
 		$this->companygroup = $companygroup;
 		$this->company      = $company;
 		$this->skin         = $skin;
@@ -62,10 +68,11 @@ class CompanyGroupController extends AdminBaseController
 	*/
 	public function create()
 	{
-		$companies = $this->company->all();
-		$skins     = $this->skin->all();
+		$companies   = $this->company->all();
+		$skins       = $this->skin->all();
+		$currentUser = $this->auth->user();
 
-		return view('content::admin.companygroups.create', compact('companies', 'skins'));
+		return view('content::admin.companygroups.create', compact('companies', 'skins', 'currentUser'));
 	}
 
 	/**
@@ -93,10 +100,11 @@ class CompanyGroupController extends AdminBaseController
 			return redirect()->route('admin.content.companygroup.index')->withError('Company Group not found');
 		}
 
-		$companies = $this->company->all()->mapWithKeys(function($comp) { return [$comp->id => $comp->name]; })->toArray();
-		$skins     = $this->skin->all()->mapWithKeys(function($sk) { return [$sk->id => $sk->name]; })->toArray();
+		$companies   = $this->company->all()->mapWithKeys(function($comp) { return [$comp->id => $comp->name]; });
+		$skins       = $this->skin->all()->mapWithKeys(function($sk) { return [$sk->id => $sk->name]; });
+		$currentUser = $this->auth->user();
 
-		return view('content::admin.companygroups.edit', compact('companygroup', 'companies', 'skins'));
+		return view('content::admin.companygroups.edit', compact('companygroup', 'companies', 'skins', 'currentUser'));
 	}
 
 	/**
