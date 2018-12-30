@@ -40,13 +40,13 @@ class UserController extends BaseUserModuleController
 	* @param Authentication    $auth
 	* @param UserGroup         $userGroup
 	*/
-    public function __construct(
+	public function __construct(
 		PermissionManager $permissions,
 		UserRepository $user,
 		RoleRepository $role,
-		Authentication $auth
+		Authentication $auth,
 		UserGroupRepository $usergroup
-    ) {
+	) {
 		parent::__construct();
 		
 		$this->permissions = $permissions;
