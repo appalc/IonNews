@@ -52,7 +52,6 @@ class CompanyGroupController extends AdminBaseController
 		})->toArray();
 		$companyGroups = $this->companygroup->all();
 
-
 		return view('content::admin.companygroups.index', compact('companyGroups', 'companies', 'skins'));
 	}
 
@@ -94,8 +93,8 @@ class CompanyGroupController extends AdminBaseController
 			return redirect()->route('admin.content.companygroup.index')->withError('Company Group not found');
 		}
 
-		$companies = $this->company->all();
-		$skins     = $this->skin->all();
+		$companies = $this->company->all()->mapWithKeys(function($comp) { return [$comp->id => $comp->name]; })->toArray();
+		$skins     = $this->skin->all()->mapWithKeys(function($sk) { return [$sk->id => $sk->name]; })->toArray();
 
 		return view('content::admin.companygroups.edit', compact('companygroup', 'companies', 'skins'));
 	}

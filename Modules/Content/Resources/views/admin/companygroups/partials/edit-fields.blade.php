@@ -19,9 +19,9 @@
 		<div class="col-sm-4">
 			<label>Company</label>
 			<select class="form-control" name="company_id">
-				<?php foreach ($companies as $company): ?>
-				<option value="{{ $company->id }}" <?php echo ($company->id == $companygroup->company_id) ? "selected" : '';?>>
-					{{ $company->name }}
+				<?php foreach ($companies as $companyId => $companyName): ?>
+				<option value="{{ $companyId }}" <?php echo ($companyId == $companygroup->company_id) ? "selected" : '';?>>
+					{{ $companyName }}
 				</option>
 				<?php endforeach; ?>
 			</select>
@@ -29,9 +29,9 @@
 		<div class="col-sm-4">
 			<label>Skin</label>
 			<select class="form-control" name="skin_id">
-				<?php foreach ($skins as $skin): ?>
-				<option value="{{ $skin->id }}" <?php echo ($skin->id == $companygroup->skin_id) ? "selected" : '';?>>
-					{{ $skin->name }}
+				<?php foreach ($skins as $skinId => $skinName): ?>
+				<option value="{{ $skinId }}" <?php echo ($skinId == $companygroup->skin_id) ? "selected" : '';?>>
+					{{ $skinName }}
 				</option>
 				<?php endforeach; ?>
 			</select>
