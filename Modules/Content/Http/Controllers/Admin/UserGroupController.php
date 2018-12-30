@@ -71,7 +71,7 @@ class UserGroupController extends AdminBaseController
 		$companygroups = $this->companyGroup->all();
 		$currentUser   = $this->auth->user();
 
-		return view('content::admin.usergroups.create')->compact('categories', 'companygroups', 'currentUser');
+		return view('content::admin.usergroups.create', compact('categories', 'companygroups', 'currentUser'));
 	}
 
 	/**
@@ -101,7 +101,7 @@ class UserGroupController extends AdminBaseController
 		$usergroup     = $this->usergroup->find($userGroupId);
 		$currentUser   = $this->auth->user();
 
-		return view('content::admin.usergroups.edit')->compact('categories', 'companygroups', 'usergroup', 'currentUser');
+		return view('content::admin.usergroups.edit', compact('categories', 'companygroups', 'usergroup', 'currentUser'));
 	}
 
 	/**
