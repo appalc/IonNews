@@ -1,3 +1,7 @@
+<?php
+use Illuminate\Support\Arr;
+?>
+
 @extends('layouts.master')
 
 @section('content-header')
