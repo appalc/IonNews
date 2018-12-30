@@ -103,12 +103,13 @@ class UserGroupController extends AdminBaseController
 	* @param  UpdateUserGroupRequest $request
 	* @return Response
 	*/
-	public function update(UserGroup $usergroup, UpdateUserGroupRequest $request)
+	public function update(UpdateUserGroupRequest $request, $id)
 	{
-		$this->usergroup->update($usergroup, $request->all());
+		if (!usergroup::find($id)->update($request->all())) {
+			return redirect()->route('admin.content.usergroup.edit', $id)->withError('Cannot update User Group, Please Try Again');
+		}
 
-		return redirect()->route('admin.content.usergroup.index')
-		->withSuccess(trans('core::core.messages.resource updated', ['name' => trans('content::usergroups.title.usergroups')]));
+		return redirect()->route('admin.content.usergroup.index')->withSuccess('User Group updated');
 	}
 
 	/**

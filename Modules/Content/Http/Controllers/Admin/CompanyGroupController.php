@@ -103,13 +103,15 @@ class CompanyGroupController extends AdminBaseController
 	/**
 	* Update the specified resource in storage.
 	*
-	* @param  CompanyGroup $companygroups
-	* @param  Request      $request
+	* @param  UpdateCompanyGroupRequest $request
+	* @param  integer                   $id
 	* @return Response
 	*/
-	public function update(CompanyGroup $companygroup, UpdateCompanyGroupRequest $request)
+	public function update(UpdateCompanyGroupRequest $request, $id)
 	{
-		$this->companygroup->update($companygroup, $request->all());
+		if (!companygroup::find($id)->update($request->all())) {
+			return redirect()->route('admin.content.companygroup.edit', $id)->withError('Cannot update Company Groups, Please Try Again');
+		}
 
 		return redirect()->route('admin.content.companygroup.index')->withSuccess('Company Groups updated');
 	}

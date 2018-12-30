@@ -405,17 +405,17 @@ $router->group(['prefix' =>'/content'], function (Router $router) {
 		'uses'       => 'CompanyGroupController@store',
 		'middleware' => 'can:companygroups.create'
 	]);
-	$router->get('companygroups/{companygroup}/edit', [
+	$router->get('companygroups/{companygroups}/edit', [
 		'as'         => 'admin.content.companygroup.edit',
 		'uses'       => 'CompanyGroupController@edit',
 		'middleware' => 'can:companygroups.edit'
 	]);
-	$router->put('companygroups/{companygroup}', [
+	$router->put('companygroups/{companygroups}', [
 		'as'         => 'admin.content.companygroup.update',
 		'uses'       => 'CompanyGroupController@update',
 		'middleware' => 'can:companygroups.edit'
 	]);
-	$router->delete('companygroups/{companygroup}', [
+	$router->delete('companygroups/{companygroups}', [
 		'as'         => 'admin.content.companygroup.destroy',
 		'uses'       => 'CompanyGroupController@destroy',
 		'middleware' => 'can:companygroups.destroy'
@@ -440,17 +440,17 @@ $router->group(['prefix' =>'/content'], function (Router $router) {
 		'uses'       => 'UserGroupController@store',
 		'middleware' => 'can:usergroups.create'
 	]);
-	$router->get('usergroups/{usergroup}/edit', [
+	$router->get('usergroups/{usergroups}/edit', [
 		'as'         => 'admin.content.usergroup.edit',
 		'uses'       => 'UserGroupController@edit',
 		'middleware' => 'can:usergroups.edit'
 	]);
-	$router->put('usergroups/{usergroup}', [
+	$router->put('usergroups/{usergroups}', [
 		'as'         => 'admin.content.usergroup.update',
 		'uses'       => 'UserGroupController@update',
 		'middleware' => 'can:usergroups.edit'
 	]);
-	$router->delete('usergroups/{usergroup}', [
+	$router->delete('usergroups/{usergroups}', [
 		'as'         => 'admin.content.usergroup.destroy',
 		'uses'       => 'UserGroupController@destroy',
 		'middleware' => 'can:usergroups.destroy'
