@@ -8,6 +8,7 @@ use Modules\User\Http\Requests\LoginRequest;
 use Illuminate\Http\Response;
 use Validator;
 use GuzzleHttp\Client;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Contracts\Auth\Guard;
 use Modules\User\Repositories\UserRepository;
@@ -19,108 +20,119 @@ use Modules\Authentication\Events\Confirmnotify;
 use Input;
 use Log;
 use Mail;
+use DB;
 
 class FrontController extends BasePublicController
 {
-    protected $guard;
-    public function __construct(Response $response,Guard $guard,UserRepository $user)
-    {
-       parent::__construct();
-       $this->response = $response;
-       $this->guard = $guard;
-       $this->user = $user;
-       //$this->middleware('auth:api');
-      // $this->middleware('oauth');
-    }
-    public function login(Request $request,Client $http){
-      $validator = Validator::make($request->all(), [
-          'email' => 'required',
-          'password' => 'required',
+	protected $guard;
 
-      ]);
-      if ($validator->fails()) {
-          $errors = $validator->errors();
-          foreach ($errors->all() as $message) {
-              $meserror =$message;
-          }
-          $this->response->setContent(array('message'=> $message));
-        return $this->response->setStatusCode(400,$meserror);
-      }else{         
+	public function __construct(Response $response, Guard $guard, UserRepository $user)
+	{
+		parent::__construct();
+		$this->response = $response;
+		$this->guard    = $guard;
+		$this->user     = $user;
+		//$this->middleware('auth:api');
+		// $this->middleware('oauth');
+	}
 
-        $credentials = [
-            'email' => $request->email,
-            'password' => $request->password,
-        ];
-      
-         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])) {    
-         $authicated_user = Auth::user();    
-           if($this->user->find($authicated_user->id)->isActivated()){
-               $last_login =  $authicated_user->last_login;
-               Auth::user()->last_login = new \DateTime();
-               if(isset($request->device_code))
-               {
-               if($request->device_code)
-               Auth::User()->device_code=$request->device_code;
-               }
-              if(isset($request->device_type))
-               {
-               if($request->device_type)
-               Auth::User()->device_type=$request->device_type;
-               }
-           
-               Auth::user()->save();
+	public function login(Request $request, Client $http)
+	{
+		$validator = Validator::make($request->all(), [
+			'email'    => 'required',
+			'password' => 'required',
+		]);
 
-               $token = Auth::generateTokenById($authicated_user->id);
-               $authicated_user->token=$token;
+		if ($validator->fails()) {
+			$errors = $validator->errors();
+			foreach ($errors->all() as $message) {
+				$meserror = $message;
+			}
 
+			$this->response->setContent(['message' => $message]);
 
+			return $this->response->setStatusCode(400, $meserror);
+		} else {
+			$credentials = [
+				'email'    => $request->email,
+				'password' => $request->password,
+			];
 
-                $authicated_user=json_decode($authicated_user,true);
-               $response=array();
-               $response['id']=$authicated_user['id'];
-               $response['email']=$authicated_user['email'];
-               $response['first_name']=$authicated_user['first_name'];
-               $response['last_name']=$authicated_user['last_name'];
-               $response['created_at']=$authicated_user['created_at'];
-               $response['updated_at']=$authicated_user['updated_at'];
-               $response['phone']=$authicated_user['phone'];
-               $response['address']=$authicated_user['address'];
-               $response['role']=$authicated_user['role'];
-               $response['role_id']=$authicated_user['role_id'];
+			if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+				$authicated_user = Auth::user();
+				if ($this->user->find($authicated_user->id)->isActivated()) {
+					$last_login = $authicated_user->last_login;
+					Auth::user()->last_login = new \DateTime();
 
-               if(!empty($authicated_user['device_code']))
-               $response['device_code']=$authicated_user['device_code'];             
-               else $response['device_code']="";
+					if (!empty($request->device_code)) {
+						Auth::User()->device_code = $request->device_code;
+					}
 
-               if(!empty($authicated_user['company']))
-               $response['company']=$authicated_user['company'];
-               else $response['company']="";
+					if (!empty($request->device_type)) {
+						Auth::User()->device_type = $request->device_type;
+					}
 
-               if(!empty($authicated_user['designation']))
-               $response['designation']=$authicated_user['designation'];
-               else $response['designation']="";
-               $response['role']=$authicated_user['role'];
-               if(!empty($authicated_user['profileImg']))
-               $response['profileImg']=$authicated_user['profileImg'];
-               else  $response['profileImg']="";
-               
-               $response['token']=$authicated_user['token'];
+					Auth::user()->save();
 
+					$token                  = Auth::generateTokenById($authicated_user->id);
+					$authicated_user->token = $token;
+					$authicated_user        = json_decode($authicated_user,true);
+					$response               = array();
+					$response                = [
+						'id'          => $authicated_user['id'],
+						'email'       => $authicated_user['email'],
+						'first_name'  => $authicated_user['first_name'],
+						'last_name'   => $authicated_user['last_name'],
+						'created_at'  => $authicated_user['created_at'],
+						'updated_at'  => $authicated_user['updated_at'],
+						'phone'       => $authicated_user['phone'],
+						'address'     => $authicated_user['address'],
+						'role'        => $authicated_user['role'],
+						'role_id'     => $authicated_user['role_id'],
+						'device_code' => Arr::get($authicated_user, 'device_code', ''),
+						'company'     => Arr::get($authicated_user, 'company', ''),
+						'designation' => Arr::get($authicated_user, 'designation', ''),
+						'profileImg'  => Arr::get($authicated_user, 'profileImg', ''),
+						'token'       => Arr::get($authicated_user, 'token', ''),
+						'companyInfo' => $this->getCompanyInfo($authicated_user['id']),
+					];
 
-               return response(json_encode($response))->header('Content-Type', 'application/json');
+					return response(json_encode($response))->header('Content-Type', 'application/json');
 
-               // return response($authicated_user);
-               // return response(['id'=>$authicated_user->id,'token' => $token,'email'=>$authicated_user->email,'last_login' =>$last_login,'first_name'=> $authicated_user->first_name,'last_name'=>$authicated_user->last_name,'create_at'=>$authicated_user->created_at,'updated_at'=>$authicated_user->updated_at,
-                // 'company_name'=>$authicated_user->company,'designation'=>$authicated_user->designation,'role'=>$authicated_user->role])->header('Content-Type', 'application/json');
-           }else{
-               $this->response->setContent(array('message'=>'Please Activate your account'));
-               return $this->response->setStatusCode(401,'Please Activate your account');
-           }
-         }
-       }
-        $this->response->setContent(array('message'=>'Email or Password is invalid'));
-        return $this->response->setStatusCode(401,'Email or Password is invalid');
-    }
+				// return response($authicated_user);
+				// return response(['id' =>$authicated_user->id,'token' => $token,'email'=>$authicated_user->email,'last_login' =>$last_login,'first_name'=> $authicated_user->first_name,'last_name'=>$authicated_user->last_name,'create_at'=>$authicated_user->created_at,'updated_at'=>$authicated_user->updated_at,
+				// 'company_name'        =>$authicated_user->company,'designation'=>$authicated_user->designation,'role'=>$authicated_user->role])->header('Content-Type', 'application/json');
+				} else {
+					$this->response->setContent(array('message' =>'Please Activate your account'));
+
+					return $this->response->setStatusCode(401,'Please Activate your account');
+				}
+			}
+		}
+
+		$this->response->setContent(array('message' =>'Email or Password is invalid'));
+
+		return $this->response->setStatusCode(401, 'Email or Password is invalid');
+	}
+
+	public function getCompanyInfo($userId)
+	{
+		return DB::table('users as usr')
+			->join('user_groups as ug', 'ug.id', '=', 'usr.user_group_id')
+			->join('company_groups as cg', 'cg.id', '=', 'ug.company_group_id')
+			->join('skins as skn', 'skn.id', '=', 'cg.skin_id')
+			->join('companies as com', 'com.id', '=', 'cg.company_id')
+			->select(
+				'ug.name as userGroupName',
+				'cg.name as companyGroupName',
+				'com.name as companyName',
+				'skn.name as skinName',
+				'skn.color as skinColor',
+				'skn.font as skinfont'
+			)
+			->where('usr.id', '=', $userId)
+			->get();
+	}
 
 	public function forgotpassword(Request $request)
 	{
