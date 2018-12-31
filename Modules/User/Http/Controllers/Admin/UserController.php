@@ -64,9 +64,7 @@ class UserController extends BaseUserModuleController
 	public function index()
 	{
 		$users      = $this->user->all();
-		$userGroups = $this->userGroup->all()->mapWithKeys(function ($group) {
-			return [$group->id => $group->name];
-		});
+		$userGroups = $this->userGroup->all()->pluck('name', 'id');
 		$currentUser = $this->auth->user();
 
 		return view('user::admin.users.index', compact('users', 'currentUser', 'userGroups'));
