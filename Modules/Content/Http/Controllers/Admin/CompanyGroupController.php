@@ -50,8 +50,8 @@ class CompanyGroupController extends AdminBaseController
 	*/
 	public function index()
 	{
-		$companies     = $this->company->all()->pluck('id', 'name');
-		$skins         = $this->skin->all()->pluck('id', 'name');
+		$companies     = $this->company->all()->pluck('name', 'id');
+		$skins         = $this->skin->all()->pluck('name', 'id');
 		$companyGroups = $this->companygroup->all();
 
 		return view('content::admin.companygroups.index', compact('companyGroups', 'companies', 'skins'));
@@ -96,8 +96,8 @@ class CompanyGroupController extends AdminBaseController
 			return redirect()->route('admin.content.companygroup.index')->withError('Company Group not found');
 		}
 
-		$companies     = $this->company->all()->('id', 'name');
-		$skins         = $this->skin->all()->('id', 'name');
+		$companies     = $this->company->all()->pluck('name', 'id');
+		$skins         = $this->skin->all()->pluck('name', 'id');
 		$currentUser = $this->auth->user();
 
 		return view('content::admin.companygroups.edit', compact('companygroup', 'companies', 'skins', 'currentUser'));
