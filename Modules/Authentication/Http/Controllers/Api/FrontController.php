@@ -123,9 +123,13 @@ class FrontController extends BasePublicController
 			->join('skins as skn', 'skn.id', '=', 'cg.skin_id')
 			->join('companies as com', 'com.id', '=', 'cg.company_id')
 			->select(
+				'ug.id as userGroupId',
 				'ug.name as userGroupName',
+				'cg.id as companyGroupId',
 				'cg.name as companyGroupName',
+				'com.id as companyId',
 				'com.name as companyName',
+				'skn.id as skinId',
 				'skn.name as skinName',
 				'skn.color as skinColor',
 				'skn.font as skinfont'
