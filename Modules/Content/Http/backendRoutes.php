@@ -445,7 +445,7 @@ $router->group(['prefix' =>'/content'], function (Router $router) {
 		'uses'       => 'UserGroupController@edit',
 		'middleware' => 'can:usergroups.edit'
 	]);
-	$router->put('usergroups/{usergroups}', [
+	$router->put('usergroups/{usergroups}/update', [
 		'as'         => 'admin.content.usergroup.update',
 		'uses'       => 'UserGroupController@update',
 		'middleware' => 'can:usergroups.edit'

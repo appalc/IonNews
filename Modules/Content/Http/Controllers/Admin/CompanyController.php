@@ -77,13 +77,15 @@ class CompanyController extends AdminBaseController
 	/**
 	* Update the specified resource in storage.
 	*
-	* @param  Company $company
-	* @param  Request $request
+	* @param  UpdateCompanyRequest $request
+	* @param  Integer              $companyId
 	* @return Response
 	*/
-	public function update(Company $company, Request $request)
+	public function update(UpdateCompanyRequest $request, $companyId)
 	{
-		$this->company->update($company, $request->all());
+		if (!company::find($companyId)->update($request->all())) {
+			return redirect()->route('admin.content.company.edit', $companyId)->withError('Cannot update Company, Please Try Again');
+		}
 
 		return redirect()->route('admin.content.company.index')
 			->withSuccess('Company updated', ['name' => 'Company']);

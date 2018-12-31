@@ -51,8 +51,8 @@ class UserGroupController extends AdminBaseController
 	*/
 	public function index()
 	{
-		$categories    = $this->cateogry->all()->mapWithKeys(function ($category) { return [$category->id => $category->name]; });
-		$companyGroups = $this->companyGroup->all()->mapWithKeys(function ($group) { return [$group->id => $group->name]; });
+		$categories    = $this->cateogry->all()->pluck('id', 'name');
+		$companyGroups = $this->companyGroup->all()->pluck('id', 'name');
 		$usergroups    = $this->usergroup->all();
 
 		return view('content::admin.usergroups.index', compact('usergroups', 'categories', 'companyGroups'));
