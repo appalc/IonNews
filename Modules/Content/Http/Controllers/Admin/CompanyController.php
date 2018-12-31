@@ -7,7 +7,8 @@ use Illuminate\Http\Response;
 use Modules\Content\Entities\Company;
 use Modules\Content\Repositories\CompanyRepository;
 use Modules\Core\Http\Controllers\Admin\AdminBaseController;
-
+use Modules\Content\Http\Requests\CreateCompanyRequest;
+use Modules\Content\Http\Requests\UpdateCompanyRequest;
 class CompanyController extends AdminBaseController
 {
 	/**
@@ -50,7 +51,7 @@ class CompanyController extends AdminBaseController
 	* @param  Request $request
 	* @return Response
 	*/
-	public function store(Request $request)
+	public function store(CreateCompanyRequest $request)
 	{
 		$this->company->create($request->all());
 
@@ -61,11 +62,15 @@ class CompanyController extends AdminBaseController
 	/**
 	* Show the form for editing the specified resource.
 	*
-	* @param  Company $company
+	* @param  Integer $companyId
 	* @return Response
 	*/
-	public function edit(Company $company)
+	public function edit($companyId)
 	{
+		if (!$company = $this->company->find($companyId)) {
+			return redirect()->route('admin.content.company.index')->withError('Company not found');
+		}
+
 		return view('content::admin.companies.edit', compact('company'));
 	}
 

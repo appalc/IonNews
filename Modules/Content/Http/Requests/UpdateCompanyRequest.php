@@ -4,17 +4,15 @@ namespace Modules\Content\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateCompanyGroupRequest extends FormRequest
+class UpdateCompanyRequest extends FormRequest
 {
 	public function rules()
 	{
-		$companyGroupId = $this->route()->getParameter('companygroups');
+		$companyId = $this->route()->getParameter('companies');
 
 		return [
-			'name'       => "required|unique:company_groups,name,{$companyGroupId}",
+			'name'       => "required|unique:companies,name,{$companyId}",
 			'user_limit' => 'required',
-			'company_id' => 'required',
-			'skin_id'    => 'required',
 		];
 	}
 

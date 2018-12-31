@@ -8,7 +8,7 @@ class UpdateUserGroupRequest extends FormRequest
 {
     public function rules()
     {
-		$userGroupId = $this->route()->parameter('usergroups');
+		$userGroupId = $this->route()->getParameter('usergroups');
 
         return [
 			'name'             => "required|unique:user_groups,name,{$userGroupId}",

@@ -4,15 +4,13 @@ namespace Modules\Content\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateCompanyGroupRequest extends FormRequest
+class CreateCompanyRequest extends FormRequest
 {
     public function rules()
     {
         return [
-			'name'       => 'required|unique:company_groups',
+			'name'       => 'required|unique:companies',
 			'user_limit' => 'required',
-			'company_id' => 'required',
-			'skin_id'    => 'required',
         ];
     }
 

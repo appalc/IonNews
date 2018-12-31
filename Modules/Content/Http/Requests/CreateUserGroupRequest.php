@@ -9,7 +9,7 @@ class CreateUserGroupRequest extends FormRequest
     public function rules()
     {
         return [
-			'name'             => 'required|unique:usergroups',
+			'name'             => 'required|unique:user_groups',
 			'user_limit'       => 'required',
 			'company_group_id' => 'required',
 			'category_id'      => 'required',
