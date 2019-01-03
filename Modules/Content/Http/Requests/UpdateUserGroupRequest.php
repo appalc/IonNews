@@ -12,7 +12,7 @@ class UpdateUserGroupRequest extends FormRequest
 
         return [
 			'name'             => "required|unique:user_groups,name,{$userGroupId}",
-			'user_limit'       => 'required',
+		//	'user_limit'       => 'required',
 			'category_id'      => 'required',
 			'company_group_id' => 'required',
         ];

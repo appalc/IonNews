@@ -113,7 +113,9 @@ class UserGroupController extends AdminBaseController
 	*/
 	public function update(UpdateUserGroupRequest $request, $id)
 	{
-		if (!usergroup::find($id)->update($request->all())) {
+		$requestData                = $request->all();
+		$requestData['category_id'] = json_encode($request['category_id']);
+		if (!usergroup::find($id)->update($requestData)) {
 			return redirect()->route('admin.content.usergroup.edit', $id)->withError('Cannot update User Group, Please Try Again');
 		}
 
