@@ -53,10 +53,19 @@ class CompanyController extends AdminBaseController
 	*/
 	public function store(CreateCompanyRequest $request)
 	{
-		$this->company->create($request->all());
+		$requestData = $request->all();
 
-		return redirect()->route('admin.content.company.index')
-			->withSuccess('Company created', ['name' => 'Company']);
+		if ($request->hasFile('logo')) {
+			$imageName = $_FILES['logo']['name'];
+
+			$request->file('logo')->move(env('IMG_URL') . '\company_logo', $imageName);
+			
+			$requestData['logo'] = '/companyLogo/' . $imageName;
+		}
+
+		$this->company->create($requestData);
+
+		return redirect()->route('admin.content.company.index')->withSuccess('Company created', ['name' => 'Company']);
 	}
 
 	/**
@@ -83,12 +92,21 @@ class CompanyController extends AdminBaseController
 	*/
 	public function update(UpdateCompanyRequest $request, $companyId)
 	{
-		if (!company::find($companyId)->update($request->all())) {
-			return redirect()->route('admin.content.company.edit', $companyId)->withError('Cannot update Company, Please Try Again');
+		$requestData = $request->all();
+
+		if ($request->hasFile('logo')) {
+			$imageName = $_FILES['logo']['name'];
+
+			$request->file('logo')->move(env('IMG_URL') . '\company_logo', $imageName);
+			
+			$requestData['logo'] = "/companyLogo/{$imageName}";
 		}
 
-		return redirect()->route('admin.content.company.index')
-			->withSuccess('Company updated', ['name' => 'Company']);
+		if (!company::find($companyId)->update($requestData)) {
+			return redirect()->route('admin.content.company.edit', $companyId)->withError('Cannot update Company Info, Please Try Again');
+		}
+
+		return redirect()->route('admin.content.company.index')->withSuccess('Company updated', ['name' => 'Company']);
 	}
 
 	/**
@@ -101,7 +119,6 @@ class CompanyController extends AdminBaseController
 	{
 		$this->company->destroy($company);
 
-		return redirect()->route('admin.content.company.index')
-			->withSuccess('Company deleted', ['name' => 'Company']);
+		return redirect()->route('admin.content.company.index')->withSuccess('Company deleted', ['name' => 'Company']);
 	}
 }

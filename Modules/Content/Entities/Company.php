@@ -8,5 +8,5 @@ class Company extends Model
 {
 	protected $table             = 'companies';
 	public $translatedAttributes = [];
-	protected $fillable          = ['name', 'user_limit'];
+	protected $fillable          = ['name', 'user_limit', 'status', 'logo', 'created_by', 'updated_by'];
 }

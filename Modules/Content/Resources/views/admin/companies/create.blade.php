@@ -1,16 +1,16 @@
 @extends('layouts.master')
 
 @section('content-header')
-    <h1>New Company</h1>
-    <ol class="breadcrumb">
-        <li><a href="{{ URL::route('dashboard.index') }}"><i class="fa fa-dashboard"></i> {{ trans('core::core.breadcrumb.home') }}</a></li>
-        <li class=""><a href="{{ URL::route('admin.content.company.index') }}">Companies</a></li>
-        <li class="active">Company New</li>
-    </ol>
+	<h1>New Company</h1>
+	<ol class="breadcrumb">
+		<li><a href="{{ URL::route('dashboard.index') }}"><i class="fa fa-dashboard"></i> {{ trans('core::core.breadcrumb.home') }}</a></li>
+		<li class=""><a href="{{ URL::route('admin.content.company.index') }}">Companies</a></li>
+		<li class="active">New</li>
+	</ol>
 @stop
 
 @section('content')
-{!! Form::open(['route' => 'admin.content.company.store', 'method' => 'post']) !!}
+{!! Form::open(['route' => 'admin.content.company.store', 'method' => 'post', 'enctype' => 'multipart/form-data']) !!}
 <div class="row">
 	<div class="col-md-12">
 		<div class="nav-tabs-custom">
@@ -24,17 +24,13 @@
 									{!! Form::text('name', old('name'), ['class' => 'form-control', 'placeholder' => 'Name']) !!}
 									{!! $errors->first('name', '<span class="help-block">:message</span>') !!}
 								</div>
-							</div>
-							<div class="col-sm-4">
+
 								<div class="form-group{{ $errors->has('user_limit') ? ' has-error' : '' }}">
 									{!! Form::label('user_limit', 'User Limit') !!}
 									{!! Form::text('user_limit', old('user_limit'), ['class' => 'form-control', 'placeholder' => 'User Limit']) !!}
 									{!! $errors->first('user_limit', '<span class="help-block">:message</span>') !!}
 								</div>
-							</div>
-						</div>
-						<div class ="row">
-							<div class="col-sm-10">
+
 								<div class="form-group{{ $errors->has('status') ? ' has-error' : '' }}">
 									{!! Form::label('status', trans('Status')) !!}
 									&nbsp;&nbsp;
@@ -46,6 +42,24 @@
 									{!! Form::label('status', trans('Disable')) !!}
 									{!! Form::radio('status', 0,'0', ['class' => '']) !!}
 									{!! $errors->first('status', '<span class="help-block">:message</span>') !!}
+								</div>
+							</div>
+							<div class="col-sm-1">
+								{{ Form::hidden('created_by', \Auth::user()->id) }}
+							</div>
+							<div class="col-sm-6" style="border-left: 1px solid #cccccc;">
+								<div class="col-sm-6 custom_img">
+									<div class="form-group{{ $errors->has('image') ? ' has-error' : '' }}">
+										{!! Form::label('logo', 'Upload Logo') !!}
+										<input name="logo" type="file" onchange="previewFile()" id="img_changes">
+										{!! $errors->first('logo', '<span class ="help-block">:message</span>') !!}
+									</div>
+									<div>
+										<input type="button" class="btn btn-primary btn-flat reset_preview_image" value="Reset Image" onclick="restImageView()" >
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<img class="select_img" src="" onchange="previewFile()" width="120">
 								</div>
 							</div>
 						</div>
@@ -85,5 +99,30 @@
 			]
 		});
 	});
+
+	function restImageView()
+	{
+		$(".select_img").attr("src", "");
+		$("#img_changes").val("");
+	}
+
+	function previewFile()
+	{
+		$('input[name="image"]').prop('checked', false);
+		var preview = document.querySelector('img.select_img'); //selects the query named img
+		var file    = document.querySelector('input[type=file]').files[0]; //sames as here
+		var reader  = new FileReader();
+
+		reader.onloadend = function () {
+			preview.src = reader.result;
+		}
+
+		if (file) {
+			reader.readAsDataURL(file); //reads the data as a URL
+		} else {
+			preview.src = "";
+		}
+	}
+
 </script>
 @stop

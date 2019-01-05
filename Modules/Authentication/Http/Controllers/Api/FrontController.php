@@ -117,7 +117,7 @@ class FrontController extends BasePublicController
 
 	public function getCompanyInfo($userId)
 	{
-		return DB::table('users as usr')
+		$companyInfo = DB::table('users as usr')
 			->join('user_groups as ug', 'ug.id', '=', 'usr.user_group_id')
 			->join('company_groups as cg', 'cg.id', '=', 'ug.company_group_id')
 			->join('skins as skn', 'skn.id', '=', 'cg.skin_id')
@@ -129,13 +129,37 @@ class FrontController extends BasePublicController
 				'cg.name as companyGroupName',
 				'com.id as companyId',
 				'com.name as companyName',
+				'com.logo as companyLogo',
 				'skn.id as skinId',
 				'skn.name as skinName',
 				'skn.color as skinColor',
-				'skn.font as skinfont'
+				'skn.highlight_color as skinHighlightColor',
+				'skn.font as skinFont',
+				'skn.font_size as skinFontSize'
 			)
 			->where('usr.id', '=', $userId)
 			->get();
+
+		if (!empty($companyInfo['companyLogo'])) {
+			$companyInfo['companyLogo'] = env('IMG_URL1') . $companyInfo['companyLogo'];
+		}
+
+		return $companyInfo;
+	}
+
+	public function userSkinInfo(Request $request)
+	{
+		$validator = Validator::make($request->all(), [
+			'user_id' => 'required'
+		]);
+
+		if ($validator->fails()) {
+			$this->response->setContent(['message' => 'user_id id required']);
+
+			return $this->response->setStatusCode(400, 'User id required');
+		}
+
+		return response($this->getCompanyInfo($request->user_id))->header('Content-Type', 'application/json');
 	}
 
 	public function forgotpassword(Request $request)
