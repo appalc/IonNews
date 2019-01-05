@@ -44,7 +44,9 @@
 									<a href="{{ URL::route('admin.content.company.edit', [$company->id]) }}"> {{ $company->name }} </a>
 								</td>
 								<td>
-									<a href="{{ URL::route('admin.content.company.edit', [$company->id]) }}"> {{ $company->status }} </a>
+									<a href="{{ URL::route('admin.content.company.edit', [$company->id]) }}">
+										{{ ($company->status) ? 'Enabled' : 'Disabled' }}
+									</a>
 								</td>
 								<td>
 									<a href="{{ URL::route('admin.content.company.edit', [$company->id]) }}"> {{ $company->user_limit }} </a>

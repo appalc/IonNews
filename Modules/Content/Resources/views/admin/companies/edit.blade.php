@@ -49,7 +49,7 @@
 							<div class="col-sm-6">
 								<div class="col-sm-6" style="border-left: 1px solid #cccccc;">
 									<div class="col-sm-6 custom_img">
-										<div class="form-group{{ $errors->has('image') ? ' has-error' : '' }}">
+										<div class="form-group{{ $errors->has('logo') ? ' has-error' : '' }}">
 											{!! Form::label('logo', 'Upload Logo') !!}
 											<input name="logo" type="file" onchange="previewFile()" id="img_changes">
 											{!! $errors->first('logo', '<span class ="help-block">:message</span>') !!}
@@ -108,7 +108,7 @@
 
 	function previewFile()
 	{
-		$('input[name="image"]').prop('checked', false);
+		$('input[name="logo"]').prop('checked', false);
 		var preview = document.querySelector('img.select_img'); //selects the query named img
 		var file    = document.querySelector('input[type=file]').files[0]; //sames as here
 		var reader  = new FileReader();
