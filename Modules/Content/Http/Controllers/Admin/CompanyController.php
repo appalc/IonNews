@@ -42,7 +42,9 @@ class CompanyController extends AdminBaseController
 	*/
 	public function create()
 	{
-		return view('content::admin.companies.create');
+		$currentUser = $this->auth->user();
+
+		return view('content::admin.companies.create', compact('currentUser'));
 	}
 
 	/**
@@ -80,7 +82,9 @@ class CompanyController extends AdminBaseController
 			return redirect()->route('admin.content.company.index')->withError('Company not found');
 		}
 
-		return view('content::admin.companies.edit', compact('company'));
+		$currentUser = $this->auth->user();
+
+		return view('content::admin.companies.edit', compact('company', 'currentUser'));
 	}
 
 	/**

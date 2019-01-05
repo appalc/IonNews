@@ -44,7 +44,7 @@
 									{!! $errors->first('status', '<span class="help-block">:message</span>') !!}
 								</div>
 
-								<div>{{ Form::hidden('updated_by', \Auth::user()->id) }}</div>
+								<div>{{ Form::hidden('updated_by', $currentUser->id) }}</div>
 							</div>
 							<div class="col-sm-6">
 								<div class="col-sm-6" style="border-left: 1px solid #cccccc;">
