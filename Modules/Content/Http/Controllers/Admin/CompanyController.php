@@ -9,17 +9,19 @@ use Modules\Content\Repositories\CompanyRepository;
 use Modules\Core\Http\Controllers\Admin\AdminBaseController;
 use Modules\Content\Http\Requests\CreateCompanyRequest;
 use Modules\Content\Http\Requests\UpdateCompanyRequest;
+use Modules\User\Contracts\Authentication;
 class CompanyController extends AdminBaseController
 {
 	/**
 	* @var CompanyRepository
 	*/
 	private $company;
-	
-	public function __construct(CompanyRepository $company)
+
+	public function __construct(CompanyRepository $company, Authentication $auth)
 	{
 		parent::__construct();
 
+		$this->auth    = $auth;
 		$this->company = $company;
 	}
 
