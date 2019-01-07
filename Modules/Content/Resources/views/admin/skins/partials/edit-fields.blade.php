@@ -35,7 +35,7 @@
 			</div>
 		</div>
 		<div class="col-sm-1">
-			{{ Form::hidden('created_by', \Auth::user()->id) }}
+			{{ Form::hidden('created_by', $currentUser->id) }}
 		</div>
 	</div>
 </div>

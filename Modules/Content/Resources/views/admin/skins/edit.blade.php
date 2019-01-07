@@ -1,13 +1,11 @@
 @extends('layouts.master')
 
 @section('content-header')
-    <h1>
-        {{ trans('content::skins.title.edit skin') }}
-    </h1>
+    <h1>Edit Skin</h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('dashboard.index') }}"><i class="fa fa-dashboard"></i> {{ trans('core::core.breadcrumb.home') }}</a></li>
-        <li><a href="{{ route('admin.content.skin.index') }}">{{ trans('content::skins.title.skins') }}</a></li>
-        <li class="active">{{ trans('content::skins.title.edit skin') }}</li>
+        <li><a href="{{ route('admin.content.skin.index') }}">Skin</a></li>
+        <li class="active">Edit</li>
     </ol>
 @stop
 

@@ -1,12 +1,10 @@
 @extends('layouts.master')
 
 @section('content-header')
-    <h1>
-        {{ trans('content::skins.title.skins') }}
-    </h1>
+    <h1>Skins </h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('dashboard.index') }}"><i class="fa fa-dashboard"></i> {{ trans('core::core.breadcrumb.home') }}</a></li>
-        <li class="active">{{ trans('content::skins.title.skins') }}</li>
+        <li class="active">Skin</li>
     </ol>
 @stop
 
@@ -16,7 +14,7 @@
             <div class="row">
                 <div class="btn-group pull-right" style="margin: 0 15px 15px 0;">
                     <a href="{{ route('admin.content.skin.create') }}" class="btn btn-primary btn-flat" style="padding: 4px 10px;">
-                        <i class="fa fa-pencil"></i> {{ trans('content::skins.button.create skin') }}
+                        <i class="fa fa-pencil"></i> Skins
                     </a>
                 </div>
             </div>
