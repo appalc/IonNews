@@ -19,6 +19,12 @@ return [
 		'edit'    => 'content::usergroups.edit resource',
 		'destroy' => 'content::usergroups.destroy resource',
 	],
+	'skins' => [
+		'index'   => 'List Skins',
+		'create'  => 'Create Skin',
+		'edit'    => 'Update Skin',
+		'destroy' => 'Delete Skin',
+	],
 
     'content.contents' => [
         'index' => 'content::contents.list resource',

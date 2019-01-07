@@ -57,7 +57,9 @@ use Illuminate\Support\Arr;
 								</td>
 								<td>
 									<a href="{{ URL::route('admin.content.usergroup.edit', [$usergroup->id]) }}">
-										<?php foreach (json_decode($usergroup->category_id, true) as $key => $categoryId) {
+										<?php
+										$groupCategories = !empty($usergroup->category_id) ? json_decode($usergroup->category_id, true) : [];
+										foreach ($groupCategories as $key => $categoryId) {
 											if ($key > 0) { echo ', '; }
 										?>
 											{{ Arr::get($categories, $categoryId, '') }}

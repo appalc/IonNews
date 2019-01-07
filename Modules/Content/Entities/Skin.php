@@ -8,5 +8,11 @@ class Skin extends Model
 {
 	protected $table             = 'skins';
 	public $translatedAttributes = [];
-	protected $fillable          = [];
+	protected $fillable          = [
+		'name',
+		'color',
+		'highlight_color',
+		'font',
+		'font_size',
+	];
 }

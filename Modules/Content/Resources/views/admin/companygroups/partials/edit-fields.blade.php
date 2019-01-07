@@ -2,7 +2,7 @@
 	<div class="row">
 		<div class="col-sm-4">
 			<div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
-				{!! Form::label('name', 'User Group name') !!}
+				{!! Form::label('name', 'Name') !!}
 				{!! Form::text('name', old('name', $companygroup->name), ['class' => 'form-control', 'placeholder' => 'Name']) !!}
 				{!! $errors->first('name', '<span class="help-block">:message</span>') !!}
 			</div>

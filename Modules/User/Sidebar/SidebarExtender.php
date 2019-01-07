@@ -61,6 +61,16 @@ class SidebarExtender implements \Maatwebsite\Sidebar\SidebarExtender
 					$item->route('admin.content.usergroup.index');
 					$item->authorize($this->auth->hasAccess('usergroups.index'));
 				});
+
+				$item->item('Skin', function (Item $item) {
+					$item->weight(1);
+					$item->icon('fa fa-group');
+					$item->weight(0);
+					$item->append('admin.content.skin.create');
+					$item->route('admin.content.skin.index');
+					$item->authorize($this->auth->hasAccess('skins.index'));
+				});
+
 			});
 		});
 

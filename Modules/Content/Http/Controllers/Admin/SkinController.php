@@ -12,91 +12,94 @@ use Modules\Core\Http\Controllers\Admin\AdminBaseController;
 
 class SkinController extends AdminBaseController
 {
-    /**
-     * @var SkinRepository
-     */
-    private $skin;
+	/**
+	 * @var SkinRepository
+	 */
+	private $skin;
 
-    public function __construct(SkinRepository $skin)
-    {
-        parent::__construct();
+	public function __construct(SkinRepository $skin)
+	{
+	    parent::__construct();
 
-        $this->skin = $skin;
-    }
+	    $this->skin = $skin;
+	}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
-    public function index()
-    {
-        //$skins = $this->skin->all();
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return Response
+	 */
+	public function index()
+	{
+		$skins = $this->skin->all();
 
-        return view('content::admin.skins.index', compact(''));
-    }
+		return view('content::admin.skins.index', compact('skins'));
+	}
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        return view('content::admin.skins.create');
-    }
+	/**
+	 * Show the form for creating a new resource.
+	 *
+	 * @return Response
+	 */
+	public function create()
+	{
+		return view('content::admin.skins.create');
+	}
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  CreateSkinRequest $request
-     * @return Response
-     */
-    public function store(CreateSkinRequest $request)
-    {
-        $this->skin->create($request->all());
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  CreateSkinRequest $request
+	 * @return Response
+	 */
+	public function store(CreateSkinRequest $request)
+	{
+		$this->skin->create($request->all());
 
-        return redirect()->route('admin.content.skin.index')
-            ->withSuccess(trans('core::core.messages.resource created', ['name' => trans('content::skins.title.skins')]));
-    }
+		return redirect()->route('admin.content.skin.index')->withSuccess('Skin created', ['name' => 'Skin']);
+	}
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  Skin $skin
-     * @return Response
-     */
-    public function edit(Skin $skin)
-    {
-        return view('content::admin.skins.edit', compact('skin'));
-    }
+	/**
+	 * Show the form for editing the specified resource.
+	 *
+	 * @param  Integer $skinId
+	 * @return Response
+	 */
+	public function edit($skinId)
+	{
+		if (!$skin = $this->skin->find($skinId)) {
+			return redirect()->route('admin.content.skin.index')->withError('Skin not found');
+		}
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  Skin $skin
-     * @param  UpdateSkinRequest $request
-     * @return Response
-     */
-    public function update(Skin $skin, UpdateSkinRequest $request)
-    {
-        $this->skin->update($skin, $request->all());
+		return view('content::admin.skins.edit', compact('skin'));
+	}
 
-        return redirect()->route('admin.content.skin.index')
-            ->withSuccess(trans('core::core.messages.resource updated', ['name' => trans('content::skins.title.skins')]));
-    }
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  UpdateSkinRequest $request
+	 * @param  Integer           $id
+	 * @return Response
+	 */
+	public function update(UpdateSkinRequest $request, $id)
+	{
+		if (!skin::find($id)->update($request->all())) {
+			return redirect()->route('admin.content.skin.edit', $id)->withError('Cannot update Skin Info, Please Try Again');
+		}
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  Skin $skin
-     * @return Response
-     */
-    public function destroy(Skin $skin)
-    {
-        $this->skin->destroy($skin);
+		return redirect()->route('admin.content.skin.index')->withSuccess('Skin updated', ['name' => 'Skin']);
+	}
 
-        return redirect()->route('admin.content.skin.index')
-            ->withSuccess(trans('core::core.messages.resource deleted', ['name' => trans('content::skins.title.skins')]));
-    }
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  Skin $skin
+	 * @return Response
+	 */
+	public function destroy(Skin $skin)
+	{
+		$this->skin->destroy($skin);
+		
+		return redirect()->route('admin.content.skin.index')->withSuccess('Skin Deleted', ['name' => 'Skin']);
+	}
 }

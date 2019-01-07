@@ -29,19 +29,27 @@
                         <table class="data-table table table-bordered table-hover">
                             <thead>
                             <tr>
-                                <th>{{ trans('core::core.table.created at') }}</th>
-                                <th data-sortable="false">{{ trans('core::core.table.actions') }}</th>
+								<td>Id</td>
+								<th>Name</th>
+								<th>Color</th>
+								<th>Highlight Color</th>
+								<th>Font</th>
+								<th>Font Size</th>
+								<th>{{ trans('core::core.table.created at') }}</th>
+								<th data-sortable="false">{{ trans('user::users.table.actions') }}</th>
                             </tr>
                             </thead>
                             <tbody>
                             <?php if (isset($skins)): ?>
                             <?php foreach ($skins as $skin): ?>
                             <tr>
-                                <td>
-                                    <a href="{{ route('admin.content.skin.edit', [$skin->id]) }}">
-                                        {{ $skin->created_at }}
-                                    </a>
-                                </td>
+								<td> <a href="{{ URL::route('admin.content.skin.edit', [$skin->id]) }}"> {{ $skin->id }} </a> </td>
+								<td> <a href="{{ URL::route('admin.content.skin.edit', [$skin->id]) }}"> {{ $skin->name }} </a> </td>
+								<td> <a href="{{ URL::route('admin.content.skin.edit', [$skin->id]) }}"> {{ $skin->color }} </a> </td>
+								<td> <a href="{{ URL::route('admin.content.skin.edit', [$skin->id]) }}"> {{ $skin->highlight_color }} </a> </td>
+								<td> <a href="{{ URL::route('admin.content.skin.edit', [$skin->id]) }}"> {{ $skin->font }} </a> </td>
+								<td> <a href="{{ URL::route('admin.content.skin.edit', [$skin->id]) }}"> {{ $skin->font_size }} </a> </td>
+								<td> <a href="{{ URL::route('admin.content.skin.edit', [$skin->id]) }}"> {{ $skin->created_at }} </a> </td>
                                 <td>
                                     <div class="btn-group">
                                         <a href="{{ route('admin.content.skin.edit', [$skin->id]) }}" class="btn btn-default btn-flat"><i class="fa fa-pencil"></i></a>

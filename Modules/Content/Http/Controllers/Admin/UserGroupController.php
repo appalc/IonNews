@@ -82,7 +82,10 @@ class UserGroupController extends AdminBaseController
 	*/
 	public function store(CreateUserGroupRequest $request)
 	{
-		$this->usergroup->create($request->all());
+		$requestData                = $request->all();
+		$requestData['category_id'] = json_encode($request['category_id']);
+
+		$this->usergroup->create($requestData);
 
 		return redirect()->route('admin.content.usergroup.index')
 		->withSuccess(trans('core::core.messages.resource created', ['name' => trans('content::usergroups.title.usergroups')]));

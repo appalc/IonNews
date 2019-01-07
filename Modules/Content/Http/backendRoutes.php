@@ -455,6 +455,41 @@ $router->group(['prefix' =>'/content'], function (Router $router) {
 		'uses'       => 'UserGroupController@destroy',
 		'middleware' => 'can:usergroups.destroy'
 	]);
+
+	// Skin Related routes
+	$router->bind('skin', function ($id) {
+		return app('Modules\Content\Repositories\SkinRepository')->find($id);
+	});
+	$router->get('skins', [
+		'as'         => 'admin.content.skin.index',
+		'uses'       => 'SkinController@index',
+		'middleware' => 'can:skins.index'
+	]);
+	$router->get('skins/create', [
+		'as' => 'admin.content.skin.create',
+		'uses' => 'SkinController@create',
+		'middleware' => 'can:skins.create'
+	]);
+	$router->post('skins', [
+		'as'         => 'admin.content.skin.store',
+		'uses'       => 'SkinController@store',
+		'middleware' => 'can:skins.create'
+	]);
+	$router->get('skins/{skins}/edit', [
+		'as'         => 'admin.content.skin.edit',
+		'uses'       => 'SkinController@edit',
+		'middleware' => 'can:skins.edit'
+	]);
+	$router->put('skins/{skins}', [
+		'as'         => 'admin.content.skin.update',
+		'uses'       => 'SkinController@update',
+		'middleware' => 'can:skins.edit'
+	]);
+	$router->delete('skins/{skin}', [
+		'as'         => 'admin.content.skin.destroy',
+		'uses'       => 'SkinController@destroy',
+		'middleware' => 'can:skins.destroy'
+	]);
 // append
 
 
