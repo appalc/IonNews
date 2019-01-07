@@ -17,6 +17,11 @@ class CompanyController extends AdminBaseController
 	*/
 	private $company;
 
+	/**
+	* @var Authentication
+	*/
+	private $auth;
+
 	public function __construct(CompanyRepository $company, Authentication $auth)
 	{
 		parent::__construct();

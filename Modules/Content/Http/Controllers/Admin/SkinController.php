@@ -9,6 +9,7 @@ use Modules\Content\Http\Requests\CreateSkinRequest;
 use Modules\Content\Http\Requests\UpdateSkinRequest;
 use Modules\Content\Repositories\SkinRepository;
 use Modules\Core\Http\Controllers\Admin\AdminBaseController;
+use Modules\User\Contracts\Authentication;
 
 class SkinController extends AdminBaseController
 {
@@ -17,11 +18,17 @@ class SkinController extends AdminBaseController
 	 */
 	private $skin;
 
-	public function __construct(SkinRepository $skin)
-	{
-	    parent::__construct();
+	/**
+	* @var Authentication
+	*/
+	private $auth;
 
-	    $this->skin = $skin;
+	public function __construct(SkinRepository $skin, Authentication $auth)
+	{
+		parent::__construct();
+
+		$this->auth = $auth;
+		$this->skin = $skin;
 	}
 
 	/**
@@ -43,7 +50,9 @@ class SkinController extends AdminBaseController
 	 */
 	public function create()
 	{
-		return view('content::admin.skins.create');
+		$currentUser = $this->auth->user();
+
+		return view('content::admin.skins.create', compact('currentUser'));
 	}
 
 	/**
@@ -71,7 +80,9 @@ class SkinController extends AdminBaseController
 			return redirect()->route('admin.content.skin.index')->withError('Skin not found');
 		}
 
-		return view('content::admin.skins.edit', compact('skin'));
+		$currentUser = $this->auth->user();
+
+		return view('content::admin.skins.edit', compact('skin', 'currentUser'));
 	}
 
 	/**
