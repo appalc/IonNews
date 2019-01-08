@@ -11,7 +11,9 @@ class CreateSkinRequest extends BaseFormRequest
 		return [
 			'name'            => 'required|unique:companies',
 			'color'           => 'required',
+			'color_code'      => 'required',
 			'highlight_color' => 'required',
+			'hi_color_code'   => 'required',
 			'font'            => 'required',
 			'font_size'       => 'required',
 		];

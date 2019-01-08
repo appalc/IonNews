@@ -13,10 +13,22 @@
 				{!! $errors->first('color', '<span class="help-block">:message</span>') !!}
 			</div>
 
+			<div class="col-sm-6 form-group{{ $errors->has('color_code') ? ' has-error' : '' }}">
+				{!! Form::label('color_code', 'Color Code') !!}
+				{!! Form::text('color_code', old('color_code'), ['class' => 'form-control', 'placeholder' => 'Color Code']) !!}
+				{!! $errors->first('color_code', '<span class="help-block">:message</span>') !!}
+			</div>
+
 			<div class="col-sm-6 form-group{{ $errors->has('highlight_color') ? ' has-error' : '' }}">
 				{!! Form::label('highlight_color', 'Highlight Color') !!}
 				{!! Form::text('highlight_color', old('highlight_color'), ['class' => 'form-control', 'placeholder' => 'Highlight Color']) !!}
 				{!! $errors->first('highlight_color', '<span class="help-block">:message</span>') !!}
+			</div>
+
+			<div class="col-sm-6 form-group{{ $errors->has('hi_color_code') ? ' has-error' : '' }}">
+				{!! Form::label('hi_color_code', 'Highlight Color Code') !!}
+				{!! Form::text('hi_color_code', old('hi_color_code'), ['class' => 'form-control', 'placeholder' => 'Highlight Color Code']) !!}
+				{!! $errors->first('hi_color_code', '<span class="help-block">:message</span>') !!}
 			</div>
 
 			<div class="col-sm-6 form-group{{ $errors->has('font') ? ' has-error' : '' }}">

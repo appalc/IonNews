@@ -11,7 +11,9 @@ class Skin extends Model
 	protected $fillable          = [
 		'name',
 		'color',
+		'color_code',
 		'highlight_color',
+		'hi_color_code',
 		'font',
 		'font_size',
 	];
