@@ -16,7 +16,7 @@
 @stop
 
 @section('content')
-    {!! Form::open(['route' => ['admin.content.category.update', $category->id], 'method' => 'put']) !!}
+    {!! Form::open(['route' => ['admin.content.category.update', $category->id], 'method' => 'put', 'enctype' => 'multipart/form-data']) !!}
     <div class="row">
         <div class="col-md-12">
             <div class="nav-tabs-custom">
