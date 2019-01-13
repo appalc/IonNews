@@ -45,7 +45,7 @@
 				</div>
 			</div>
 			<div class="col-sm-6">
-				<?php $iconUrl = !empty ($category->icon) ? env('IMG_BASE_URL') . $category->icon : ''; ?>
+				<?php $iconUrl = !empty ($category->icon) ? env('IMG_URL1') . $category->icon : ''; ?>
 				<img class="select_img" src="{{ $iconUrl }}" onchange="previewFile()" width="120">
 			</div>
 		</div>
