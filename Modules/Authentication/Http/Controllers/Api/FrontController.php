@@ -133,7 +133,9 @@ class FrontController extends BasePublicController
 				'skn.id as skinId',
 				'skn.name as skinName',
 				'skn.color as skinColor',
+				'skn.color_code as skinColorCode',
 				'skn.highlight_color as skinHighlightColor',
+				'skn.hi_color_code as skinHighlightColorCode',
 				'skn.font as skinFont',
 				'skn.font_size as skinFontSize'
 			)

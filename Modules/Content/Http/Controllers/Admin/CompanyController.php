@@ -67,9 +67,9 @@ class CompanyController extends AdminBaseController
 		if ($request->hasFile('logo')) {
 			$imageName = $_FILES['logo']['name'];
 
-			$request->file('logo')->move(env('IMG_URL') . '\company_logo', $imageName);
-			
-			$requestData['logo'] = '/companyLogo/' . $imageName;
+			$request->file('logo')->move(env('IMG_URL') . '/company_logo', $imageName);
+
+			$requestData['logo'] = '/company_logo/' . $imageName;
 		}
 
 		$this->company->create($requestData);
@@ -108,9 +108,9 @@ class CompanyController extends AdminBaseController
 		if ($request->hasFile('logo')) {
 			$imageName = $_FILES['logo']['name'];
 
-			$request->file('logo')->move(env('IMG_URL') . '\company_logo', $imageName);
+			$request->file('logo')->move(env('IMG_URL') . '/company_logo', $imageName);
 			
-			$requestData['logo'] = "/companyLogo/{$imageName}";
+			$requestData['logo'] = "/company_logo/{$imageName}";
 		}
 
 		if (!company::find($companyId)->update($requestData)) {
