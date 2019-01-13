@@ -60,7 +60,31 @@
                 ]
             });
         });
-    </script>
+
+		function restImageView()
+		{
+			$(".select_img").attr("src", "");
+			$("#img_changes").val("");
+		}
+
+		function previewFile()
+		{
+			$('input[name="image"]').prop('checked', false);
+			var preview = document.querySelector('img.select_img'); //selects the query named img
+			var file    = document.querySelector('input[type=file]').files[0]; //sames as here
+			var reader  = new FileReader();
+
+			reader.onloadend = function () {
+				preview.src = reader.result;
+			}
+
+			if (file) {
+				reader.readAsDataURL(file); //reads the data as a URL
+			} else {
+				preview.src = "";
+			}
+		}
+	</script>
     <script>
         $( document ).ready(function() {
             $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({

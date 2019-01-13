@@ -53,53 +53,72 @@ class CategoryController extends AdminBaseController
         return view('content::admin.categories.create', compact('categories_size'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  CreateCategoryRequest $request
-     * @return Response
-     */
-    public function store(CreateCategoryRequest $request)
-    {
-         $find_all_priority=$this->category->getAllPriority('priority',$request->priority);     
-          if(sizeof($find_all_priority)){
-            Log::info($find_all_priority);
-          foreach ($find_all_priority as $key => $value) { 
-              $details=$this->category->updatePriority($value['id'],$value['priority']+1);              
-          }
-      }
+	/**
+	* Store a newly created resource in storage.
+	*
+	* @param  CreateCategoryRequest $request
+	* @return Response
+	*/
+	public function store(CreateCategoryRequest $request)
+	{
+		$find_all_priority = $this->category->getAllPriority('priority', $request->priority);
+		if (sizeof($find_all_priority)) {
+			foreach ($find_all_priority as $key => $value) {
+				$details = $this->category->updatePriority($value['id'], ($value['priority'] + 1));
+			}
+		}
 
-        $this->category->create($request->all());
+		$requestData = $request->all();
 
-        return redirect()->route('admin.content.category.index')
-            ->withSuccess(trans('core::core.messages.resource created', ['name' => trans('content::categories.title.categories')]));
-    }
+		if ($request->hasFile('icon')) {
+			$imageName = $_FILES['icon']['name'];
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  Category $category
-     * @return Response
-     */
-    public function edit(Category $category)
-    { Log::info($category);
-        return view('content::admin.categories.edit', compact('category'));
-    }
+			$request->file('icon')->move(env('IMG_URL') . '/category_icons', $imageName);
+			
+			$requestData['icon'] = "/category_icons/{$imageName}";
+		}
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  Category $category
-     * @param  UpdateCategoryRequest $request
-     * @return Response
-     */
-    public function update(Category $category, UpdateCategoryRequest $request)
-    {
-        $this->category->update($category, $request->all());
+		$this->category->create($requestData);
 
-        return redirect()->route('admin.content.category.index')
-            ->withSuccess(trans('core::core.messages.resource updated', ['name' => trans('content::categories.title.categories')]));
-    }
+		return redirect()->route('admin.content.category.index')
+			->withSuccess(trans('core::core.messages.resource created', ['name' => trans('content::categories.title.categories')]));
+	}
+
+	/**
+	* Show the form for editing the specified resource.
+	*
+	* @param  Category $category
+	* @return Response
+	*/
+	public function edit(Category $category)
+	{
+		return view('content::admin.categories.edit', compact('category'));
+	}
+
+	/**
+	* Update the specified resource in storage.
+	*
+	* @param  Category $category
+	* @param  UpdateCategoryRequest $request
+	* @return Response
+	*/
+	public function update(Category $category, UpdateCategoryRequest $request)
+	{
+		$requestData = $request->all();
+
+		if ($request->hasFile('icon')) {
+			$imageName = $_FILES['icon']['name'];
+
+			$request->file('icon')->move(env('IMG_URL') . '/category_icons', $imageName);
+			
+			$requestData['icon'] = "/category_icons/{$imageName}";
+		}
+
+		$this->category->update($category, $requestData);
+
+		return redirect()->route('admin.content.category.index')
+			->withSuccess(trans('core::core.messages.resource updated', ['name' => trans('content::categories.title.categories')]));
+	}
 
     /**
      * Remove the specified resource from storage.
@@ -114,17 +133,13 @@ class CategoryController extends AdminBaseController
         return redirect()->route('admin.content.category.index')
             ->withSuccess(trans('core::core.messages.resource deleted', ['name' => trans('content::categories.title.categories')]));
     }
-    public function update_priority(Request $request)
-    {
-       $priorityData=$_POST['url'];
-       print_r($priorityData);
-       foreach ($priorityData as $key => $value) {
-        DB::table('content__categories')
-            ->where('id', $key)
-            ->update(['priority' => $value]);
-           
-       }
-       
-    }
+
+	public function update_priority(Request $request)
+	{
+		$priorityData = $_POST['url'];
+		foreach ($priorityData as $key => $value) {
+			DB::table('categories')->where('id', $key)->update(['priority' => $value]);
+		}
+	}
 
 }

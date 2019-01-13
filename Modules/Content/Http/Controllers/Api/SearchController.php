@@ -52,7 +52,7 @@ class SearchController extends BasePublicController
 	public function categoryAndTaglist(Request $request, Client $http)
 	{
 		return [
-			'category' => DB::table('content__categories')->select('id', 'name', 'slug_name')->where('status', '=', 1)->get(),
+			'category' => DB::table('categories')->select('id', 'name', 'slug_name')->where('status', '=', 1)->get(),
 			'tag'      => collect($this->content->extractTags())->map(function($tag) {
 				$parsedTag = str_replace('#', ',', $tag->tags);
 				$parsedTag = str_replace(' ,', ',', $parsedTag);
@@ -114,7 +114,7 @@ class SearchController extends BasePublicController
 
 		foreach ($dataset as $key => $value) {
 			$allCategory     = json_decode($value->all_category, true);
-			$primaryCategory = DB::table('content__categories')->where('id', '=', $allCategory[0])->first();
+			$primaryCategory = DB::table('categories')->where('id', '=', $allCategory[0])->first();
 			$categoryName    = $primaryCategory->name;
 
 			$value->category_id = $primaryCategory->id;
