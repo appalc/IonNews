@@ -229,7 +229,7 @@ class StoryController extends BasePublicController
 	public function getAllLikeStory(Request $request)
 	{
 		$current_date = date('Y-m-d');      
-		$dataset      = DB::table('content__contents as cc')
+		$dataset      = DB::table('stories as cc')
 			->join('content__contentlikestories as ccl', 'cc.id', '=', 'ccl.content_id')
 			->select('cc.*' )
 			->where('cc.expiry_date', '>=', $current_date)
@@ -246,7 +246,7 @@ class StoryController extends BasePublicController
 	public function move_to_archive(Request $request)
 	{
 		$current_date = date('Y-m-d');
-		$exipre_story = DB::table('content__contents')
+		$exipre_story = DB::table('stories')
 							->where('expiry_date', '<', $current_date)
 							->orderBy('id', 'desc')
 							->get();
@@ -257,7 +257,7 @@ class StoryController extends BasePublicController
 		$cat[]       = $category_id;
 
 		foreach ($exipre_story as $key => $value) {
-			DB::table('content__contents')
+			DB::table('stories')
 				->where('id', $value->id)
 				->update(['category_id' => $category_id, 'all_category' => json_encode($cat)]);
 
@@ -274,7 +274,7 @@ class StoryController extends BasePublicController
 	public function updateDatabase(Request $request)
 	{
 		$current_date = date('Y-m-d');
-		$exipre_story = DB::table('content__contents')
+		$exipre_story = DB::table('stories')
 							->where('expiry_date', '<', $current_date)
 							->orderBy('id', 'desc')
 							->get();
@@ -286,7 +286,7 @@ class StoryController extends BasePublicController
 		$category_id = $categories[0]->id;
 		$cat[]       = $category_id;
 		foreach ($exipre_story as $key => $value) {
-			DB::table('content__contents')
+			DB::table('stories')
 				->where('id', $value->id)
 				->update(['category_id' => $category_id, 'all_category' => json_encode($cat)]);
 

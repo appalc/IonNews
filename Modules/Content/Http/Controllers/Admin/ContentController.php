@@ -28,21 +28,23 @@ use DB;
 
 class ContentController extends AdminBaseController
 {
-    /**
-     * @var ContentRepository
-     */
-    private $content;
 
-    public function __construct(ContentRepository $content,CategoryRepository $category,ContentUserRepository $contentUser , MultipleCategoryContentRepository $multiContCategory,RoleRepository $role , UserGroupRepository $userGroup)
-    {
-        parent::__construct();
-        $this->category = $category;
-        $this->content = $content;  
-        $this->contentUser=$contentUser;
-        $this->multiContCategory=$multiContCategory;
-        $this->role=$role;
-        $this->userGroup=$userGroup;
-    }
+	/**
+	* @var ContentRepository
+	*/
+	private $content;
+
+	public function __construct(ContentRepository $content, CategoryRepository $category, ContentUserRepository $contentUser, MultipleCategoryContentRepository $multiContCategory,RoleRepository $role, UserGroupRepository $userGroup)
+	{
+		parent::__construct();
+
+		$this->category          = $category;
+		$this->content           = $content;  
+		$this->contentUser       = $contentUser;
+		$this->multiContCategory = $multiContCategory;
+		$this->role              = $role;
+		$this->userGroup         = $userGroup;
+	}
 
 	/**
 	* Display a listing of the resource.
@@ -51,45 +53,38 @@ class ContentController extends AdminBaseController
 	*/
 	public function index()
 	{
-	//	$data = DB::table('content__contents')->whereIn('id', [181, 182, 183, 184])->delete();
-
 		$categories = $this->category->getByAttributes(['status' => 1]);
-		// Log::info(json_decode($categories,true));
-		$contents = $this->content->all();
-		// Log::info(json_decode($contents,true)); die;
+		$contents   = $this->content->all();
 
-		return view('content::admin.contents.index', compact('contents','categories'));
+		return view('content::admin.contents.index', compact('contents', 'categories'));
 	}
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        $categories = $this->category->getByAttributes(['status' => 1],'priority','desc');
-        foreach ($categories as $key => $value) {
-          if($value->slug_name=='archive')
-            unset($categories[$key]);         
-        }
+	/**
+	* Show the form for creating a new resource.
+	*
+	* @return Response
+	*/
+	public function create()
+	{
+		$categories = $this->category->getByAttributes(['status' => 1], 'priority', 'desc');
+		foreach ($categories as $key => $value) {
+			if ($value->slug_name == 'archive')
+				unset($categories[$key]);         
+		}
 
-        $roles=json_decode($this->role->all());          
-          $user_roles[-1]['id']=-1;       
-          $user_roles[-1]['type']='All';
-                       
-          foreach ($roles as $value) { 
-          if($value->name!='Admin')
-          {                
-          $user_roles[$value->id]['id']=$value->id;        
-          $user_roles[$value->id]['type']=$value->name;
-        
-          }
-         }  
-             
+		$roles                  = json_decode($this->role->all());
+		$user_roles[-1]['id']   = -1;
+		$user_roles[-1]['type'] = 'All';
 
-        return view('content::admin.contents.create',compact('categories'),compact('user_roles'));
-    }
+		foreach ($roles as $value) {
+			if($value->name !='Admin') {
+				$user_roles[$value->id]['id']   = $value->id;
+				$user_roles[$value->id]['type'] = $value->name;
+			}
+		}
+
+		return view('content::admin.contents.create', compact('categories'), compact('user_roles'));
+	}
 
 	/**
 	* TO crawl information from a url
@@ -503,296 +498,281 @@ class ContentController extends AdminBaseController
             ->withSuccess(trans('core::core.messages.resource updated', ['name' => trans('content::contents.title.contents')]));
 	}
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  Content $content
-     * @return Response
-     */
-    public function destroy(Content $content)
-    {
-        $this->content->destroy($content);
+	/**
+	* Remove the specified resource from storage.
+	*
+	* @param  Content $content
+	* @return Response
+	*/
+	public function destroy(Content $content)
+	{
+		$this->content->destroy($content);
 
-        return redirect()->route('admin.content.content.index')
-            ->withSuccess(trans('core::core.messages.resource deleted', ['name' => trans('content::contents.title.contents')]));
-    }
-    public function getAllUsers(Request $request)
-    {   
-            
-         $users =json_decode(User::all(),true);
-         if (isset($_GET['id'])) {            
-            $content_id=$_GET['id']; 
-            $userData = DB::table('content__contentusers as cu')->select(\DB::raw('u.*'))
-            ->join('users as u','u.id','=','cu.user_id')
-            ->where('cu.content_id','=',$content_id)->get();
-          $check_aray=array();
-          $uncheck_array=array();
-          $userData=json_decode($userData,true);
-          $j=0;$k=0;
-          $userId=array();
-          foreach ($userData as $key => $value) {
-               $userId[$key]=$value['id'];
-          }
-          $ch=0;
-          foreach ($users as $value) {           
-            if($ch<sizeof($userData) && in_array($value['id'], $userId))
-            {    if($value['role'])
-              {
-                $check_array[$value['role']][$k]['id']=$value['id'];
-                $check_array[$value['role']][$k]['name']=$value['first_name'];
-                $check_array[$value['role']][$k]['role']=$value['designation'];
-                $check_array[$value['role']][$k]['company']=$value['company'];
-              }
-               else {
-                 $check_array['default'][$k]['id']=$value['id'];
-                 $check_array['default'][$k]['name']=$value['first_name'];
-                 $check_array['default'][$k]['role']=$value['designation'];
-                 $check_array['default'][$k]['company']=$value['company'];
+		return redirect()->route('admin.content.content.index')
+			->withSuccess(trans('core::core.messages.resource deleted', ['name' => trans('content::contents.title.contents')]));
+	}
 
-               }
+	public function getAllUsers(Request $request)
+	{
+		$users =json_decode(User::all(),true);
+		if (isset($_GET['id'])) {
+			$content_id = $_GET['id']; 
+			$userData   = DB::table('content__contentusers as cu')->select(\DB::raw('u.*'))
+				->join('users as u','u.id', '=', 'cu.user_id')
+				->where('cu.content_id', '=', $content_id)->get();
+			$check_aray    = array();
+			$uncheck_array = array();
+			$userData      = json_decode($userData,true);
+			$j             = 0;
+			$k             = 0;
+			$userId        = array();
 
-                $k++;
-                $ch++;
-            }
-            else {
-                 if($value['role'])
-                 {
-                 $uncheck_array[$value['role']][$j]['id']=$value['id'];
-                 $uncheck_array[$value['role']][$j]['name']=$value['first_name'];
-                 $uncheck_array[$value['role']][$j]['role']=$value['designation'];
-                 $uncheck_array[$value['role']][$j]['company']=$value['company'];
-                 }
-                 else {
-                 $uncheck_array['default'][$j]['id']=$value['id'];
-                 $uncheck_array['default'][$j]['name']=$value['first_name'];
-                 $uncheck_array['default'][$j]['role']=$value['designation'];
-                 $uncheck_array['default'][$j]['company']=$value['company'];
+			foreach ($userData as $key => $value) {
+				$userId[$key] = $value['id'];
+			}
 
-                 }
+			$ch = 0;
+			foreach ($users as $value) {
+				if ($ch<sizeof($userData) && in_array($value['id'], $userId)) {
+					if ($value['role']) {
+						$check_array[$value['role']][$k]['id']      = $value['id'];
+						$check_array[$value['role']][$k]['name']    = $value['first_name'];
+						$check_array[$value['role']][$k]['role']    = $value['designation'];
+						$check_array[$value['role']][$k]['company'] = $value['company'];
+					} else {
+						$check_array['default'][$k]['id']      = $value['id'];
+						$check_array['default'][$k]['name']    = $value['first_name'];
+						$check_array['default'][$k]['role']    = $value['designation'];
+						$check_array['default'][$k]['company'] = $value['company'];
+					}
 
+					$k++;
+					$ch++;
+				} else {
+					if ($value['role']) {
+						$uncheck_array[$value['role']][$j]['id']      = $value['id'];
+						$uncheck_array[$value['role']][$j]['name']    = $value['first_name'];
+						$uncheck_array[$value['role']][$j]['role']    = $value['designation'];
+						$uncheck_array[$value['role']][$j]['company'] = $value['company'];
+					} else {
+						$uncheck_array['default'][$j]['id']      = $value['id'];
+						$uncheck_array['default'][$j]['name']    = $value['first_name'];
+						$uncheck_array['default'][$j]['role']    = $value['designation'];
+						$uncheck_array['default'][$j]['company'] = $value['company'];
+					}
 
+					$j++;
+				}
+			}
 
-                  $j++;
+			$FinalArray['check']   = $check_array;
+			$FinalArray['uncheck'] = $uncheck_array;
+			} else {
+				$company_name = array();
+				$k            = 0;
+				$FinalArray   = array();
+				foreach ($users as $value) {
+					if ($value['role']) {
+						$FinalArray[$value['role']][$k]['id']      = $value['id'];
+						$FinalArray[$value['role']][$k]['name']    = $value['first_name'];
+						$FinalArray[$value['role']][$k]['role']    = $value['designation'];
+						$FinalArray[$value['role']][$k]['company'] = $value['company'];
+					} else {
+						$FinalArray['default'][$k]['id']      = $value['id'];
+						$FinalArray['default'][$k]['name']    = $value['first_name'];
+						$FinalArray['default'][$k]['role']    = $value['designation'];
+						$FinalArray['default'][$k]['company'] = $value['company'];
+					}
 
-                 } 
-                    
-          }
-         
-          $FinalArray['check']=$check_array;
-          $FinalArray['uncheck']=$uncheck_array;         
-           }    
-        else {              
-              $company_name=array();
-              $k=0;
-              $FinalArray=array();
-              foreach ($users as $value) {
-              if($value['role'])
-              {
-              $FinalArray[$value['role']][$k]['id']=$value['id'];
-              $FinalArray[$value['role']][$k]['name']=$value['first_name'];
-              $FinalArray[$value['role']][$k]['role']=$value['designation'];
-              $FinalArray[$value['role']][$k]['company']=$value['company'];
-              }
-              else {
-              $FinalArray['default'][$k]['id']=$value['id'];
-              $FinalArray['default'][$k]['name']=$value['first_name'];
-              $FinalArray['default'][$k]['role']=$value['designation'];
-              $FinalArray['default'][$k]['company']=$value['company'];
+					$k++;
+				}
+			}
 
-              }
-              $k++;
-              }             
+			return $FinalArray;
+		}
 
-     }
+	public function getAllUsersInfo(Request $request)
+	{
+		$users           = json_decode(User::all(), true);
+		$FinalArray_name = array();
+		$FinalArray_ids  = array();
+		foreach ($users as $key => $value) {
+			$name                  = $value['first_name'] . " " . $value['last_name'];
+			$FinalArray_name[]     = $name;
+			$FinalArray_ids[$name] = $value['id'];
+		}
 
-     return $FinalArray;
-     }
-     public function getAllUsersInfo(Request $request)
-     {
-          $users =json_decode(User::all(),true);
-           $FinalArray_name=array();
-           $FinalArray_ids=array();
-           foreach ($users as $key => $value) {
-                $name=$value['first_name']." ".$value['last_name'];
-                $FinalArray_name[]=$name;
-                $FinalArray_ids[$name]=$value['id'];
-           }
-             $FinalArray['name']=$FinalArray_name;
-             $FinalArray['ids']=$FinalArray_ids;
-           return response()->json($FinalArray);
-     }
+		$FinalArray['name'] = $FinalArray_name;
+		$FinalArray['ids']  = $FinalArray_ids;
 
-     public function store_user_info(Request $request)
-     {      
-          
-           $content_id=$_GET['content_id'];
-           $user_id=$_GET['user_id'];   
-            // echo $content_id."   ".$user_id; exit;      
+		return response()->json($FinalArray);
+	}
 
-           $userData = DB::table('content__contentusers')->select(\DB::raw('*'))
-            ->where('content_id','=',$content_id)->get();
-            $userData=json_decode($userData,true);
-            $check=0;
-            foreach ($userData as $userInfo) {
-                 if(in_array($user_id, $userInfo))
-                      $check=1;             
-                     
-                } 
-                    if($check==0)
-                    {                     
-                     $ContentUser= new ContentUser;
-                     $ContentUser->user_id=$user_id;
-                     $ContentUser->content_id=$content_id;
-                     $ContentUser->save();
-                     return 200;
-                   } 
-                    else return 202;           
-      }
+	public function store_user_info(Request $request)
+	{
+		$content_id = $_GET['content_id'];
+		$user_id    = $_GET['user_id'];
+		// echo $content_id."   ".$user_id; exit;
 
-      public function push_notifications($msg = array(),$registrationIds)
-      {
-          $API_ACCESS_KEY = env("API_ACCESS_KEY");      
-       
-      
-        $fields = array
-        (
-          'registration_ids'  =>array($registrationIds),
-          'data'      => $msg
-        );
-         
-        $headers = array
-        (
-          'Authorization: key=' . $API_ACCESS_KEY,
-          'Content-Type: application/json'
-        );
-        $url='https://fcm.googleapis.com/fcm/send';
-         
-        $ch = curl_init();
-        curl_setopt( $ch,CURLOPT_URL, 'http://android.googleapis.com/gcm/send');
-        curl_setopt( $ch,CURLOPT_POST, true );
-        curl_setopt( $ch,CURLOPT_HTTPHEADER, $headers );
-        curl_setopt( $ch,CURLOPT_RETURNTRANSFER, true );
-        curl_setopt( $ch,CURLOPT_SSL_VERIFYPEER, false );
-        curl_setopt( $ch,CURLOPT_POSTFIELDS, json_encode($fields) );
-        $result = curl_exec($ch );       
-        curl_close( $ch );
-        // Log::info($result);
-        return response($result);
-      } 
+		$userData = DB::table('content__contentusers')->select(\DB::raw('*'))->where('content_id', '=', $content_id)->get();
+		$userData = json_decode($userData,true);
+		$check    = 0;
+		foreach ($userData as $userInfo) {
+			if (in_array($user_id, $userInfo))
+				$check = 1;
+		}
 
-      public function push_notificationsIOS($msg = array(),$registrationIds)
-      {
-          $API_ACCESS_KEY = env("API_ACCESS_KEY");      
-       
-      
-        // $fields = array
-        // (
-        //   'registration_ids'  =>array($registrationIds),
-        //   'data'      => $msg
-        // );
-        // $fields = array(
-        //     'registration_ids'  => array($registrationIds),
-        //     'notification'      => $msg
-        // );
-          $notification['title']='ION NEWS';
-          $fields = array(
-            'to' => $registrationIds,
-            'data' => $msg,
-            'notification' => $notification
-        );
-         
-        $headers = array
-        (
-          'Authorization: key=' . $API_ACCESS_KEY,
-          'Content-Type: application/json'
-        );
-        $url='https://fcm.googleapis.com/fcm/send';
-         
-        $ch = curl_init();
-        curl_setopt( $ch,CURLOPT_URL, 'http://android.googleapis.com/gcm/send');
-        curl_setopt( $ch,CURLOPT_POST, true );
-        curl_setopt( $ch,CURLOPT_HTTPHEADER, $headers );
-        curl_setopt( $ch,CURLOPT_RETURNTRANSFER, true );
-        curl_setopt( $ch,CURLOPT_SSL_VERIFYPEER, false );
-        curl_setopt( $ch,CURLOPT_POSTFIELDS, json_encode($fields) );
-        $result = curl_exec($ch );       
-        curl_close( $ch );
-        // Log::info($result);
+		if ($check ==0) {
+			$ContentUser             = new ContentUser;
+			$ContentUser->user_id    = $user_id;
+			$ContentUser->content_id = $content_id;
+			$ContentUser->save();
 
-        return response($result);
-      } 
-      public function push_notificationsIOS1($smg=array(),$registrationIds)
-      {
+			return 200;
+		} else
+			return 202;
+	}
 
-        $apnsHost = env('apnsHost');
-        $apnsCert = env('apnsCert');
-        $apnsPort = env('apnsPort');
-        $apnsPass = env('apnsPass');
-        // $token =$registrationIds;
-        $token ='56ed3ac2a250158cc76c33af099a0629fb41a4565923154cb0675baa468b9915';
+	public function push_notifications($msg = array(),$registrationIds)
+	{
+		$API_ACCESS_KEY = env("API_ACCESS_KEY");
+		$fields         = [
+			'registration_ids' => array($registrationIds),
+			'data'             => $msg,
+		];
 
-        
-        // Log::info(json_encode($smg));
-        // $message=json_encode($smg);
-        // $payload['aps'] = array('alert' => 'Oh hai!','badge' => 1, 'sound' => 'default');
-        // $payload['acme2']='ION NEWS';
-        // $output = json_encode($payload);
+		$headers = [
+			'Authorization: key=' . $API_ACCESS_KEY,
+			'Content-Type : application/json'
+		];
 
-        $title=substr( $smg['title'],0,45);
-        $message=substr($smg['message'],0,10);
-        $img_url=$smg['imageUrl'];
-        $crawl_url=$smg['crawl_url'];
-        // $story='IBM NEWS';
-        // $title='ION NEWS';
-        // $url="http://assets.jpg";
+		$url ='https://fcm.googleapis.com/fcm/send';
 
-$output='{
-"aps": {
-"alert": {
-"title":"'.$title.'",
-"body": "'.$message.'"
-}
-},
-"mediaUrl": "'.$img_url.'",
-"mediaType": "image"}';
+		$ch = curl_init();
+		curl_setopt( $ch,CURLOPT_URL, 'http://android.googleapis.com/gcm/send');
+		curl_setopt( $ch,CURLOPT_POST, true );
+		curl_setopt( $ch,CURLOPT_HTTPHEADER, $headers );
+		curl_setopt( $ch,CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $ch,CURLOPT_SSL_VERIFYPEER, false );
+		curl_setopt( $ch,CURLOPT_POSTFIELDS, json_encode($fields));
+		$result = curl_exec($ch );
+		curl_close( $ch );
 
-// $output='{
-// "aps": {
-// "alert": {
-// "title": "123456789012345678901\n23456789012345766737373\n12345678901234",
-// "body": "titi"
-// }
-// },
-// "mediaUrl": "https://www.w3schools.com/html/pic_mountain.jpg",
-// "mediaType": "image"}';
-// Log::info($output);
-        // Log::info($payload['acme2']=['abab','bababa']);
-        // Log::info($output);
-        // $token = pack('H*', str_replace(' ', '', $token));
-        $apnsMessage = chr(0).chr(0).chr(32).$token.chr(0).chr(strlen($output)).$output;
+		return response($result);
+	}
 
-        $streamContext = stream_context_create();
-        stream_context_set_option($streamContext, 'ssl', 'local_cert', $apnsCert);
-        stream_context_set_option($streamContext, 'ssl', 'passphrase', $apnsPass);
+	public function push_notificationsIOS($msg = array(),$registrationIds)
+	{
+		$API_ACCESS_KEY = env("API_ACCESS_KEY");
 
-        $apns = stream_socket_client('ssl://'.$apnsHost.':'.$apnsPort, $error, $errorString, 2, STREAM_CLIENT_CONNECT, $streamContext);
-        // print_r($apns);
-        Log::info($apns);
+		// $fields = array
+		// (
+		//   'registration_ids'  =>array($registrationIds),
+		//   'data'      => $msg
+		// );
+		// $fields = array(
+		//     'registration_ids'  => array($registrationIds),
+		//     'notification'      => $msg
+		// );
+		$notification['title'] ='ION NEWS';
+		$fields = array(
+			'to'           => $registrationIds,
+			'data'         => $msg,
+			'notification' => $notification
+		);
 
-        if (!$apns)
-         exit("Failed to connect: $err $errstr" . PHP_EOL);
-          //echo 'Connected to APNS' . PHP_EOL;
+		$headers = array
+		(
+		'Authorization:key=' . $API_ACCESS_KEY,
+		'Content-Type: application/json'
+		);
+		$url ='https://fcm.googleapis.com/fcm/send';
 
-        fwrite($apns, $apnsMessage);
-        fclose($apns);
-        sleep(60);
-        // echo "hahhaa";
-      }
+		$ch = curl_init();
+		curl_setopt( $ch,CURLOPT_URL, 'http://android.googleapis.com/gcm/send');
+		curl_setopt( $ch,CURLOPT_POST, true );
+		curl_setopt( $ch,CURLOPT_HTTPHEADER, $headers );
+		curl_setopt( $ch,CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $ch,CURLOPT_SSL_VERIFYPEER, false );
+		curl_setopt( $ch,CURLOPT_POSTFIELDS, json_encode($fields) );
+		$result = curl_exec($ch );       
+		curl_close( $ch );
+		// Log::info($result);
+
+		return response($result);
+	}
+
+	public function push_notificationsIOS1($smg =array(),$registrationIds)
+	{
+		$apnsHost = env('apnsHost');
+		$apnsCert = env('apnsCert');
+		$apnsPort = env('apnsPort');
+		$apnsPass = env('apnsPass');
+		// $token =$registrationIds;
+		$token ='56ed3ac2a250158cc76c33af099a0629fb41a4565923154cb0675baa468b9915';
+
+		// Log::info(json_encode($smg));
+		// $message          =json_encode($smg);
+		// $payload['aps']   = array('alert' => 'Oh hai!','badge' => 1, 'sound' => 'default');
+		// $payload['acme2'] ='ION NEWS';
+		// $output           = json_encode($payload);
+
+		$title     = substr( $smg['title'],0,45);
+		$message   = substr($smg['message'],0,10);
+		$img_url   = $smg['imageUrl'];
+		$crawl_url = $smg['crawl_url'];
+		// $story  ='IBM NEWS';
+		// $title  ='ION NEWS';
+		// $url    ="http://assets.jpg";
+
+		$output    ='{
+			"aps"      : {
+				"alert"    : {
+					"title"    :"' . $title . '",
+					"body"     : "' . $message . '"
+				}
+			},
+			"mediaUrl" : "' . $img_url . '",
+			"mediaType": "image"}';
+
+		// $output='{
+		// "aps": {
+		// "alert": {
+		// "title": "123456789012345678901\n23456789012345766737373\n12345678901234",
+		// "body": "titi"
+		// }
+		// },
+		// "mediaUrl": "https://www.w3schools.com/html/pic_mountain.jpg",
+		// "mediaType": "image"}';
+		// Log::info($output);
+		// Log::info($payload['acme2']=['abab','bababa']);
+		// Log::info($output);
+		// $token = pack('H*', str_replace(' ', '', $token));
+
+		$apnsMessage = chr(0).chr(0).chr(32).$token.chr(0).chr(strlen($output)).$output;
+
+		$streamContext = stream_context_create();
+		stream_context_set_option($streamContext, 'ssl', 'local_cert', $apnsCert);
+		stream_context_set_option($streamContext, 'ssl', 'passphrase', $apnsPass);
+
+		$apns = stream_socket_client('ssl://'.$apnsHost.':'.$apnsPort, $error, $errorString, 2, STREAM_CLIENT_CONNECT, $streamContext);
+		// print_r($apns);
+		Log::info($apns);
+
+		if (!$apns)
+			exit("Failed to connect: $err $errstr" . PHP_EOL);
+			//echo 'Connected to APNS' . PHP_EOL;
+
+		fwrite($apns, $apnsMessage);
+		fclose($apns);
+		sleep(60);
+		// echo "hahhaa";
+	}
 
 	public function deleteStory(Request $request)
 	{
 		try {
-			$data = DB::table('content__contents')->whereIn('id', $request->data)->delete();
+			$data = DB::table('stories')->whereIn('id', $request->data)->delete();
 		} catch(Exception $e) {
 			echo 'Message: ' . $e->getMessage();
 		}
@@ -811,8 +791,8 @@ $output='{
 		$ch = curl_init(env('PROD_SERVER_URL') . '/api/content/createStory');
 
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-		'Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vNTAuMTEyLjU3LjE0Ni9hcGkvYXV0aGVudGljYXRpb24vbG9naW4iLCJpYXQiOjE1MzgwNDM4NzcsImV4cCI6MTU1MTM3OTQ3NywibmJmIjoxNTM4MDQzODc3LCJqdGkiOiJZNU14MktHbzRZWVhzSEtUIiwic3ViIjo4NX0.2YqoK4rVT1jEbpkUx0DopH5ZIhFCk-UXl_asT7V4xsY',
-		'Content-Type: application/json',
+			'Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vNTAuMTEyLjU3LjE0Ni9hcGkvYXV0aGVudGljYXRpb24vbG9naW4iLCJpYXQiOjE1MzgwNDM4NzcsImV4cCI6MTU1MTM3OTQ3NywibmJmIjoxNTM4MDQzODc3LCJqdGkiOiJZNU14MktHbzRZWVhzSEtUIiwic3ViIjo4NX0.2YqoK4rVT1jEbpkUx0DopH5ZIhFCk-UXl_asT7V4xsY',
+			'Content-Type: application/json',
 		));
 
 		curl_setopt($ch, CURLOPT_POST, true);
@@ -820,8 +800,8 @@ $output='{
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-
 		$result = curl_exec($ch);
+
 		return curl_close($ch);
 	}
 
@@ -832,7 +812,7 @@ $output='{
 	 */
 	public function pushStoryToProd(Request $request)
 	{
-		$stories = DB::table('content__contents as cc')
+		$stories = DB::table('stories as cc')
 			->join('content__usergroups as cug', 'cug.content_id', '=', 'cc.id')
 			->select('cc.*', 'cug.role_id')
 			->whereIn('cc.id', $request->data)
