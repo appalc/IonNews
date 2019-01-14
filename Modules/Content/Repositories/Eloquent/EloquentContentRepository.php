@@ -9,11 +9,11 @@ use DB;
 class EloquentContentRepository extends EloquentBaseRepository implements ContentRepository
 {
 
-	public function filter($category_id,$role_id)
+	public function filter($category_id, $role_id)
 	{
 		$current_date = date('Y-m-d');
 		$story        = DB::table('stories as cc')
-			->join('content__usergroups as cug', 'cug.content_id', ' =', 'cc.id')
+			->join('content__usergroups as cug', 'cug.content_id', '=', 'cc.id')
 			->join('content__multiplecategorycontents as cm','cm.content_id', '=', 'cc.id')
 			->select('cc.*')
 			->where('cm.category_id', '=', $category_id)

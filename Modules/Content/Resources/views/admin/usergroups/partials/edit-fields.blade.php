@@ -20,8 +20,11 @@
 		<div class="col-sm-4">
 			<label>Category</label>
 			<select multiple="" class="form-control" name="category_id[]">
-				<?php foreach ($categories as $category): ?>
-				<option value="{{ $category->id }}" <?php echo in_array($category->id, json_decode($usergroup->category_id, true)) ? "selected" : '';?>>
+				<?php
+				foreach ($categories as $category) :
+					$parsedCategories = !empty($usergroup->category_id) ? json_decode($usergroup->category_id, true) : [];
+				?>
+				<option value="{{ $category->id }}" <?php echo in_array($category->id, $parsedCategories) ? "selected" : '';?>>
 					{{ $category->name }}
 				</option>
 				<?php endforeach; ?>

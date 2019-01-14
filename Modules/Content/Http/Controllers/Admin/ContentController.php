@@ -299,7 +299,7 @@ class ContentController extends AdminBaseController
 				}
 			}
 		}
-
+/*
 		if (sizeof($multiContCategoryData)) {
 			foreach ($multiContCategoryData as $value) {
 				$abc['category_id'] = $value;
@@ -308,7 +308,7 @@ class ContentController extends AdminBaseController
 				$this->multiContCategory->create($abc);
 			}
 		}
-
+*/
 		$company_name = [];
 		$i            = 0;  
 		$device_code  = []; 

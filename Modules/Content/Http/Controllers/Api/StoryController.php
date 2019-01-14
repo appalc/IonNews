@@ -59,11 +59,11 @@ class StoryController extends BasePublicController
 
 			$this->response->setContent(array('message' => $message));
 
-			return $this->response->setStatusCode(400,$meserror);
+			return $this->response->setStatusCode(400, $meserror);
 		} else {
 			$users        = $this->user->find($request->user_id);
-			$user_groupId = $users->role_id;          
-			$dataset      = $this->content->filter( $request->category_id, $user_groupId);
+			$user_groupId = $users->role_id;
+			$dataset      = $this->content->filter($request->category_id, $user_groupId);
 
 			// Log::info($dataset);
 			// Log::info($dataset->total());
