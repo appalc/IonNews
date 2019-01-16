@@ -78,10 +78,7 @@ class UserController extends BaseUserModuleController
 	public function create()
 	{
 		$roles      = $this->role->all();
-		$userGroups = $this->userGroup->all()->mapWithKeys(function ($group) {
-			return [$group->id => $group->name];
-		});
-		// echo "<pre>";print_r(json_decode($roles)); exit;
+		$userGroups = $this->userGroup->all()->pluck('name', 'id');
 
 		return view('user::admin.users.create', compact('roles', 'userGroups'));
 	}

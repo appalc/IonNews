@@ -70,10 +70,10 @@
                                 </div>
                             </div>
 							<div class="col-sm-4">
-								<label>Company Group</label>
+								<label>User Group</label>
 								<select class="form-control" name="company_group_id">
-									<?php foreach ($companyGroups as $cGroup): ?>
-									<option value="{{ $cGroup->id }}">{{ $cGroup->name }}</option>
+									<?php foreach ($userGroups as $uGroup): ?>
+									<option value="{{ $uGroup->id }}">{{ $uGroup->name }}</option>
 									<?php endforeach; ?>
 								</select>
 							</div>
