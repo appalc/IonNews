@@ -72,8 +72,8 @@
 							<div class="col-sm-4">
 								<label>User Group</label>
 								<select class="form-control" name="company_group_id">
-									<?php foreach ($userGroups as $uGroup): ?>
-									<option value="{{ $uGroup->id }}">{{ $uGroup->name }}</option>
+									<?php foreach ($userGroups as $uGId => $uGName): ?>
+									<option value="{{ $uGId }}">{{ $uGName }}</option>
 									<?php endforeach; ?>
 								</select>
 							</div>
