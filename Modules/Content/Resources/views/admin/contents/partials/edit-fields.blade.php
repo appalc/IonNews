@@ -47,18 +47,13 @@
 									$allcategory        = $content->all_category;
 									$allContentCategory = ($allcategory) ? json_decode($allcategory, true) : [$content->category_id];
 
-									foreach ($categories as $category):
-										if ($category->slug_name != 'archive') {
+									foreach ($categories as $categoryId => $categoryName):
 									?>
 										<label style="display: block;">
-											<input type="checkbox" style="vertical-align:top; margin-right: 10px;" onclick ="selectCategory(this.value)" name="category_id[]" value="{{ $category->id }}" <?php echo (in_array($category->id, $allContentCategory)) ? "checked" : '';?> />
-											{{ $category->name }}
+											<input type="checkbox" style="vertical-align:top; margin-right: 10px;" onclick ="selectCategory(this.value)" name="category_id[]" value="{{ $categoryId }}" <?php echo (in_array($categoryId, $allContentCategory)) ? "checked" : '';?> />
+											{{ $categoryName }}
 										</label>
-									<?php
-										}
-									endforeach;
-									?>
-								<!-- </select> -->
+									<?php endforeach; ?>
 								</div>
 							</div>
 						</div>
@@ -95,23 +90,5 @@
 			</div>
 		</div>
 
-		<div class="tab-pane user-types" id="tab_2-2">
-			<div class="box-body">
-				<div class="row">
-					<div class="col-md-6">
-						<div class="form-group">
-							{!! Form::label('user_group', trans('User Group')) !!}
-							<select multiple="multiple" class=" user_group form-control" name="user_roles[]">
-								<?php foreach ($user_roles as $user_role): ?>
-									<option value="{{ $user_role['id'] }}" <?php echo ($user_role['checked'] == 1) ? "selected" : '';?>>
-										{{ $user_role['type'] }}
-									</option>
-								<?php endforeach; ?>
-							</select>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
 	</div>
 </div>

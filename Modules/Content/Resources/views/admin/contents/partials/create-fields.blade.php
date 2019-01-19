@@ -42,22 +42,13 @@
 					<div class="col-md-6">
 						<div class="form-group ">
 							{!! Form::label('category_id', trans('Category')) !!}
-							<!-- <div class="form-group multiselect" style="height: auto;"> -->
-							<div class="form-control category_select multiselect"> 
-								<!-- <select multiple="" class="form-control category_select" onchange="selectCategory(this.value)" name="category_id[]"> -->
-								<?php foreach ($categories as $category):
-									if($category->slug_name!='archive') {
-								?>
 
-									<!-- <option value="{{ $category->id }}">{{ $category->name }}</option> -->
+							<div class="form-control category_select multiselect"> 
+								<?php foreach ($categories as $categoryId => $categoryName) : ?>
 									<label>
-										<input type="checkbox" style="vertical-align:top; margin-right: 10px;" onclick ="selectCategory(this.value)" name="category_id[]"  value="{{ $category->id }}" /> {{ $category->name }}
+										<input type="checkbox" style="vertical-align:top; margin-right: 10px;" onclick ="selectCategory(this.value)" name="category_id[]"  value="{{ $categoryId }}" /> {{ $categoryName }}
 									</label>
-								<?php
-									}
-								endforeach;
-								?>
-								<!-- </select> -->
+								<?php endforeach; ?>
 							</div>
 						</div>
 					</div>
@@ -116,23 +107,6 @@
 			</div>
 		</div>
 
-		<div class ="tab-pane user-types" id="tab_2-2">
-			<div class ="box-body">
-				<div class ="row">
-					<div class ="col-md-6">
-						<div class ="form-group ">
-							{!! Form::label('user_group', trans('User Group')) !!}
-							<select multiple ="multiple" class="user_group form-control" name="user_roles[]">
-								<?php foreach ($user_roles as $user_role): ?>
-									<option value="{{ $user_role['id'] }}" <?php echo ($user_role['id'] ==-1) ? 'selected' : ''; ?>> {{ $user_role['type'] }} </option>
-								<?php endforeach; ?>
-							</select>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
 		<?php if (env('STORY_PUSH_ENABLE')) { ?>
 			<div class="col-sm-12">
 				<div class="form-group">
@@ -142,26 +116,6 @@
 				<div>
 			</div>
 		<?php } ?>
-
-		<!--
-			<div class ="form-group user-types form_grp_relative" style="">
-				<table class=" data-table table table-bordered table-hover dataTable" id="User_data" role="grid" aria-describedby="DataTables_Table_0_info" >          
-					<button type="button" class="btn btn-primary" id="select_all_page" style="position: relative; top: 71px; margin-left: 5px;height: 32px;width: 83px;">
-					<span style="position: relative;top: -2px;">SelectAll</span></button>
-					<thead>
-						<tr>
-							<th data-sortable ="false" style="width: 70px;">
-							<input type ="checkbox"  id="select_all">Select</th>
-							<th>Name</th>
-							<th>Company Name </th>
-							<th>Designation</th>
-						</tr>
-					</thead>
-					<tbody id = "user_info">
-					</tbody>
-				</table>
-			</div>
-		-->
 	</div>
 
 </div>

@@ -4,20 +4,22 @@ namespace Modules\Content\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Modules\Content\Entities\Content;
-use Modules\Content\Repositories\ContentRepository;
-use Modules\Content\Repositories\ContentUserRepository;
-use Modules\Content\Repositories\UserGroupRepository;
-use Modules\Content\Repositories\MultipleCategoryContentRepository;
-use Modules\Content\Repositories\CategoryRepository;
-use Modules\Core\Http\Controllers\Admin\AdminBaseController;
-use Modules\User\Repositories\UserRepository;
-use Modules\User\Contracts\Authentication;
 
-use Modules\User\Entities\Sentinel\User;
+use Modules\Content\Entities\Content;
 use Modules\Content\Entities\ContentImages;
 use Modules\Content\Entities\ContentUser;
 use Modules\Content\Entities\ContentCompany;
+use Modules\Content\Entities\StoryCategory;
+use Modules\User\Entities\Sentinel\User;
+
+use Modules\Content\Repositories\ContentRepository;
+use Modules\Content\Repositories\ContentUserRepository;
+use Modules\Content\Repositories\UserGroupRepository;
+use Modules\Content\Repositories\CategoryRepository;
+use Modules\User\Repositories\UserRepository;
+use Modules\User\Contracts\Authentication;
+
+use Modules\Core\Http\Controllers\Admin\AdminBaseController;
 use Modules\Content\Http\Requests\CreateContentRequest;
 
 use Monolog\Logger;
@@ -34,16 +36,22 @@ class ContentController extends AdminBaseController
 	*/
 	private $content;
 
-	public function __construct(ContentRepository $content, CategoryRepository $category, ContentUserRepository $contentUser, MultipleCategoryContentRepository $multiContCategory,RoleRepository $role, UserGroupRepository $userGroup)
-	{
+	public function __construct(
+		ContentRepository $content,
+		CategoryRepository $category,
+		ContentUserRepository $contentUser,
+		RoleRepository $role,
+		UserGroupRepository $userGroup,
+		StoryCategory $storyCategory
+	) {
 		parent::__construct();
 
-		$this->category          = $category;
-		$this->content           = $content;  
-		$this->contentUser       = $contentUser;
-		$this->multiContCategory = $multiContCategory;
-		$this->role              = $role;
-		$this->userGroup         = $userGroup;
+		$this->category      = $category;
+		$this->content       = $content;  
+		$this->contentUser   = $contentUser;
+		$this->role          = $role;
+		$this->storyCategory = $storyCategory;
+		$this->userGroup     = $userGroup;
 	}
 
 	/**
@@ -66,24 +74,9 @@ class ContentController extends AdminBaseController
 	*/
 	public function create()
 	{
-		$categories = $this->category->getByAttributes(['status' => 1], 'priority', 'desc');
-		foreach ($categories as $key => $value) {
-			if ($value->slug_name == 'archive')
-				unset($categories[$key]);         
-		}
+		$categories = $this->category->getByAttributes(['status' => 1], 'priority', 'desc')->pluck('name', 'id');
 
-		$roles                  = json_decode($this->role->all());
-		$user_roles[-1]['id']   = -1;
-		$user_roles[-1]['type'] = 'All';
-
-		foreach ($roles as $value) {
-			if($value->name !='Admin') {
-				$user_roles[$value->id]['id']   = $value->id;
-				$user_roles[$value->id]['type'] = $value->name;
-			}
-		}
-
-		return view('content::admin.contents.create', compact('categories'), compact('user_roles'));
+		return view('content::admin.contents.create', compact('categories'));
 	}
 
 	/**
@@ -240,27 +233,14 @@ class ContentController extends AdminBaseController
 	*/
 	public function store(Request $request)
 	{
-		$Alldata    = $request->all();
-		$tags       = "";
-		$user_roles = $Alldata['user_roles'];
+		$Alldata = $request->all();
+		$tags    = "";
+		$image   = "";
 
-		$Alldata['all_users'] = json_encode($user_roles);
 		if (!$Alldata['tags']) {
-			$categoryName = $this->category->find($Alldata['category_id']);
-			$categoryName = json_decode($categoryName, true);
-			$i = 0;
-			if (sizeof($categoryName)) {
-				foreach ($categoryName as $value) {
-					$tags = $tags . "#" . $value['name'];
-					break;
-				}
-			}
-
-			$Alldata['tags'] = $tags;
+			$categoryName    = $this->category->find($Alldata['category_id'])->pluck('name')->first();
+			$Alldata['tags'] = !empty($categoryName) ? $tags . "#" . $categoryName : $tags;
 		}
-
-		$Alldata['content'] = trim($Alldata['content']);
-		$image              = "";
 
 		if ($request->hasFile('img')) {
 			$image_name = $_FILES['img']['name'];
@@ -272,85 +252,18 @@ class ContentController extends AdminBaseController
 			$Alldata['image'] = (array_key_exists('img1', $Alldata)) ? $Alldata['img1'] : $image;
 		}
 
-		$sizeofCategories        = sizeof($Alldata['category_id']);
-		$multiContCategoryData   = $Alldata['category_id'];
+		$storyCategoryData       = $Alldata['category_id'];
 		$Alldata['all_category'] = json_encode($Alldata['category_id']);
-		$Alldata['category_id']  = $sizeofCategories;
+		$Alldata['category_id']  = sizeof($Alldata['category_id']);
+		$Alldata['content']      = trim($Alldata['content']);
 
-		$ids = $this->content->create($Alldata);
+		$id = $this->content->create($Alldata)->id;
 
-		$id = json_decode($ids, true);
-		$id = $ids['id'];
-
-		if (!in_array(-1, $user_roles)) {
-			foreach ($user_roles as $key => $value) {
-				$abc['role_id']    = $value;
-				$abc['content_id'] = $id;
-
-				$this->userGroup->create($abc);
-			}
-		} else {
-			$all_roles = json_decode($this->role->all(), true);
-			foreach ($all_roles as $key => $value) {
-				if($value['id'] != 1) {
-					$abc['role_id']    = $value['id'];
-					$abc['content_id'] = $id;
-					$this->userGroup->create($abc);
-				}
+		if (sizeof($storyCategoryData)) {
+			foreach ($storyCategoryData as $value) {
+				$this->storyCategory->create(['category_id' => $value, 'story_id' => $id]);
 			}
 		}
-/*
-		if (sizeof($multiContCategoryData)) {
-			foreach ($multiContCategoryData as $value) {
-				$abc['category_id'] = $value;
-				$abc['content_id']  = $id;
-
-				$this->multiContCategory->create($abc);
-			}
-		}
-*/
-		$company_name = [];
-		$i            = 0;  
-		$device_code  = []; 
-		$users        = json_decode(User::all(), true);
-		$role_ids     = $Alldata['user_roles'];
-		$final_users  = [];
-
-		if (!in_array(-1, $role_ids)) {
-			$user_roll = $this->role->find($role_ids);
-			$all_roles = json_decode($user_roll, true);
-
-			foreach ($all_roles as $key => $value) {
-				$find[] = $value['slug'];
-			}
-
-			foreach ($users as $key => $value) { 
-				if (in_array($value['role'], $find)) {
-					$final_users[] = $value;
-				}
-			}
-		} else {
-			$final_users = $users;
-		}
-
-		foreach ($users as $key => $value) {
-			if (!empty($final_users[$i]) && ($value['id'] == $final_users[$i]['id'])) {
-				$company_name[] = $value['company'];
-				$i++;
-				if($value['device_type'])
-					$device_code[$value['device_type']][$value['id']] = $value['device_code'];
-			}
-
-			if ($i >= sizeof($final_users))
-				break;
-		}
-
-		// for ($i=0; $i<sizeof($company_name); $i++) {
-		//     $ContentCompany               = new ContentCompany;
-		//     $ContentCompany->content_id   = $id;
-		//     $ContentCompany->company_name = $company_name[$i];
-		//     $ContentCompany->save();
-		// }
 
 		$message = [
 			'title'     => $Alldata['title'],
@@ -359,23 +272,7 @@ class ContentController extends AdminBaseController
 			'crawl_url' => $Alldata['crawl_url'],
 		];
 
-		// Log::info($device_code);
-
-		foreach ($device_code as $device_type => $value) {
-			if ($device_type == "iphone") {
-				foreach ($value as $device_iphone) {
-				if ($value)
-					$this->push_notificationsIOS($message, $device_iphone);
-					// Log::info("IOS");
-					// Log::info($device_iphone);
-				}
-			} elseif ($device_type == "android") {
-				foreach ($value as $device_andriod) {
-					if($value)
-						$this->push_notifications($message, $device_andriod);
-				}
-			}
-		}
+		$this->generateStoryNotifications($message, $storyCategoryData);
 
 		if (env('STORY_PUSH_ENABLE') && $request->pushToProd) {
 			try {
@@ -391,6 +288,37 @@ class ContentController extends AdminBaseController
 	}
 
 	/**
+	* To retrieve user's device info's and generate push notifictions
+	*
+	* @param array $notification  Array of ntification infos
+	* @param array $allCategories Array of categories
+	*
+	* @return Response
+	*/
+	private function generateStoryNotifications($notification, $allCategories)
+	{
+		$results = UserGroup::select('id');
+		foreach ($allCategories as $categoryId) {
+			$results->orWhereRaw('json_contains(category_id, \'["' . $categoryId . '"]\')');
+		}
+
+		$userGroups  = $results->get()->pluck('id');
+		$usersToSend = User::where('user_group_id', '=', $userGroups)->get()->pluck('device_code', 'device_type')->toArray();
+
+		foreach ($usersToSend as $deviceType => $deviceCode) {
+			if (($deviceType == "iphone") && ($deviceCode)) {
+				$this->push_notificationsIOS($message, $deviceCode);
+			}
+
+			if (($deviceType == "android") && ($deviceCode)) {
+				$this->push_notifications($message, $deviceCode);
+			}
+		}
+
+		return true;
+	}
+
+	/**
 	* Show the form for editing the specified resource.
 	*
 	* @param  Content $content
@@ -398,32 +326,9 @@ class ContentController extends AdminBaseController
 	*/
 	public function edit(Content $content)
 	{
-		$find_group_type = $this->content->find($content->id);
-		$find_group_type = $find_group_type->all_users;
-		$user_type       = json_decode($find_group_type, true);
+		$categories = $this->category->getByAttributes(['status' => 1], 'priority', 'desc')->pluck('name', 'id');
 
-		$categories = $this->category->getByAttributes(['status' => 1], 'priority', 'desc');
-		$roles      = json_decode($this->role->all());
-
-		$user_roles[-1]['id']   = -1;
-		$user_roles[-1]['type'] = 'All';
-
-		foreach ($roles as $value) {
-			if ($value->name != 'Admin') {
-				$user_roles[$value->id]['id']   = $value->id;
-				$user_roles[$value->id]['type'] = $value->name;
-			}
-		}
-
-		foreach ($user_roles as $key => $value) {
-			if(sizeof($user_type) and in_array($value['id'], $user_type))
-				$user_roles[$value['id']]['checked'] = 1;
-			else
-				$user_roles[$value['id']]['checked'] = 0;
-		}
-		// Log::info($user_roles); die;
-
-		return view('content::admin.contents.edit', compact('content','categories','user_roles'));
+		return view('content::admin.contents.edit', compact('content', 'categories'));
 	}
 
 	/**
@@ -431,33 +336,26 @@ class ContentController extends AdminBaseController
 	*
 	* @param  Content $content
 	* @param  Request $request
-	* @param  ContentUser $contentUser
 	* @return Response
 	*/
-	public function update(Content $content, Request $request, ContentUser $contentUser)
+	public function update(Content $content, Request $request)
 	{
-		$content_data = json_decode($content, true);
-		$data         = $request->all();
-
-		$data['all_users'] = json_encode($data['user_roles']);
-		$content_id        = $content_data['id'];
-
-		$sizeofCategories = sizeof($data['category_id']);
-		$Allcategory      = $data['category_id'];
+		$data        = $request->all();
+		$contentId   = $content->id;
+		$Allcategory = $data['category_id'];
 
 		$data['all_category'] = json_encode($data['category_id']);
-		$data['category_id']  = $sizeofCategories;
+		$data['category_id']  = count($data['category_id']);
 
-		$categoryID = DB::table('content__multiplecategorycontents')->where('content_id', '=', $content_id)->delete();
-
+		// To Manage Category
+		$categoryID = DB::table('story_categories')->where('story_id', '=', $contentId)->delete();
 		foreach ($Allcategory as $value) {
-			$abc['category_id'] = $value;
-			$abc['content_id']  = $content_id;
-			$this->multiContCategory->create($abc);
+			$this->storyCategory->create(['category_id' => $value, 'story_id' => $contentId]);
 		}
 
+		// To manage Images
 		if ($request->hasFile('img')) {
-			$image_name = $content_id . $_FILES['img']['name'];
+			$image_name = $contentId . $_FILES['img']['name'];
 			$request->file('img')->move(env('IMG_URL') . '/crawle_image', $image_name);
 			$image = env('IMG_URL1') . '/crawle_image/' . $image_name;
 		} else {
@@ -467,35 +365,10 @@ class ContentController extends AdminBaseController
 		$request->merge(['image' => $image]);
 		$data['image'] = $image;
 
-		DB::table('content__usergroups')->where('content_id', '=', $content_id)->delete();
-		$role_ids    = $data['user_roles'];
-		$final_users = array();
-		if (!in_array(-1, $role_ids)) {
-			$user_roll = $this->role->find($role_ids);
-
-			$all_roles = json_decode($user_roll, true);
-			// Log::info($all_roles);
-			foreach ($all_roles as $key => $value) {
-				$abc['role_id']    = $value['id'];
-				$abc['content_id'] = $content_id;
-				$this->userGroup->create($abc);
-			}
-		} else {
-			$user_roll = $this->role->all();
-			// Log::info(json_decode($user_roll,true));
-			foreach ($user_roll as $key => $value) {
-				if ($value->id !=1) {
-					$abc['role_id']    = $value->id;
-					$abc['content_id'] = $content_id;
-					$this->userGroup->create($abc);
-				}
-			}
-		}
-
 		$this->content->update($content, $data);
 
 		return redirect()->route('admin.content.content.index')
-            ->withSuccess(trans('core::core.messages.resource updated', ['name' => trans('content::contents.title.contents')]));
+			->withSuccess(trans('core::core.messages.resource updated', ['name' => trans('content::contents.title.contents')]));
 	}
 
 	/**

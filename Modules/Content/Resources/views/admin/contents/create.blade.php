@@ -84,8 +84,8 @@
 		$(".imageview").on("click",function () {
 		});
 
-		user_roles          = '<?php echo json_encode($user_roles);?>';
-		var all_users_roles = jQuery.parseJSON(user_roles);
+	//	user_roles          = '<?php // echo json_encode($user_roles);?>';
+	//	var all_users_roles = jQuery.parseJSON(user_roles);
 
 		// $( "select.user_group" ).change( changeorder );
 		// changeorder();

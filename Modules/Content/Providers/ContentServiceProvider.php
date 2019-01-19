@@ -202,13 +202,20 @@ class ContentServiceProvider extends ServiceProvider
 				return new \Modules\Content\Repositories\Cache\CacheSkinDecorator($repository);
 			}
 		);
+
+		$this->app->bind(
+			'Modules\Content\Repositories\StoryCategoryRepository',
+			function () {
+				$repository = new \Modules\Content\Repositories\Eloquent\EloquentStoryCategoryRepository(new \Modules\Content\Entities\StoryCategory());
+
+				if (! config('app.cache')) {
+					return $repository;
+				}
+
+				return new \Modules\Content\Repositories\Cache\CacheStoryCategoryDecorator($repository);
+			}
+		);
 // add bindings
-
-
-
-
-
-
 
 
 
