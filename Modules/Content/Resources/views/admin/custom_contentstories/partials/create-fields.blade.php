@@ -1,9 +1,9 @@
 <div class="box-body">
 	<div class="row">
 		<div class="col-sm-6">
-			<div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
+			<div class="form-group{{ $errors->has('crawl_url') ? ' has-error' : '' }}">
 				{!! Form::label('name', trans('URL Address')) !!}
-				{!! Form::text('custom_url', old('custom_url'), ['class' => 'form-control','data-slug' => 'source', 'placeholder' => trans('Custom content URL')]) !!}
+				{!! Form::text('crawl_url', old('crawl_url'), ['class' => 'form-control','data-slug' => 'source', 'placeholder' => trans('Custom content URL')]) !!}
 				{!! $errors->first('name', '<span class="help-block">:message</span>') !!}
 			</div>
 		</div>
@@ -45,15 +45,12 @@
 						<div class="form-group">
 							{!! Form::label('category_id', trans('Category')) !!}
 							<div class="form-control" style="width: 20em;height: 10em;border: 1px solid rgb(192, 192, 192);overflow: auto;">
-							<!--	<select multiple ="" class="form-control category_select" onchange="selectCategory(this.value)" name="category_id[]"> -->
-								<?php foreach ($categories as $category): ?>
-								<label style="display: block;">
-									<input type="checkbox" style="vertical-align:top; margin-right: 10px;" onclick ="selectCategory(this.value)" name="category_id[]" value="{{ $category->id }}" />
-									{{ $category->name }}
-								</label>
-							<!--	<option value ="{{ $category->id }}">{{ $category->name }}</option>	-->
+								<?php foreach ($categories as $categoryId => $categoryName): ?>
+									<label style="display: block;">
+										<input type="checkbox" style="vertical-align:top; margin-right: 10px;" onclick ="selectCategory(this.value)" name="category_id[]" value="{{ $categoryId }}" />
+										{{ $categoryName }}
+									</label>
 								<?php endforeach; ?>
-							<!--	</select> -->
 							</div>
 						</div>
 					</div>

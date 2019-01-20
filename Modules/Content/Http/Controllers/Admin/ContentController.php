@@ -36,6 +36,11 @@ class ContentController extends AdminBaseController
 	*/
 	private $content;
 
+	/**
+	 * @var string Story type
+	 */
+	private $storyType = 'news';
+
 	public function __construct(
 		ContentRepository $content,
 		CategoryRepository $category,
@@ -47,7 +52,7 @@ class ContentController extends AdminBaseController
 		parent::__construct();
 
 		$this->category      = $category;
-		$this->content       = $content;  
+		$this->content       = $content;
 		$this->contentUser   = $contentUser;
 		$this->role          = $role;
 		$this->storyCategory = $storyCategory;
@@ -62,7 +67,7 @@ class ContentController extends AdminBaseController
 	public function index()
 	{
 		$categories = $this->category->getByAttributes(['status' => 1]);
-		$contents   = $this->content->all();
+		$contents   = content::where('type', '=', $this->storyType)->get();
 
 		return view('content::admin.contents.index', compact('contents', 'categories'));
 	}

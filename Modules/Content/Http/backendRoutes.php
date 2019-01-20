@@ -304,17 +304,17 @@ $router->group(['prefix' =>'/content'], function (Router $router) {
         'uses' => 'Custom_ContentStoryController@store',
         'middleware' => 'can:content.custom_contentstories.create'
     ]);
-    $router->get('custom_contentstories/{custom_contentstory}/edit', [
+    $router->get('custom_contentstories/{content}/edit', [
         'as' => 'admin.content.custom_contentstory.edit',
         'uses' => 'Custom_ContentStoryController@edit',
         'middleware' => 'can:content.custom_contentstories.edit'
     ]);
-    $router->put('custom_contentstories/{custom_contentstory}', [
+    $router->put('custom_contentstories/{content}', [
         'as' => 'admin.content.custom_contentstory.update',
         'uses' => 'Custom_ContentStoryController@update',
         'middleware' => 'can:content.custom_contentstories.edit'
     ]);
-    $router->delete('custom_contentstories/{custom_contentstory}', [
+    $router->delete('custom_contentstories/{content}', [
         'as' => 'admin.content.custom_contentstory.destroy',
         'uses' => 'Custom_ContentStoryController@destroy',
         'middleware' => 'can:content.custom_contentstories.destroy'

@@ -16,7 +16,7 @@
 @stop
 
 @section('content')
-    {!! Form::open(['route' => ['admin.content.custom_contentstory.update', $custom_contentstory->id], 'method' => 'put', 'enctype' => 'multipart/form-data']) !!}
+    {!! Form::open(['route' => ['admin.content.custom_contentstory.update', $content->id], 'method' => 'put', 'enctype' => 'multipart/form-data']) !!}
     <div class="row">
         <div class="col-md-12">
             <div class="nav-tabs-custom">
@@ -107,7 +107,7 @@
 		var checkedArray = [];
 		function selectCategory(event) {
 			if (check == 0) {
-				checkedArray = <?= $custom_contentstory->all_category ?>;
+				checkedArray = <?= $content->all_category ?>;
 				check        = 1;
 			}
 

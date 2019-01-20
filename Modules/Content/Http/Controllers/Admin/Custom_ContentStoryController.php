@@ -4,13 +4,17 @@ namespace Modules\Content\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Modules\Content\Entities\Custom_ContentStory;
-use Modules\Content\Repositories\Custom_ContentStoryRepository;
+
 use Modules\Core\Http\Controllers\Admin\AdminBaseController;
+
+use Modules\Content\Entities\Custom_ContentStory;
+use Modules\Content\Entities\Content;
+use Modules\Content\Entities\StoryCategory;
+
+use Modules\Content\Repositories\ContentRepository;
+use Modules\Content\Repositories\Custom_ContentStoryRepository;
 use Modules\Content\Repositories\CategoryRepository;
 use Modules\User\Repositories\RoleRepository;
-use Modules\Content\Repositories\CustomMultiCategoryRepository;
-
 
 use DB;
 use Log;
@@ -22,14 +26,19 @@ class Custom_ContentStoryController extends AdminBaseController
 	 */
 	private $custom_contentstory;
 
-	public function __construct(Custom_ContentStoryRepository $custom_contentstory,CategoryRepository $category, RoleRepository $role, CustomMultiCategoryRepository $multiCustomCategory)
+	/**
+	 * @var string Story type
+	 */
+	private $storyType = 'ads';
+
+	public function __construct(ContentRepository $content, CategoryRepository $category, RoleRepository $role, StoryCategory $storyCategory)
 	{
 		parent::__construct();
 
-		$this->custom_contentstory = $custom_contentstory;
-		$this->category            = $category;
-		$this->role                = $role;
-		$this->multiCustomCategory = $multiCustomCategory;
+		$this->content       = $content;
+		$this->category      = $category;
+		$this->role          = $role;
+		$this->storyCategory = $storyCategory;
 	}
 
 	/**
@@ -39,16 +48,11 @@ class Custom_ContentStoryController extends AdminBaseController
 	 */
 	public function index()
 	{
-		$custom_contentstories = $this->custom_contentstory->all();
-		$position              = DB::table('storypositions')->get();
-		$position              = json_decode($position,true);
+		$customStories = content::where('type', '=', $this->storyType)->get();
+		$position      = DB::table('storypositions')->pluck('positions');
+		$position      = (sizeof($position)) ? $position[0] : 2;
 
-		if (sizeof($position))
-			$position = $position[0]['positions'];
-		else
-			$position = 2;
-
-		return view('content::admin.custom_contentstories.index', compact('custom_contentstories', 'position'));
+		return view('content::admin.custom_contentstories.index', compact('customStories', 'position'));
 	}
 
 	/**
@@ -58,8 +62,7 @@ class Custom_ContentStoryController extends AdminBaseController
 	 */
 	public function create()
 	{
-		$categories = $this->category->getByAttributes(['status' => 1]);
-		Log::info($categories);
+		$categories = $this->category->getByAttributes(['status' => 1])->pluck('name', 'id');
 
 		return view('content::admin.custom_contentstories.create', compact('categories'));
 	}
@@ -72,13 +75,14 @@ class Custom_ContentStoryController extends AdminBaseController
 	 */
 	public function store(Request $request)
 	{
-		$setData = $request->all();
+		$customStory = $request->all();
 		$image   = '';
 
-		$multiContCategoryData = '';
-		if (array_key_exists('category_id', $setData)) {
-			$multiContCategoryData   = $setData['category_id'];
-			$setData['all_category'] = json_encode($multiContCategoryData);
+		$storyCategories = '';
+		if (array_key_exists('category_id', $customStory)) {
+			$storyCategories       = $customStory['category_id'];
+			$customStory['all_category'] = json_encode($storyCategories);
+			$customStory['category_id']  = count($customStory['category_id']);
 		}
 
 		if ($request->hasFile('img')) {
@@ -88,25 +92,18 @@ class Custom_ContentStoryController extends AdminBaseController
 			$image = env('IMG_URL1') . '/crawle_image/' . $image_name;
 		}
 
-		$setData['image'] = $image;
-		$story            = $this->custom_contentstory->create($setData);
-		$story_id         = $story->id;
+		$customStory['image'] = $image;
+		$customStory['type']  = $this->storyType;
+		$storyId              = $this->content->create($customStory)->id;
 
-		if(!$multiContCategoryData) {
-			$categories = $this->category->getByAttributes(['status' => 1]);
-			$categories = json_decode($categories,true);
-			foreach ($categories as $key => $value) {
-				$abc['category_id']       = $value['id'];
-				$abc['custom_content_id'] = $story_id;
-				$this->multiCustomCategory->create($abc);
-			}
-		} else {
-			foreach ($multiContCategoryData as $value) {
-				Log::info($value);
-				$abc['category_id']       = $value;
-				$abc['custom_content_id'] = $story_id;
-				$this->multiCustomCategory->create($abc);
-			}
+		if(!$storyCategories) {
+			$storyCategories             = $this->category->getByAttributes(['status' => 1])->pluck('id');
+			$customStory['all_category'] = json_encode($storyCategories);
+
+		}
+
+		foreach ($storyCategories as $value) {
+			$this->storyCategory->create(['category_id' => $value, 'story_id' => $storyId]);
 		}
 
 		return redirect()->route('admin.content.custom_contentstory.index')
@@ -119,21 +116,23 @@ class Custom_ContentStoryController extends AdminBaseController
 	 * @param  Custom_ContentStory $custom_contentstory
 	 * @return Response
 	 */
-	public function edit(Custom_ContentStory $custom_contentstory)
+	public function edit(Content $content)
 	{
-		$categories = $this->category->getByAttributes(['status' => 1]);
-		return view('content::admin.custom_contentstories.edit', compact('custom_contentstory','categories'));
+		$categories = $this->category->getByAttributes(['status' => 1])->pluck('name', 'id');
+
+		return view('content::admin.custom_contentstories.edit', compact('content', 'categories'));
 	}
 
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  Custom_ContentStory $custom_contentstory
+	 * @param  Content $content
 	 * @param  Request $request
 	 * @return Response
 	 */
-	public function update(Custom_ContentStory $custom_contentstory, Request $request)
-	{   
+	public function update(Content $content, Request $request)
+	{
+		$storyId = $content->id;
 		$setData = $request->all();
 		$image   = '';
 		if ($request->hasFile('img')) {
@@ -141,19 +140,20 @@ class Custom_ContentStoryController extends AdminBaseController
 			$request->file('img')->move(env('IMG_URL').'/crawle_image',$image_name);
 			$image      = env('IMG_URL1').'/crawle_image/'.$image_name;   
 		} else {
-			$image = $custom_contentstory->image;
+			$image = $content->image;
 		}
 
-		$setData['image'] = $image;
-
-		$categoryID = DB::table('content__custommulticategories')->where('custom_content_id', '=', $custom_contentstory->id)->delete();
-
-		$setData['all_category'] = json_encode($setData['category_id']);
+		// To Manage Category
+		$categoryID = DB::table('story_categories')->where('story_id', '=', $storyId)->delete();
 		foreach ($setData['category_id'] as $catId) {
-			$this->multiCustomCategory->create(['category_id' => $catId, 'custom_content_id' => $custom_contentstory->id]);
+			$this->storyCategory->create(['category_id' => $catId, 'story_id' => $storyId]);
 		}
 
-		$this->custom_contentstory->update($custom_contentstory, $setData);
+		$setData['image']        = $image;
+		$setData['all_category'] = json_encode($setData['category_id']);
+		$setData['category_id']  = count($setData['category_id']);
+
+		$this->content->update($content, $setData);
 
 		return redirect()->route('admin.content.custom_contentstory.index')
 			->withSuccess(trans('core::core.messages.resource updated', ['name' => trans('content::custom_contentstories.title.custom_contentstories')]));
@@ -162,12 +162,14 @@ class Custom_ContentStoryController extends AdminBaseController
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  Custom_ContentStory $custom_contentstory
+	 * @param  Content $content
 	 * @return Response
 	 */
-	public function destroy(Custom_ContentStory $custom_contentstory)
+	public function destroy(Content $content)
 	{
-		$this->custom_contentstory->destroy($custom_contentstory);
+		$categoryID = DB::table('story_categories')->where('story_id', '=', $content->id)->delete();
+
+		$this->content->destroy($content);
 
 		return redirect()->route('admin.content.custom_contentstory.index')
 			->withSuccess(trans('core::core.messages.resource deleted', ['name' => trans('content::custom_contentstories.title.custom_contentstories')]));
@@ -181,13 +183,14 @@ class Custom_ContentStoryController extends AdminBaseController
 	 */
 	public function setPosition(Request $request)
 	{
-		$positions = $request->position;
-		$data      = DB::table('storypositions')->get();
+		$data = DB::table('storypositions')->get();
 		if(sizeof($data)) {
-			DB::table('storypositions')->update(['positions' => $positions]);
-		} else {
-			  DB::table('storypositions')->insert(['positions' => $positions]);
+			DB::table('storypositions')->update(['positions' => $request->position]);
+
+			return $request;
 		}
+
+		DB::table('storypositions')->insert(['positions' => $request->position]);
 
 		return $request;
 	}
