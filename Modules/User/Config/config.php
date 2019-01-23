@@ -55,18 +55,19 @@ return [
     |--------------------------------------------------------------------------
     | Set the fillable user fields, those fields will be mass assigned
     */
-    'fillable' => [
-        'email',
-        'password',
-        'permissions',
-        'first_name',
-        'last_name',
-        'company',
-        'designation',
-        'profileImg',
-        'device_code',
-        'device_type'
-    ],
+	'fillable' => [
+		'email',
+		'password',
+		'permissions',
+		'first_name',
+		'last_name',
+		'company',
+		'designation',
+		'profileImg',
+		'device_code',
+		'device_type',
+		'user_group_id',
+	],
     /*
     |--------------------------------------------------------------------------
     | Custom date fields
