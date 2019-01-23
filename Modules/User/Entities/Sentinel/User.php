@@ -11,128 +11,131 @@ use Modules\User\Presenters\UserPresenter;
 
 class User extends EloquentUser implements UserInterface
 {
-    use PresentableTrait;
+	use PresentableTrait;
 
-    protected $fillable = [
-        'email',
-        'password',
-        'permissions',
-        'first_name',
-        'last_name',
-        'company',
-        'designation',
-        'profileImg',
-        'device_code',
-        'device_type',
-        'role_id'
+	protected $fillable = [
+		'email',
+		'password',
+		'permissions',
+		'first_name',
+		'last_name',
+		'company',
+		'designation',
+		'profileImg',
+		'device_code',
+		'device_type',
+		'role_id',
+		'user_group_id',
+	];
 
-    ];
+	/**
+	* {@inheritDoc}
+	*/
+	protected $loginNames = ['email'];
 
-    /**
-     * {@inheritDoc}
-     */
-    protected $loginNames = ['email'];
+	protected $presenter = UserPresenter::class;
 
-    protected $presenter = UserPresenter::class;
+	public function __construct(array $attributes = [])
+	{
+		$this->loginNames = config('asgard.user.config.login-columns');
+		$this->fillable   = config('asgard.user.config.fillable');
 
-    public function __construct(array $attributes = [])
-    {
-        $this->loginNames = config('asgard.user.config.login-columns');
-        $this->fillable = config('asgard.user.config.fillable');
-        if (config()->has('asgard.user.config.presenter')) {
-            $this->presenter = config('asgard.user.config.presenter', UserPresenter::class);
-        }
-        if (config()->has('asgard.user.config.dates')) {
-            $this->dates = config('asgard.user.config.dates', []);
-        }
-        if (config()->has('asgard.user.config.casts')) {
-            $this->casts = config('asgard.user.config.casts', []);
-        }
+		if (config()->has('asgard.user.config.presenter')) {
+			$this->presenter = config('asgard.user.config.presenter', UserPresenter::class);
+		}
 
-        parent::__construct($attributes);
-    }
+		if (config()->has('asgard.user.config.dates')) {
+			$this->dates = config('asgard.user.config.dates', []);
+		}
 
-    /**
-     * @inheritdoc
-     */
-    public function hasRoleId($roleId)
-    {
-        return $this->roles()->whereId($roleId)->count() >= 1;
-    }
+		if (config()->has('asgard.user.config.casts')) {
+			$this->casts = config('asgard.user.config.casts', []);
+		}
 
-    /**
-     * @inheritdoc
-     */
-    public function hasRoleSlug($slug)
-    {
-        return $this->roles()->whereSlug($slug)->count() >= 1;
-    }
+		parent::__construct($attributes);
+	}
 
-    /**
-     * @inheritdoc
-     */
-    public function hasRoleName($name)
-    {
-        return $this->roles()->whereName($name)->count() >= 1;
-    }
+	/**
+	* @inheritdoc
+	*/
+	public function hasRoleId($roleId)
+	{
+		return $this->roles()->whereId($roleId)->count() >= 1;
+	}
 
-    /**
-     * @inheritdoc
-     */
-    public function isActivated()
-    {
-        if (Activation::completed($this)) {
-            return true;
-        }
+	/**
+	* @inheritdoc
+	*/
+	public function hasRoleSlug($slug)
+	{
+		return $this->roles()->whereSlug($slug)->count() >= 1;
+	}
 
-        return false;
-    }
+	/**
+	* @inheritdoc
+	*/
+	public function hasRoleName($name)
+	{
+		return $this->roles()->whereName($name)->count() >= 1;
+	}
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function api_keys()
-    {
-        return $this->hasMany(UserToken::class);
-    }
+	/**
+	* @inheritdoc
+	*/
+	public function isActivated()
+	{
+		if (Activation::completed($this)) {
+			return true;
+		}
 
-    /**
-     * @inheritdoc
-     */
-    public function getFirstApiKey()
-    {   
-        $userToken = $this->api_keys->first();
+		return false;
+	}
 
-        if ($userToken === null) {
-            return '';
-        }
+	/**
+	* @return \Illuminate\Database\Eloquent\Relations\HasMany
+	*/
+	public function api_keys()
+	{
+		return $this->hasMany(UserToken::class);
+	}
 
-        return $userToken->access_token;
-    }
+	/**
+	* @inheritdoc
+	*/
+	public function getFirstApiKey()
+	{
+		$userToken = $this->api_keys->first();
 
-    public function __call($method, $parameters)
-    {
-        #i: Convert array to dot notation
-        $config = implode('.', ['asgard.user.config.relations', $method]);
+		if ($userToken === null) {
+			return '';
+		}
 
-        #i: Relation method resolver
-        if (config()->has($config)) {
-            $function = config()->get($config);
+		return $userToken->access_token;
+	}
 
-            return $function($this);
-        }
+	public function __call($method, $parameters)
+	{
+		#i: Convert array to dot notation
+		$config = implode('.', ['asgard.user.config.relations', $method]);
 
-        #i: No relation found, return the call to parent (Eloquent) to handle it.
-        return parent::__call($method, $parameters);
-    }
+		#i: Relation method resolver
+		if (config()->has($config)) {
+			$function = config()->get($config);
 
-    /**
-     * @inheritdoc
-     */
-    public function hasAccess($permission)
-    {
-        $permissions = $this->getPermissionsInstance();
+			return $function($this);
+		}
 
-        return $permissions->hasAccess($permission);
-    }
+		#i: No relation found, return the call to parent (Eloquent) to handle it.
+		return parent::__call($method, $parameters);
+	}
+
+	/**
+	* @inheritdoc
+	*/
+	public function hasAccess($permission)
+	{
+		$permissions = $this->getPermissionsInstance();
+
+		return $permissions->hasAccess($permission);
+	}
 }
