@@ -8,5 +8,5 @@ class CompanyGroup extends Model
 {
 	protected $table             = 'company_groups';
 	public $translatedAttributes = [];
-	protected $fillable          = ['name', 'user_limit', 'company_id'];
+	protected $fillable          = ['name', 'user_limit', 'company_id', 'skin_id'];
 }
