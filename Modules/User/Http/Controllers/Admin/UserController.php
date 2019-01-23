@@ -116,10 +116,8 @@ class UserController extends BaseUserModuleController
 				->withError(trans('user::messages.user not found'));
 		}
 
-		$roles      = $this->role->all();
-		$userGroups = $this->userGroup->all()->mapWithKeys(function ($group) {
-			return [$group->id => $group->name];
-		});
+		$roles       = $this->role->all();
+		$userGroups  = $this->userGroup->all()->pluck('name', 'id');
 		$currentUser = $this->auth->user();
 
 		return view('user::admin.users.edit', compact('user', 'roles', 'currentUser', 'userGroups'));

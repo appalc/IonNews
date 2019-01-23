@@ -73,7 +73,7 @@
 								<label>User Group</label>
 								<select class="form-control" name="company_group_id">
 									<?php foreach ($userGroups as $uGId => $uGName): ?>
-									<option value="{{ $uGId }}">{{ $uGName }}</option>
+										<option value="{{ $uGId }}">{{ $uGName }}</option>
 									<?php endforeach; ?>
 								</select>
 							</div>
