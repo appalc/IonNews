@@ -67,7 +67,7 @@ use Illuminate\Support\Arr;
                                 </td>
 								<td>
 									<a href="{{ URL::route('admin.user.user.edit', [$user->id]) }}">
-										{{ Arr::get($userGroups, $user->user_group_id, '') }}
+										{{ !empty($userGroups[$user->user_group_id]) ? $userGroups[$user->user_group_id] : '' }}
 									</a>
 								</td>
                                 <td>
