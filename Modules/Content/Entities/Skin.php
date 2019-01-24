@@ -16,5 +16,9 @@ class Skin extends Model
 		'hi_color_code',
 		'font',
 		'font_size',
+		'bottom_shade_color_1',
+		'bottom_shade_color_2',
+		'button_color_code',
 	];
+
 }
