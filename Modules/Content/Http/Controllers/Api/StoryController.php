@@ -146,10 +146,10 @@ class StoryController extends BasePublicController
 			return $this->response->setStatusCode(400, $meserror);
 		}
 
-		$categorylist = $this->category->getCategoriesByUser($request->user_id);
+		$user_id      = !empty($_GET['user_id']) ? $_GET['user_id'] : $request->user_id;
+		$categorylist = $this->category->getCategoriesByUser($user_id);
 		$dataresponse = [];
 		$current_date = date('Y-m-d');
-		$user_id      = $request->user_id;
 
 		foreach ($categorylist as $category) {
 			$setexist = $this->content->getStoryByCategory($category->id);
