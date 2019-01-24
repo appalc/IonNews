@@ -165,9 +165,9 @@ class StoryController extends BasePublicController
 		}
 
 		// To sort it by decending order of created date
-		$dataresponse = collect($dataresponse)->->filter(function ($stories)
+		$dataresponse = collect($dataresponse)->->filter(function ($stories) {
 			return !empty($stories['stories']);
-		)->mapWithKeys(function ($stories, $catName) {
+		})->mapWithKeys(function ($stories, $catName) {
 			return [
 				$catName => [
 					'stories' => collect($stories['stories'])->sortByDesc('created_at')->values(),
