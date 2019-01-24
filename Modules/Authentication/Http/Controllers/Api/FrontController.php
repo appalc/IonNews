@@ -140,10 +140,11 @@ class FrontController extends BasePublicController
 				'skn.font_size as skinFontSize'
 			)
 			->where('usr.id', '=', $userId)
-			->get();
+			->get()
+			->first();
 
-		if (!empty($companyInfo['companyLogo'])) {
-			$companyInfo['companyLogo'] = env('IMG_URL1') . $companyInfo['companyLogo'];
+		if (!empty($companyInfo->companyLogo)) {
+			$companyInfo->companyLogo = env('IMG_URL1') . $companyInfo->companyLogo;
 		}
 
 		return $companyInfo;

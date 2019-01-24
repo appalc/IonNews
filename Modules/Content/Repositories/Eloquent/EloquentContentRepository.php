@@ -25,20 +25,16 @@ class EloquentContentRepository extends EloquentBaseRepository implements Conten
 		return $story;
 	}
 
-	public function getStoryByCategory($category_id,$role_id)
+	public function getStoryByCategory($categoryId)
 	{
-		$current_date = date('Y-m-d');
-		$setexist     = DB::table('stories as cc')
-			->join('content__usergroups as cug', 'cug.content_id', '=','cc.id')
-			->join('content__multiplecategorycontents as cm', 'cm.content_id', '=', 'cc.id')
-			->where('cc.expiry_date', '>=', $current_date)
-			->where('cm.category_id', '=', $category_id)
-			->where('cug.role_id', '=', $role_id)
-			->orderBy('cc.id', 'desc')
-			->take(5)
-			->get();
-
-		return $setexist;
+		return	DB::table('stories as st')
+					->join('story_categories as sc', 'sc.story_id', '=', 'st.id')
+					->select('st.*')
+					->where('sc.category_id', '=', $categoryId)
+					->where('st.expiry_date', '>=', date('Y-m-d'))
+					->orderBy('st.id', 'desc')
+					->take(5)
+					->get();
 	}
 
 	public function searchByTag($tag, $roleId)
@@ -59,6 +55,17 @@ class EloquentContentRepository extends EloquentBaseRepository implements Conten
 	public function extractTags()
 	{
 		return DB::table('stories')->select('tags')->groupBy('tags')->get();
+	}
+
+	public function getStoriesByCategory($categoryId)
+	{
+		return	DB::table('stories as st')
+					->join('story_categories as sc', 'sc.story_id', '=', 'st.id')
+					->select('st.*')
+					->where('sc.category_id', '=', $categoryId)
+					->where('st.expiry_date', '>=', date('Y-m-d'))
+					->orderBy('st.id', 'desc')
+					->paginate(12);
 	}
 
 }
