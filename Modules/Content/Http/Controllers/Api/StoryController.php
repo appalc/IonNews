@@ -133,7 +133,19 @@ class StoryController extends BasePublicController
 
 	public function homepage(Request $request, Client $http)
 	{
-		$validator    = Validator::make($request->all(), ['user_id' => 'required']);
+		$validator = Validator::make($request->all(), ['user_id' => 'required']);
+
+		if ($validator->fails()) {
+			$errors = $validator->errors();
+			foreach ($errors->all() as $message) {
+				$meserror = $message;
+			}
+
+			$this->response->setContent(array('message' => $message));
+
+			return $this->response->setStatusCode(400, $meserror);
+		}
+
 		$categorylist = $this->category->getCategoriesByUser($request->user_id);
 		$dataresponse = [];
 		$current_date = date('Y-m-d');
