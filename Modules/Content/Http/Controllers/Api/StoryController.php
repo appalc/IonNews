@@ -157,7 +157,7 @@ class StoryController extends BasePublicController
 				foreach ($setexist as $key => $value) {
 					$value->priority = $category->priority;
 				}
-				
+
 				$dataresponse[$category->name]['stories'] = $setexist;
 			}
 
@@ -165,7 +165,9 @@ class StoryController extends BasePublicController
 		}
 
 		// To sort it by decending order of created date
-		$dataresponse = collect($dataresponse)->mapWithKeys(function ($stories, $catName) {
+		$dataresponse = collect($dataresponse)->->filter(function ($stories)
+			return !empty($stories['stories']);
+		)->mapWithKeys(function ($stories, $catName) {
 			return [
 				$catName => [
 					'stories' => collect($stories['stories'])->sortByDesc('created_at')->values(),
