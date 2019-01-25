@@ -28,6 +28,12 @@ $router->group(['prefix' =>'/content'], function (Router $router) {
 		// 'middleware' => 'can:content.contents.delete_Story'
 	]);
 
+	$router->post('contents/update_expiry_date', [
+		'as'   => 'admin.content.content.ChangeExpiryDate',
+		'uses' => 'ContentController@ChangeExpiryDate',
+		// 'middleware' => 'can:content.contents.delete_Story'
+	]);
+
 	$router->get('users', [
 		'as'   => 'Content.all.users', 
 		'uses' => 'ContentController@getAllUsers'

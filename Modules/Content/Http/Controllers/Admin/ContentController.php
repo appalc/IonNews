@@ -726,4 +726,16 @@ class ContentController extends AdminBaseController
 		return response('Selected contents moved to Production Instance [' . json_encode($request->data) . ']');
 	}
 
+	/**
+	 * Push multiple story to production instance by Ajax Call
+	 * @param  Request $request [description]
+	 * @return [type]           [description]
+	 */
+	public function ChangeExpiryDate(Request $request)
+	{
+		$response = Content::whereIn('story_id', $request->id)->update(['expiry_date' => $request->date]);
+
+		return response(($response) ? 'Expiry date updated to the Selected Stories' : 'Expiry date could not be updated, Try Again');
+	}
+
 }
