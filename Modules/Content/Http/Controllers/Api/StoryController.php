@@ -52,6 +52,12 @@ class StoryController extends BasePublicController
 		// $this->middleware('oauth');
 	}
 
+	/**
+	 * Category's Story page
+	 * @param  Request $request [description]
+	 * @param  Client  $http    [description]
+	 * @return Json           [description]
+	 */
 	public function story(Request $request, Client $http)
 	{
 		$validator = Validator::make($request->all(), ['category_id' => 'required']);
@@ -131,6 +137,12 @@ class StoryController extends BasePublicController
 		return $stories;
 	}
 
+	/**
+	 * List of category with stories and icons
+	 * @param  Request $request [description]
+	 * @param  Client  $http    [description]
+	 * @return Json
+	 */
 	public function homepage(Request $request, Client $http)
 	{
 		$validator = Validator::make($request->all(), ['user_id' => 'required']);
@@ -184,60 +196,70 @@ class StoryController extends BasePublicController
 		return response($dataresponse);
 	}
 
+	/**
+	 * Like story
+	 *
+	 * @param  Request $request [description]
+	 *
+	 * @return Json
+	 */
 	public function story_like(Request $request)
 	{ 
-		$validator = Validator::make($request->all(), ['content_id' => 'required']);
+		$validator = Validator::make($request->all(), ['content_id' => 'required', 'user_id' => 'required']);
 
 		if ($validator->fails()) {
-			$errors   = $validator->errors();
-			foreach ($errors->all() as $message) {
+			foreach ($validator->errors()->all() as $message) {
 				$meserror = $message;
 			}
 
 			$this->response->setContent(['message'=> $message]);
 
 			return $this->response->setStatusCode(400, $meserror);
-		} else {
-			$user_id    = $request->user_id;
-			$content_id = $request->content_id;
-			$data       = DB::table('content__contentlikestories')
-				->where('content_id', '=', $content_id)
-				->where('user_id', '=', $user_id)
-				->get();
-
-			if (sizeof($data) > 0) {
-				$data = DB::table('content__contentlikestories')
-					->where('content_id', '=', $content_id)
-					->where('user_id', '=', $user_id)
-					->delete();
-			} else {
-				$abc['user_id']    = $user_id;
-				$abc['content_id'] = $content_id;
-				$data              = $this->likestory->create($abc);
-			}
-
-			$response['status'] = "successful";
-
-			return response($response);
 		}
+
+		$user_id  = $request->user_id;
+		$story_id = $request->content_id;
+
+		$data = DB::table('user_liked_stories')
+			->where('story_id', '=', $story_id)
+			->where('user_id', '=', $user_id)
+			->get();
+
+		if (sizeof($data) > 0) {
+			$data = DB::table('user_liked_stories')
+				->where('story_id', '=', $story_id)
+				->where('user_id', '=', $user_id)
+				->delete();
+		} else {
+			$data = $this->likestory->create([
+				'user_id'  => $user_id,
+				'story_id' => $story_id
+			]);
+		}
+
+		return response(['status' => 'successful']);
 	}
 
+	/**
+	 * Get all liked sotries by user
+	 * @param  Request $request [description]
+	 * @return Json
+	 */
 	public function getAllLikeStory(Request $request)
 	{
-		$current_date = date('Y-m-d');      
-		$dataset      = DB::table('stories as cc')
-			->join('content__contentlikestories as ccl', 'cc.id', '=', 'ccl.content_id')
+		$stories = DB::table('stories as cc')
+			->join('user_liked_stories as ccl', 'cc.id', '=', 'ccl.story_id')
 			->select('cc.*' )
-			->where('cc.expiry_date', '>=', $current_date)
+			->where('cc.expiry_date', '>=', date('Y-m-d'))
 			->where('ccl.user_id', '=', $request->user_id)
-			->paginate(12);
+			->paginate(12)
+			->each(function ($story) {
+				return $story->islike = 1;
+			});
 
-			foreach ($dataset as $key => $value) {
-				$value->islike = 1;
-			}
-
-		return response($dataset);
+		return response($stories ? $stories : 'No Stories');
 	}
+
 
 	public function move_to_archive(Request $request)
 	{
