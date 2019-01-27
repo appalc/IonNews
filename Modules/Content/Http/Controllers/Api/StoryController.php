@@ -9,11 +9,10 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Modules\Authentication\Events\Confirmnotify;
-use Modules\Content\Entities\ContentLikeStory;
 use Modules\Content\Repositories\CategoryRepository;
-use Modules\Content\Repositories\ContentLikeStoryRepository;
 use Modules\Content\Repositories\ContentRepository;
 use Modules\Content\Repositories\MultipleCategoryContentRepository;
+use Modules\Content\Repositories\UserLikedStoryRepository;
 use Modules\Core\Http\Controllers\BasePublicController;
 use Modules\Services\Repositories\UsertypeRepository;
 use Modules\User\Events\UserHasBegunResetProcess;
@@ -35,7 +34,7 @@ class StoryController extends BasePublicController
 		UserRepository $user,
 		ContentRepository $content,
 		CategoryRepository $category,
-		ContentLikeStoryRepository $likestory,
+		UserLikedStoryRepository $storyLikes,
 		MultipleCategoryContentRepository $multiContCategory
 	) {
 		parent::__construct();
@@ -45,7 +44,7 @@ class StoryController extends BasePublicController
 		$this->user              = $user;
 		$this->content           = $content;
 		$this->category          = $category;
-		$this->likestory         = $likestory;
+		$this->storyLikes        = $storyLikes;
 		$this->multiContCategory = $multiContCategory;
 
 		//$this->middleware('auth:api');
@@ -103,7 +102,7 @@ class StoryController extends BasePublicController
 
 		foreach ($stories as $key => $value) {
 			unset($value->category_id);
-			$value->like_count = $this->likestory->checkLikeorNot($value, $user_id);
+			$value->like_count = $this->storyLikes->checkLikeorNot($value, $user_id);
 
 			$value->islike = ($value->like_count) ? 1 : 0;
 
@@ -184,6 +183,7 @@ class StoryController extends BasePublicController
 		return response($dataresponse);
 	}
 
+
 	public function story_like(Request $request)
 	{ 
 		$validator = Validator::make($request->all(), ['content_id' => 'required', 'user_id' => 'required']);
@@ -193,7 +193,7 @@ class StoryController extends BasePublicController
 				$meserror = $message;
 			}
 
-			$this->response->setContent(['message'=> $message]);
+			$this->response->setContent(['message' => $message]);
 
 			return $this->response->setStatusCode(400, $meserror);
 		}
@@ -212,7 +212,7 @@ class StoryController extends BasePublicController
 				->where('user_id', '=', $user_id)
 				->delete();
 		} else {
-			$data = $this->likestory->create([
+			$data = $this->storyLikes->create([
 				'user_id'  => $user_id,
 				'story_id' => $story_id
 			]);
@@ -220,6 +220,7 @@ class StoryController extends BasePublicController
 
 		return response(['status' => 'successful']);
 	}
+
 
 	public function getAllLikeStory(Request $request)
 	{
