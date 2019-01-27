@@ -8,19 +8,19 @@ $router->group(['prefix' => '/story'], function (Router $router) {
 		$router->get('/list', [
 			'as'         => 'StoryController.api.story',
 			'uses'       => 'StoryController@story',
-	//		'middleware' => 'auth:api',
+			'middleware' => 'auth:api',
 		]);
 
 		$router->get('/getAllLikeStory', [
 			'as'         => 'StoryController.api.getAllLikeStory',
 			'uses'       => 'StoryController@getAllLikeStory',
-	//		'middleware' => 'auth:api',
+			'middleware' => 'auth:api',
 		]);
 
 		$router->get('/homepage', [
 			'as'         => 'StoryController.api.homepage',
 			'uses'       => 'StoryController@homepage',
-	//		'middleware' => 'auth:api',
+			'middleware' => 'auth:api',
 		]);
 
 		$router->get('/updateDatabase', [
@@ -38,7 +38,7 @@ $router->group(['prefix' => '/story'], function (Router $router) {
 		$router->POST('/story_like', [
 			'as'         => 'StoryController.api.story_like',
 			'uses'       => 'StoryController@story_like',
-	//		'middleware' => 'auth:api',
+			'middleware' => 'auth:api',
 		]);
 	});
 });
