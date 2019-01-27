@@ -8,14 +8,18 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+
 use Modules\Authentication\Events\Confirmnotify;
 use Modules\Content\Entities\ContentLikeStory;
 use Modules\Content\Repositories\CategoryRepository;
 use Modules\Content\Repositories\ContentLikeStoryRepository;
 use Modules\Content\Repositories\ContentRepository;
 use Modules\Content\Repositories\MultipleCategoryContentRepository;
+use Modules\Content\Repositories\UserLikedStoryRepository;
 use Modules\Core\Http\Controllers\BasePublicController;
+
 use Modules\Services\Repositories\UsertypeRepository;
+
 use Modules\User\Events\UserHasBegunResetProcess;
 use Modules\User\Http\Requests\LoginRequest;
 use Modules\User\Repositories\RoleRepository;
@@ -35,7 +39,7 @@ class StoryController extends BasePublicController
 		UserRepository $user,
 		ContentRepository $content,
 		CategoryRepository $category,
-		ContentLikeStoryRepository $likestory,
+		UserLikedStoryRepository $storyLikes,
 		MultipleCategoryContentRepository $multiContCategory
 	) {
 		parent::__construct();
@@ -45,7 +49,7 @@ class StoryController extends BasePublicController
 		$this->user              = $user;
 		$this->content           = $content;
 		$this->category          = $category;
-		$this->likestory         = $likestory;
+		$this->likestory         = $storyLikes;
 		$this->multiContCategory = $multiContCategory;
 
 		//$this->middleware('auth:api');
