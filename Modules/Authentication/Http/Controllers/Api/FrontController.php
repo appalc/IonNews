@@ -76,7 +76,7 @@ class FrontController extends BasePublicController
 
 					$token                  = Auth::generateTokenById($authicated_user->id);
 					$authicated_user->token = $token;
-					$authicated_user        = json_decode($authicated_user,true);
+					$authicated_user        = json_decode($authicated_user, true);
 					$response               = array();
 					$response                = [
 						'id'          => $authicated_user['id'],
@@ -153,7 +153,7 @@ class FrontController extends BasePublicController
 		return $companyInfo;
 	}
 
-	public function userSkinInfo(Request $request)
+	public function userSkinInfo(Request $request, Client $http)
 	{
 		$validator = Validator::make($request->all(), [
 			'user_id' => 'required'

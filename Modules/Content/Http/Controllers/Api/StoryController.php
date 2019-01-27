@@ -10,9 +10,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 use Modules\Authentication\Events\Confirmnotify;
-use Modules\Content\Entities\ContentLikeStory;
 use Modules\Content\Repositories\CategoryRepository;
-use Modules\Content\Repositories\ContentLikeStoryRepository;
 use Modules\Content\Repositories\ContentRepository;
 use Modules\Content\Repositories\MultipleCategoryContentRepository;
 use Modules\Content\Repositories\UserLikedStoryRepository;
@@ -56,12 +54,6 @@ class StoryController extends BasePublicController
 		// $this->middleware('oauth');
 	}
 
-	/**
-	 * Category's Story page
-	 * @param  Request $request [description]
-	 * @param  Client  $http    [description]
-	 * @return Json           [description]
-	 */
 	public function story(Request $request, Client $http)
 	{
 		$validator = Validator::make($request->all(), ['category_id' => 'required']);
@@ -141,12 +133,6 @@ class StoryController extends BasePublicController
 		return $stories;
 	}
 
-	/**
-	 * List of category with stories and icons
-	 * @param  Request $request [description]
-	 * @param  Client  $http    [description]
-	 * @return Json
-	 */
 	public function homepage(Request $request, Client $http)
 	{
 		$validator = Validator::make($request->all(), ['user_id' => 'required']);
