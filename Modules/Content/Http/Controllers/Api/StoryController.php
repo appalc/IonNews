@@ -6,12 +6,12 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Modules\Authentication\Events\Confirmnotify;
 use Modules\Content\Repositories\CategoryRepository;
 use Modules\Content\Repositories\ContentRepository;
-use Modules\Content\Repositories\MultipleCategoryContentRepository;
 use Modules\Content\Repositories\UserLikedStoryRepository;
 use Modules\Core\Http\Controllers\BasePublicController;
 use Modules\Services\Repositories\UsertypeRepository;
@@ -34,18 +34,16 @@ class StoryController extends BasePublicController
 		UserRepository $user,
 		ContentRepository $content,
 		CategoryRepository $category,
-		UserLikedStoryRepository $storyLikes,
-		MultipleCategoryContentRepository $multiContCategory
+		UserLikedStoryRepository $storyLikes
 	) {
 		parent::__construct();
 
-		$this->response          = $response;
-		$this->guard             = $guard;
-		$this->user              = $user;
-		$this->content           = $content;
-		$this->category          = $category;
-		$this->storyLikes        = $storyLikes;
-		$this->multiContCategory = $multiContCategory;
+		$this->response   = $response;
+		$this->guard      = $guard;
+		$this->user       = $user;
+		$this->content    = $content;
+		$this->category   = $category;
+		$this->storyLikes = $storyLikes;
 
 		//$this->middleware('auth:api');
 		// $this->middleware('oauth');
@@ -189,7 +187,8 @@ class StoryController extends BasePublicController
 		$validator = Validator::make($request->all(), ['content_id' => 'required', 'user_id' => 'required']);
 
 		if ($validator->fails()) {
-			foreach ($validator->errors()->all() as $message) {
+			$errors = $validator->errors();
+			foreach ($errors->all() as $message) {
 				$meserror = $message;
 			}
 
@@ -224,11 +223,25 @@ class StoryController extends BasePublicController
 
 	public function getAllLikeStory(Request $request)
 	{
+		$userId    = !empty($request->user_id) ? $request->user_id : Arr::get($_GET, 'user_id');
+		$validator = Validator::make($request->all(), ['user_id' => 'required']);
+
+		if ($validator->fails()) {
+			$errors = $validator->errors();
+			foreach ($errors->all() as $message) {
+				$meserror = $message;
+			}
+
+			$this->response->setContent(array('message' => $message));
+
+			return $this->response->setStatusCode(400, $meserror);
+		}
+
 		$stories = DB::table('stories as cc')
 			->join('user_liked_stories as ccl', 'cc.id', '=', 'ccl.story_id')
 			->select('cc.*' )
 			->where('cc.expiry_date', '>=', date('Y-m-d'))
-			->where('ccl.user_id', '=', $request->user_id)
+			->where('ccl.user_id', '=', $userId)
 			->paginate(12)
 			->each(function ($story) {
 				return $story->islike = 1;
@@ -260,7 +273,7 @@ class StoryController extends BasePublicController
 
 			$abc['category_id'] = $category_id;
 			$abc['content_id']  = $value->id;
-			$this->multiContCategory->create($abc);
+		//	$this->multiContCategory->create($abc);
 		}
 
 		return $exipre_story;
@@ -289,7 +302,7 @@ class StoryController extends BasePublicController
 
 			$abc['category_id'] = $category_id;
 			$abc['content_id']  = $value->id;
-			$this->multiContCategory->create($abc);
+		//	$this->multiContCategory->create($abc);
 		}
 
 		return $exipre_story;
