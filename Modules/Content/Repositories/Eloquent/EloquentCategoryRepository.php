@@ -40,4 +40,23 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
 			->get();
 	}
 
+	public function getCategoriesByGroup($userGroupId)
+	{
+		$categories = DB::table('user_groups as ug')
+			->select('ug.category_id')
+			->where('ug.id', '=', $userGroupId)
+			->get()
+			->pluck('category_id')
+			->first();
+
+			if (empty($categories)) {
+				return [];
+			}
+
+		return DB::table('categories as cat')
+			->where('cat.status', '=', 1)
+			->whereIn('cat.id', json_decode($categories, true))
+			->get();
+	}
+
 }

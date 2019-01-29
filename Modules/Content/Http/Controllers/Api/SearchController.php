@@ -51,8 +51,12 @@ class SearchController extends BasePublicController
 	 */
 	public function categoryAndTaglist(Request $request, Client $http)
 	{
+		$userId = !empty($_GET['user_id']) ? $_GET['user_id'] : $request->user_id;
+
 		return [
-			'category' => DB::table('categories')->select('id', 'name', 'slug_name')->where('status', '=', 1)->get(),
+			'category' => $this->category->getCategoriesByUser($userId)->map(function ($cat) {
+				return ['id' => $cat->id, 'name' => $cat->name, 'slug_name' => $cat->slug_name];
+			}),
 			'tag'      => collect($this->content->extractTags())->map(function($tag) {
 				$parsedTag = str_replace('#', ',', $tag->tags);
 				$parsedTag = str_replace(' ,', ',', $parsedTag);
@@ -86,8 +90,10 @@ class SearchController extends BasePublicController
 			return $this->response->setStatusCode(400, $meserror);
 		}
 
-		$userData  = $this->user->find($request->user_id);
-		$dataset   = $this->content->searchByTag($request->tags, $userData->role_id);
+		$userData     = $this->user->find($request->user_id);
+		$userCategory = $this->category->getCategoriesByGroup($userData->user_group_id);
+		$dataset      = $this->content->searchByTag($request->tags, $userCategory->pluck('id'));
+
 		$positions = DB::table('storypositions')->select('positions')->get();
 		$positions = json_decode($positions, true);
 		$position  = $positions[0]['positions'];
@@ -99,8 +105,9 @@ class SearchController extends BasePublicController
 			$offset = $limit * ($pageno - 1);
 		}
 
-		$custom_story = DB::table('content__custom_contentstories as cus')
+		$custom_story = DB::table('stories as cus')
 					->where('cus.tags', 'LIKE', '%' . $request->tags . '%')
+					->where('cus.type', '=', 'ads')
 					->offset($offset)
 					->limit($limit)
 					->get();

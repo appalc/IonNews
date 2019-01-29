@@ -32,24 +32,22 @@ class EloquentContentRepository extends EloquentBaseRepository implements Conten
 					->select('st.*')
 					->where('sc.category_id', '=', $categoryId)
 					->where('st.expiry_date', '>=', date('Y-m-d'))
+					->where('st.type', '=', 'news')
 					->orderBy('st.id', 'desc')
 					->take(5)
 					->get();
 	}
 
-	public function searchByTag($tag, $roleId)
+	public function searchByTag($tag, $categoryIds)
 	{
-		$currentDate = date('Y-m-d');
-		$story       = DB::table('stories as cc')
-				->join('content__usergroups as cug', 'cug.content_id', '=', 'cc.id')
-				->select('cc.*')
-				->where('cc.tags', 'like', '%' . $tag . '%')
-				->where('cc.expiry_date', '>=', $currentDate)
-				->where('cug.role_id', '=', $roleId)
-				->orderBy('cc.id', 'desc')
+		return DB::table('stories as st')
+				->join('story_categories as sc', 'sc.story_id', '=', 'st.id')
+				->select('st.*')
+				->where('st.tags', 'like', '%' . $tag . '%')
+				->where('st.expiry_date', '>=', date('Y-m-d'))
+				->where('sc.category_id', $categoryIds)
+				->orderBy('st.id', 'desc')
 				->paginate(12);
-
-		return $story;
 	}
 
 	public function extractTags()
@@ -64,6 +62,7 @@ class EloquentContentRepository extends EloquentBaseRepository implements Conten
 					->select('st.*')
 					->where('sc.category_id', '=', $categoryId)
 					->where('st.expiry_date', '>=', date('Y-m-d'))
+					->where('st.type', '=', 'news')
 					->orderBy('st.id', 'desc')
 					->paginate(12);
 	}
