@@ -25,7 +25,11 @@ $router->group(['prefix' =>'/content'], function (Router $router) {
 	$router->post('contents/push_story_to_prod', [
 		'as'   => 'admin.content.content.pushStoryToProd',
 		'uses' => 'ContentController@pushStoryToProd'
-		// 'middleware' => 'can:content.contents.delete_Story'
+	]);
+
+	$router->post('contents/update_expiry_date', [
+		'as'   => 'admin.content.content.ChangeExpiryDate',
+		'uses' => 'ContentController@ChangeExpiryDate',
 	]);
 
 	$router->get('users', [

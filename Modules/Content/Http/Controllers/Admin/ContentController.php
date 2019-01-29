@@ -868,4 +868,20 @@ $output='{
 		return response('Selected contents moved to Production Instance [' . json_encode($request->data) . ']');
 	}
 
+	/**
+	 * Push multiple story to production instance by Ajax Call
+	 * @param  Request $request [description]
+	 * @return [type]           [description]
+	 */
+	public function ChangeExpiryDate(Request $request)
+	{
+		$response = 'Expiry date could not be updated, Try Again';
+		if (!empty($request->date) && !empty($request->id)) {
+			Content::whereIn('id', $request->id)->update(['expiry_date' => $request->date]);
+			$response = 'Expiry date updated to the Selected Stories';
+		}
+
+		return response($response);
+	}
+
 }

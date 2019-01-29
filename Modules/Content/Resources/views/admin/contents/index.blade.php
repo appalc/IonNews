@@ -21,6 +21,18 @@
 	        	Push To Production Instance
 	        </button>
 	    <?php } ?>
+		<div id="expiryDate" style="margin-left:20px; display:none; float:left; border: 1px #000 solid; padding: 2px;">
+			<label class="pull-left" style="margin:5px;">Expiry Date</label>
+			<div id="returnrange" class="pull-left" style="margin-left:20px;background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
+				<input type="hidden" name="expiry_date" id="expiry_date"  value="" >
+				<i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+				<span></span><b class="caret"></b>
+			</div>
+
+			<button type="button" class="btn btn-primary btn-flat" id="expiryDateBtn" hidden="hide" style="margin-left: 10px;">
+				Extend Expiry Date
+			</button>
+		</div>
             <div class="row">
 
                 <!--  <div class="btn-group pull-right" style="margin: 0 15px 15px 0;">
@@ -52,6 +64,7 @@
                                 <th>{{ trans('Title') }}</th>
                                 <th>{{ trans('Category') }}</th>
                                 <th>{{ trans('Created At') }}</th>
+                                <th>{{ trans('Expired At') }}</th>
                                 <th data-sortable="false">{{ trans('core::core.table.actions') }}</th>
                             </tr>
                             </thead>
@@ -98,6 +111,11 @@
 									</a>
 								</td>
 								<td>
+									<a href ="{{ route('admin.content.content.edit', [$content->id]) }}">
+										{{ $content->expiry_date }}
+									</a>
+								</td>
+								<td>
 									<div class ="btn-group">
 										<a href ="{{ route('admin.content.content.edit', [$content->id]) }}" class="btn btn-default btn-flat"><i class="fa fa-pencil"></i></a>
 										<button class ="btn btn-danger btn-flat" data-toggle="modal" data-target="#modal-delete-confirmation" data-action-target="{{ route('admin.content.content.destroy', [$content->id]) }}"><i class="fa fa-trash"></i></button>
@@ -114,6 +132,7 @@
                                 <th>{{ trans('Title') }}</th>
                                 <th>{{ trans('Category') }}</th>
                                 <th>{{ trans('Created At') }}</th>
+                                <th>{{ trans('Expired At') }}</th>
                                 <th>{{ trans('core::core.table.actions') }}</th>
                             </tr>
                             </tfoot>
@@ -148,6 +167,8 @@
                     { key: 'c', route: "<?= route('admin.content.content.create') ?>" }
                 ]
             });
+
+			dateRangePickerFunctions();
         });
     </script>
     <?php $locale = locale(); ?>
@@ -173,7 +194,7 @@
 
 		$("#select_all,#select_all_footer").change(function() {
 			var status = this.checked; 
-			$("#deleteStory, #pushToProduction").show();
+			$("#deleteStory, #pushToProduction, #expiryDate").show();
 			if (status) {
 				$('.checkbox').each(function() {
 					this.checked = status;
@@ -190,13 +211,13 @@
 			}
 
 			if(!checkedArray.length)
-				$("#deleteStory, #pushToProduction").hide();
+				$("#deleteStory, #pushToProduction, #expiryDate").hide();
 		});
 
 
 		function changed(event)
 		{
-			$("#deleteStory, #pushToProduction").show();
+			$("#deleteStory, #pushToProduction, #expiryDate").show();
 			if (event.checked) {
 				checkedArray.push(event.value);
 			} else {
@@ -205,7 +226,7 @@
 			}
 
 			if(!checkedArray.length)
-				$("#deleteStory, #pushToProduction").hide();
+				$("#deleteStory, #pushToProduction, #expiryDate").hide();
 				console.log(checkedArray.length);
 				console.log(checkedArray);
 		}
@@ -216,7 +237,7 @@
 			data: {data: checkedArray},
 			url: '{{ env('APP_URL') }}/contents/delete_story',
 			success: function(result) {
-				$("#deleteStory").hide(); 
+				$("#deleteStory, #expiryDate").hide();
 				location.reload();
 			}
 		});
@@ -232,11 +253,32 @@
 			data: {data: checkedArray},
 			url: '{{ env('APP_URL') }}/contents/push_story_to_prod',
 			success: function(result) {
-				$("#pushToProduction").hide();
+				$("#pushToProduction, #expiryDate").hide();
 				alert('Selected Stories are moved to Production Instance');
 				location.reload();
 			}
 		});
 	});
+
+	$('#expiryDateBtn').click(function() {
+		if (!confirm("Are you sure, You want to change the Expiry Date of selected stories?")) {
+			return false;
+		}
+
+		$.ajax({
+			type: 'POST',
+			data: {id: checkedArray, date: $('#expiry_date').val()},
+			url: '{{ env('APP_URL') }}/contents/update_expiry_date',
+			success: function(result) {
+				alert(result);
+				location.reload();
+			},
+			error: function (error) {
+				alert('Somethiing went Wrong, Please Try Again');
+			}
+		});
+	});
 </script>
 @stop
+
+<script type="text/javascript" src="{{ Module::asset('content:js/datepicker.js') }}?rv={{ env('RV') }}"></script>
