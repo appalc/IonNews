@@ -30,10 +30,6 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
 			->pluck('category_id')
 			->first();
 
-			if (empty($categories)) {
-				return [];
-			}
-
 		return DB::table('categories as cat')
 			->where('cat.status', '=', 1)
 			->whereIn('cat.id', json_decode($categories, true))
@@ -48,10 +44,6 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
 			->get()
 			->pluck('category_id')
 			->first();
-
-			if (empty($categories)) {
-				return [];
-			}
 
 		return DB::table('categories as cat')
 			->where('cat.status', '=', 1)
