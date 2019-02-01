@@ -45,7 +45,7 @@ class EloquentContentRepository extends EloquentBaseRepository implements Conten
 				->select('st.*')
 				->where('st.tags', 'like', '%' . $tag . '%')
 				->where('st.expiry_date', '>=', date('Y-m-d'))
-				->where('sc.category_id', $categoryIds)
+				->whereIn('sc.category_id', $categoryIds)
 				->orderBy('st.id', 'desc')
 				->paginate(12);
 	}
