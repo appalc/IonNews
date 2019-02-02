@@ -150,7 +150,7 @@ class FrontController extends BasePublicController
 			$companyInfo->companyLogo = env('IMG_URL1') . $companyInfo->companyLogo;
 		}
 
-		return $companyInfo;
+		return ($companyInfo) ? $companyInfo : [];
 	}
 
 	public function userSkinInfo(Request $request, Client $http)
@@ -165,7 +165,10 @@ class FrontController extends BasePublicController
 			return $this->response->setStatusCode(400, 'User id required');
 		}
 
-		return response($this->getCompanyInfo($request->user_id));
+		return response(json_encode([
+			'status' => 1,
+			'skin'   => $this->getCompanyInfo($request->user_id),
+		]));
 	}
 
 	public function forgotpassword(Request $request)
