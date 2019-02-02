@@ -165,7 +165,7 @@ class FrontController extends BasePublicController
 			return $this->response->setStatusCode(400, 'User id required');
 		}
 
-		return response(json_encode($this->getCompanyInfo($request->user_id)->toArray()))->header('Content-Type', 'application/json');
+		return response($this->getCompanyInfo($request->user_id));
 	}
 
 	public function forgotpassword(Request $request)
