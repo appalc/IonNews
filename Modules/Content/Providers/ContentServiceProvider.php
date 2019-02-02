@@ -229,10 +229,21 @@ class ContentServiceProvider extends ServiceProvider
 			}
 		);
 
+		$this->app->bind(
+			'Modules\Content\Repositories\FeedbackRepository',
+			function () {
+				$repository = new \Modules\Content\Repositories\Eloquent\EloquentFeedbackRepository(new \Modules\Content\Entities\Feedback());
+
+				if (! config('app.cache')) {
+					return $repository;
+				}
+
+				return new \Modules\Content\Repositories\Cache\CacheFeedbackDecorator($repository);
+			}
+		);
 // add bindings
 
 
 
-
-    }
+	}
 }
