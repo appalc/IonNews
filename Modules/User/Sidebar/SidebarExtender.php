@@ -64,11 +64,21 @@ class SidebarExtender implements \Maatwebsite\Sidebar\SidebarExtender
 
 				$item->item('Skin', function (Item $item) {
 					$item->weight(1);
-					$item->icon('fa fa-group');
+					$item->icon('fa fa-vcard-o');
 					$item->weight(0);
 					$item->append('admin.content.skin.create');
 					$item->route('admin.content.skin.index');
 					$item->authorize($this->auth->hasAccess('skins.index'));
+				});
+
+				$item->item(trans('content::feedback.title.feedback'), function (Item $item) {
+					$item->icon('fa fa-question-circle-o');
+					$item->weight(0);
+					$item->append('admin.content.feedback.create');
+					$item->route('admin.content.feedback.index');
+					$item->authorize(
+						$this->auth->hasAccess('content.feedback.index')
+					);
 				});
 
 			});

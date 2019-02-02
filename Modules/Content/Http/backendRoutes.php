@@ -496,6 +496,40 @@ $router->group(['prefix' =>'/content'], function (Router $router) {
 		'uses'       => 'SkinController@destroy',
 		'middleware' => 'can:skins.destroy'
 	]);
+
+	$router->bind('feedback', function ($id) {
+		return app('Modules\Content\Repositories\FeedbackRepository')->find($id);
+	});
+	$router->get('feedback', [
+		'as'         => 'admin.content.feedback.index',
+		'uses'       => 'FeedbackController@index',
+		'middleware' => 'can:content.feedback.index'
+	]);
+	$router->get('feedback/create', [
+		'as'         => 'admin.content.feedback.create',
+		'uses'       => 'FeedbackController@create',
+		'middleware' => 'can:content.feedback.create'
+	]);
+	$router->post('feedback', [
+		'as'         => 'admin.content.feedback.store',
+		'uses'       => 'FeedbackController@store',
+		'middleware' => 'can:content.feedback.create'
+	]);
+	$router->get('feedback/{feedback}/edit', [
+		'as'         => 'admin.content.feedback.edit',
+		'uses'       => 'FeedbackController@edit',
+		'middleware' => 'can:content.feedback.edit'
+	]);
+	$router->put('feedback/{feedback}', [
+		'as'         => 'admin.content.feedback.update',
+		'uses'       => 'FeedbackController@update',
+		'middleware' => 'can:content.feedback.edit'
+	]);
+	$router->delete('feedback/{feedback}', [
+		'as'         => 'admin.content.feedback.destroy',
+		'uses'       => 'FeedbackController@destroy',
+		'middleware' => 'can:content.feedback.destroy'
+	]);
 // append
 
 

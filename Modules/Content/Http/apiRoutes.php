@@ -60,13 +60,15 @@ $router->group(['prefix' => '/category'], function (Router $router) {
 $router->group(['prefix' => '/search'], function (Router $router) {
 	Route::group(['middleware' => 'cors'], function(Router $router){
 		$router->get('/categoryAndTaglist', [
-			'as'   => 'SearchController.api.categoryAndTaglist',
-			'uses' => 'SearchController@categoryAndTaglist',
+			'as'         => 'SearchController.api.categoryAndTaglist',
+			'uses'       => 'SearchController@categoryAndTaglist',
+			'middleware' => 'auth:api',
 		]);
 
 		$router->POST('/storyByTag', [
-			'as'   => 'SearchController.api.storyByTag',
-			'uses' => 'SearchController@storyByTag',
+			'as'         => 'SearchController.api.storyByTag',
+			'uses'       => 'SearchController@storyByTag',
+			'middleware' => 'auth:api',
 		]);
 	});
 });
@@ -76,6 +78,16 @@ $router->group(['prefix' => '/content'], function (Router $router) {
 		$router->POST('/createStory', [
 			'as'   => 'ContentController.api.createStory',
 			'uses' => 'ContentController@createStory',
+		]);
+	});
+});
+
+$router->group(['prefix' => '/feedback'], function (Router $router) {
+	Route::group(['middleware' => 'cors'], function(Router $router){
+		$router->POST('/add', [
+			'as'         => 'FeedbackController.api.store',
+			'uses'       => 'FeedbackController@store',
+			'middleware' => 'auth:api',
 		]);
 	});
 });
