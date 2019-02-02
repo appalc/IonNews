@@ -47,7 +47,12 @@ class FeedbackController extends BasePublicController
 			return $this->response->setStatusCode(400, $meserror);
 		}
 
-		return response($this->feedback->create($request->all()) ? 'Feedback saved successfully': 'Feedback Not Saved');
+		$result = $this->feedback->create($request->all());
+
+		return response([
+			'status' => ($result),
+			'result' => ($result) ? 'Feedback saved successfully' : 'Feedback Not Saved',
+		];
 	}
 
 	public function validateApiRequest()
