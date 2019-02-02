@@ -50,7 +50,7 @@ class FeedbackController extends BasePublicController
 		$result = $this->feedback->create($request->all());
 
 		return response([
-			'status' => ($result),
+			'status' => !empty($result),
 			'result' => ($result) ? 'Feedback saved successfully' : 'Feedback Not Saved',
 		]);
 	}
