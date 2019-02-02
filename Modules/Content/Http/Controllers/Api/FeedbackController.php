@@ -52,11 +52,7 @@ class FeedbackController extends BasePublicController
 		return response([
 			'status' => ($result),
 			'result' => ($result) ? 'Feedback saved successfully' : 'Feedback Not Saved',
-		];
-	}
-
-	public function validateApiRequest()
-	{
+		]);
 	}
 
 }
