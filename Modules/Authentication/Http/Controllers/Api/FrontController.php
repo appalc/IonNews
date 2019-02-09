@@ -146,11 +146,46 @@ class FrontController extends BasePublicController
 			->get()
 			->first();
 
+		if (empty($companyInfo)) {
+			$companyInfo = $this->getDefaultSkin();
+		}
+
 		if (!empty($companyInfo->companyLogo)) {
 			$companyInfo->companyLogo = env('IMG_URL1') . $companyInfo->companyLogo;
 		}
 
 		return ($companyInfo) ? $companyInfo : [];
+	}
+
+	public function getDefaultSkin()
+	{
+		return DB::table('user_groups as ug')
+			->join('company_groups as cg', 'cg.id', '=', 'ug.company_group_id')
+			->join('skins as skn', 'skn.id', '=', 'cg.skin_id')
+			->join('companies as com', 'com.id', '=', 'cg.company_id')
+			->select(
+				'ug.id as userGroupId',
+				'ug.name as userGroupName',
+				'cg.id as companyGroupId',
+				'cg.name as companyGroupName',
+				'com.id as companyId',
+				'com.name as companyName',
+				'com.logo as companyLogo',
+				'skn.id as skinId',
+				'skn.name as skinName',
+				'skn.color as skinColor',
+				'skn.color_code as skinColorCode',
+				'skn.highlight_color as skinHighlightColor',
+				'skn.hi_color_code as skinHighlightColorCode',
+				'skn.bottom_shade_color_1 as skinBottomShadeColor1Code',
+				'skn.bottom_shade_color_2 as skinBottomShadeColor2Code',
+				'skn.button_color_code as skinButtonColorCode',
+				'skn.font as skinFont',
+				'skn.font_size as skinFontSize'
+			)
+			->where('ug.default', '=', 1)
+			->get()
+			->first();
 	}
 
 	public function userSkinInfo(Request $request, Client $http)
@@ -165,10 +200,7 @@ class FrontController extends BasePublicController
 			return $this->response->setStatusCode(400, 'User id required');
 		}
 
-		return response(json_encode([
-			'status' => 1,
-			'skin'   => $this->getCompanyInfo($request->user_id),
-		]));
+		return response(['status' => 1, 'skin' => $this->getCompanyInfo($request->user_id)]);
 	}
 
 	public function forgotpassword(Request $request)
