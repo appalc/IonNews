@@ -247,7 +247,9 @@ class StoryController extends BasePublicController
 				return $story->islike = 1;
 			});
 
-		return response($stories ? $stories : 'No Stories');
+		return response($stories ?
+			['status' => true, 'stories' => $stories] :
+			['status' => false, 'stories' => 'No Stories']);
 	}
 
 
