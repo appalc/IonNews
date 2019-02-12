@@ -47,7 +47,10 @@ class FeedbackController extends BasePublicController
 			return $this->response->setStatusCode(400, $meserror);
 		}
 
-		$result = $this->feedback->create($request->all());
+		$requestData             = $request->all();
+		$requestData['feedback'] = is_array($requestData['feedback']) ? json_encode($requestData['feedback']) : $requestData['feedback'];
+
+		$result = $this->feedback->create($requestData);
 
 		return response([
 			'status' => !empty($result),

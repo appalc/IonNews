@@ -276,7 +276,10 @@ class FrontController extends BasePublicController
 				return $this->response->setStatusCode(400,'Not allowed as Usertype');
 			}
 
-			$user       = $this->user->createWithRoles($request->all(), $role_id,true);
+			$requestData                  = $request->all();
+			$requestData['user_group_id'] = DB::table('user_groups')->where('default', '=', 1)->get()->first()->id;
+
+			$user       = $this->user->createWithRoles($requestData, $role_id, true);
 			$user->role = $request->role;
 
 			$confirm->broadcastOn($user);
