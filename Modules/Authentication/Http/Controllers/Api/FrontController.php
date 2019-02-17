@@ -17,6 +17,7 @@ use Modules\User\Repositories\RoleRepository;
 use Modules\User\Services\UserResetter;
 use Modules\Services\Repositories\UsertypeRepository;
 use Modules\Authentication\Events\Confirmnotify;
+use Modules\Content\Entities\Preference;
 use Input;
 use Log;
 use Mail;
@@ -95,6 +96,7 @@ class FrontController extends BasePublicController
 						'profileImg'  => Arr::get($authicated_user, 'profileImg', ''),
 						'token'       => Arr::get($authicated_user, 'token', ''),
 						'companyInfo' => $this->getCompanyInfo($authicated_user['id']),
+						'settings'    => DB::table('preferences')->where('user_id', '=', $userId)->get()->toArray(),
 					];
 
 					return response(json_encode($response))->header('Content-Type', 'application/json');
@@ -200,7 +202,11 @@ class FrontController extends BasePublicController
 			return $this->response->setStatusCode(400, 'User id required');
 		}
 
-		return response(['status' => 1, 'skin' => $this->getCompanyInfo($request->user_id)]);
+		return response([
+			'status'   => 1,
+			'skin'     => $this->getCompanyInfo($request->user_id),
+			'settings' => DB::table('preferences')->where('user_id', '=', $request->user_id)->get()->toArray(),
+		]);
 	}
 
 	public function forgotpassword(Request $request)
@@ -586,6 +592,39 @@ $output='{
 		});
 
 		return true;
+	}
+
+	/**
+	 * [updatePreference description]
+	 *
+	 *  @param  Request $request [description]
+	 *
+	 * @return Json
+	 */
+	public function updatePreference(Request $request, Client $http)
+	{
+		$validator = Validator::make($request->all(), [
+			'user_id' => 'required',
+			'name'    => 'required',
+			'value'   => 'required',
+		]);
+
+		if ($validator->fails()) {
+			$errors = $validator->errors();
+			foreach ($errors->all() as $message) {
+				$meserror = $message;
+			}
+
+			$this->response->setContent(array('message' => $meserror));
+			return $this->response->setStatusCode(400, $meserror);
+		}
+
+		$response = ['status' => false, 'message' => 'Preference Not Updated, Try Again'];
+		if (preference::where('user_id', $userId)->where('name', 'story_layout')->update(['value' => 'grid'])) {
+			$response = ['status' => true, 'message' => 'Preference Updated successfully'];
+		}
+
+		return response($response)->header('Content-Type', 'application/json');
 	}
 
 }

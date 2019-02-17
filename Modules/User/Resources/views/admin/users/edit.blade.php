@@ -21,6 +21,7 @@
                 <li class=""><a href="#tab_2-2" data-toggle="tab">{{ trans('user::users.tabs.roles') }}</a></li>
                 <li class=""><a href="#tab_3-3" data-toggle="tab">{{ trans('user::users.tabs.permissions') }}</a></li>
                 <li class=""><a href="#password_tab" data-toggle="tab">{{ trans('user::users.tabs.new password') }}</a></li>
+                <li><a href="#setting_tab" data-toggle="tab">App Settings</a></li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="tab_1-1">
@@ -137,6 +138,20 @@
                         </div>
                     </div>
                 </div>
+
+				<div class="tab-pane" id="setting_tab">
+					<div class="box-body">
+						<div class="row">
+							<div class="col-md-6"><h4>Name</h4></div>
+							<div class="col-md-6"><h4>Value</h4></div>
+							<?php foreach ($settings as $setting) { ?>
+								<div class="col-md-6"> {{$setting->name}} </div>
+								<div class="col-md-6"> {{$setting->value}} </div>
+							<?php } ?>
+						</div>
+					</div>
+				</div>
+
                 <div class="box-footer">
                     <button type="submit" class="btn btn-primary btn-flat" name="button" value="index">
                         <i class="fa fa-angle-left"></i>

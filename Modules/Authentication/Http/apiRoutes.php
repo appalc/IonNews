@@ -78,5 +78,11 @@ $router->group(['prefix' =>'/authentication'], function (Router $router) {
 			'uses'       => 'FrontController@userSkinInfo',
 			'middleware' => 'auth:api'
 		]);
+
+		$router->post('/updatePreference', [
+			'as'         => 'authentication.api.updatePreference',
+			'uses'       => 'FrontController@updatePreference',
+			'middleware' => 'auth:api'
+		]);
 	});
 });

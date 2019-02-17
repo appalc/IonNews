@@ -241,6 +241,30 @@ class ContentServiceProvider extends ServiceProvider
 				return new \Modules\Content\Repositories\Cache\CacheFeedbackDecorator($repository);
 			}
 		);
+		$this->app->bind(
+			'Modules\Content\Repositories\LayoutRepository',
+			function () {
+				$repository = new \Modules\Content\Repositories\Eloquent\EloquentLayoutRepository(new \Modules\Content\Entities\Layout());
+
+				if (! config('app.cache')) {
+					return $repository;
+				}
+
+				return new \Modules\Content\Repositories\Cache\CacheLayoutDecorator($repository);
+			}
+		);
+		$this->app->bind(
+			'Modules\Content\Repositories\PreferenceRepository',
+			function () {
+				$repository = new \Modules\Content\Repositories\Eloquent\EloquentPreferenceRepository(new \Modules\Content\Entities\Preference());
+
+				if (! config('app.cache')) {
+					return $repository;
+				}
+
+				return new \Modules\Content\Repositories\Cache\CachePreferenceDecorator($repository);
+			}
+		);
 // add bindings
 
 

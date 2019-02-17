@@ -119,8 +119,9 @@ class UserController extends BaseUserModuleController
 		$roles       = $this->role->all();
 		$userGroups  = $this->userGroup->all()->pluck('name', 'id');
 		$currentUser = $this->auth->user();
+		$settings    = DB::table('preferences')->where('user_id', '=', $id)->get();
 
-		return view('user::admin.users.edit', compact('user', 'roles', 'currentUser', 'userGroups'));
+		return view('user::admin.users.edit', compact('user', 'roles', 'currentUser', 'userGroups', 'settings'));
 	}
 
 	/**

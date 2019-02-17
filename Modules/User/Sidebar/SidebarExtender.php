@@ -64,14 +64,14 @@ class SidebarExtender implements \Maatwebsite\Sidebar\SidebarExtender
 
 				$item->item('Skin', function (Item $item) {
 					$item->weight(1);
-					$item->icon('fa fa-vcard-o');
+					$item->icon('fa fa-address-card-o');
 					$item->weight(0);
 					$item->append('admin.content.skin.create');
 					$item->route('admin.content.skin.index');
 					$item->authorize($this->auth->hasAccess('skins.index'));
 				});
 
-				$item->item(trans('content::feedback.title.feedback'), function (Item $item) {
+				$item->item('Feedback', function (Item $item) {
 					$item->icon('fa fa-question-circle-o');
 					$item->weight(0);
 					$item->append('admin.content.feedback.create');
@@ -80,7 +80,24 @@ class SidebarExtender implements \Maatwebsite\Sidebar\SidebarExtender
 						$this->auth->hasAccess('content.feedback.index')
 					);
 				});
-
+				$item->item('Layout', function (Item $item) {
+					$item->icon('fa fa-table');
+					$item->weight(0);
+					$item->append('admin.content.layout.create');
+					$item->route('admin.content.layout.index');
+					$item->authorize(
+						$this->auth->hasAccess('content.layouts.index')
+					);
+				});
+				$item->item('Preferences', function (Item $item) {
+					$item->icon('fa fa-copy');
+					$item->weight(0);
+					$item->append('admin.content.preference.create');
+					$item->route('admin.content.preference.index');
+					$item->authorize(
+						$this->auth->hasAccess('content.preferences.index')
+					);
+				});
 			});
 		});
 

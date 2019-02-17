@@ -87,6 +87,18 @@ return [
 		'edit'    => 'content::feedback.edit resource',
 		'destroy' => 'content::feedback.destroy resource',
 	],
+	'content.layouts' => [
+		'index'   => 'content::layouts.list resource',
+		'create'  => 'content::layouts.create resource',
+		'edit'    => 'content::layouts.edit resource',
+		'destroy' => 'content::layouts.destroy resource',
+	],
+	'content.preferences' => [
+		'index'   => 'content::preferences.list resource',
+		'create'  => 'content::preferences.create resource',
+		'edit'    => 'content::preferences.edit resource',
+		'destroy' => 'content::preferences.destroy resource',
+	],
 // append
 
 
