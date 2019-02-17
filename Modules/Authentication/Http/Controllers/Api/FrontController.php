@@ -622,6 +622,8 @@ $output='{
 		$response = ['status' => false, 'message' => 'Preference Not Updated, Try Again'];
 		if (Preference::where('user_id', $request->user_id)->where('name', $request->name)->update(['value' => $request->value])) {
 			$response = ['status' => true, 'message' => 'Preference Updated successfully'];
+		} else if (Preference::create(['name' => $request->name, 'value' => $request->value, 'user_id' => $request->user_id])) {
+			$response = ['status' => true, 'message' => 'Preference saved successfully'];
 		}
 
 		return response($response)->header('Content-Type', 'application/json');
