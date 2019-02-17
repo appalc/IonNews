@@ -13,6 +13,7 @@ use Modules\User\Repositories\UserRepository;
 use Modules\Content\Repositories\UserGroupRepository;
 use Log;
 use Mail;
+use DB;
 
 class UserController extends BaseUserModuleController
 {
