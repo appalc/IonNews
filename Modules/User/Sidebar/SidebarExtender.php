@@ -80,7 +80,7 @@ class SidebarExtender implements \Maatwebsite\Sidebar\SidebarExtender
 						$this->auth->hasAccess('content.feedback.index')
 					);
 				});
-				$item->item('Layout', function (Item $item) {
+	/*			$item->item('Layout', function (Item $item) {
 					$item->icon('fa fa-table');
 					$item->weight(0);
 					$item->append('admin.content.layout.create');
@@ -98,6 +98,7 @@ class SidebarExtender implements \Maatwebsite\Sidebar\SidebarExtender
 						$this->auth->hasAccess('content.preferences.index')
 					);
 				});
+	*/
 			});
 		});
 
