@@ -96,7 +96,7 @@ class FrontController extends BasePublicController
 						'profileImg'  => Arr::get($authicated_user, 'profileImg', ''),
 						'token'       => Arr::get($authicated_user, 'token', ''),
 						'companyInfo' => $this->getCompanyInfo($authicated_user['id']),
-						'settings'    => DB::table('preferences')->where('user_id', '=', $authicated_user['id'])->get(),
+						'settings'    => DB::table('preferences')->where('user_id', '=', $authicated_user['id'])->get()->pluck('value', 'name'),
 					];
 
 					return response(json_encode($response))->header('Content-Type', 'application/json');
@@ -205,7 +205,7 @@ class FrontController extends BasePublicController
 		return response([
 			'status'   => 1,
 			'skin'     => $this->getCompanyInfo($request->user_id),
-			'settings' => DB::table('preferences')->where('user_id', '=', $request->user_id)->get(),
+			'settings' => DB::table('preferences')->where('user_id', '=', $request->user_id)->get()->pluck('value', 'name'),
 		]);
 	}
 
