@@ -620,7 +620,7 @@ $output='{
 		}
 
 		$response = ['status' => false, 'message' => 'Preference Not Updated, Try Again'];
-		if (preference::where('user_id', $userId)->where('name', 'story_layout')->update(['value' => 'grid'])) {
+		if (preference::where('user_id', $request->user_id)->where('name', 'story_layout')->update(['value' => 'grid'])) {
 			$response = ['status' => true, 'message' => 'Preference Updated successfully'];
 		}
 
