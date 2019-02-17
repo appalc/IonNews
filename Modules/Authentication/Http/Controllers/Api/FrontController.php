@@ -96,7 +96,7 @@ class FrontController extends BasePublicController
 						'profileImg'  => Arr::get($authicated_user, 'profileImg', ''),
 						'token'       => Arr::get($authicated_user, 'token', ''),
 						'companyInfo' => $this->getCompanyInfo($authicated_user['id']),
-						'settings'    => DB::table('preferences')->where('user_id', '=', $userId)->get()->toArray(),
+						'settings'    => DB::table('preferences')->where('user_id', '=', $authicated_user['id'])->get()->toArray(),
 					];
 
 					return response(json_encode($response))->header('Content-Type', 'application/json');
