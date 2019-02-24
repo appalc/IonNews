@@ -243,7 +243,7 @@ class FrontController extends BasePublicController
       }
     }
 
-	public function register(Request $request,RoleRepository $roles,Confirmnotify $confirm)
+	public function register(Request $request, RoleRepository $roles, Confirmnotify $confirm)
 	{
 		$validator = Validator::make($request->all(), [
 			'email'       => 'required|unique:users',
@@ -251,8 +251,8 @@ class FrontController extends BasePublicController
 			'first_name'  => 'required|max:25',
 			'role'        => 'required',
 			'last_name'   => 'required|max:25',
-			'device_code' =>'required',
-			'role_id'     =>'required'
+			'device_code' => 'required',
+			'role_id'     => 'required',
 		]);
 
 		if ($validator->fails()) {
@@ -300,6 +300,12 @@ class FrontController extends BasePublicController
 					Auth::user()->last_login = new \DateTime();
 					Auth::user()->save();
 					$user->token = Auth::generateTokenById($authicated_user->id);
+
+					Preference::create([
+						'name'    => 'story_layout',
+						'value'   => 'List',
+						'user_id' => $authicated_user->id,
+					]);
 
 					return response($user)->header('Content-Type', 'application/json');
 				}

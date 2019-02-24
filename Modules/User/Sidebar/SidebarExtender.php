@@ -64,7 +64,7 @@ class SidebarExtender implements \Maatwebsite\Sidebar\SidebarExtender
 
 				$item->item('Skin', function (Item $item) {
 					$item->weight(1);
-					$item->icon('fa fa-address-card-o');
+					$item->icon('fa fa-clone');
 					$item->weight(0);
 					$item->append('admin.content.skin.create');
 					$item->route('admin.content.skin.index');
