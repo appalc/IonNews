@@ -303,6 +303,8 @@ class ContentController extends AdminBaseController
 	*/
 	private function generateStoryNotifications($notification, $allCategories)
 	{
+		return true;
+
 		$results = UserGroup::select('id');
 		foreach ($allCategories as $categoryId) {
 			$results->orWhereRaw('json_contains(category_id, \'["' . $categoryId . '"]\')');
