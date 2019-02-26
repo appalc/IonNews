@@ -243,7 +243,7 @@ class ContentController extends AdminBaseController
 		$tags    = "";
 		$image   = "";
 
-		if (!$Alldata['tags']) {
+		if (empty($Alldata['tags'])) {
 			$categoryName    = $this->category->find($Alldata['category_id'])->pluck('name')->first();
 			$Alldata['tags'] = !empty($categoryName) ? $tags . "#" . $categoryName : $tags;
 		}
