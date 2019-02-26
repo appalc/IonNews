@@ -10,6 +10,7 @@ use Modules\Content\Entities\ContentImages;
 use Modules\Content\Entities\ContentUser;
 use Modules\Content\Entities\ContentCompany;
 use Modules\Content\Entities\StoryCategory;
+use Modules\Content\Entities\UserGroup;
 use Modules\User\Entities\Sentinel\User;
 
 use Modules\Content\Repositories\ContentRepository;
