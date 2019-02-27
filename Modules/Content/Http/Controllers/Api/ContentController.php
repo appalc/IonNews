@@ -79,9 +79,12 @@ class ContentController extends BasePublicController
 			$Alldata['image'] = (array_key_exists('img1', $Alldata)) ? $Alldata['img1'] : $image;
 		}
 
-		$storyCategoryData       = $Alldata['category_id'];
-		$Alldata['all_category'] = json_encode($Alldata['category_id']);
-		$Alldata['category_id']  = sizeof($Alldata['category_id']);
+		$categoriesWithName      = $this->category->all()->pluck('id', 'slug_name');
+		$storyCategoryData       = collect($Alldata['category_id'])->map(function ($cateSlug) use ($categoriesWithName) {
+			empty !empty($categoriesWithName[$cateSlug]) ? $categoriesWithName[$cateSlug] : '';
+		})->filter()->toArray();
+		$Alldata['all_category'] = json_encode($storyCategoryData);
+		$Alldata['category_id']  = sizeof($storyCategoryData);
 		$Alldata['content']      = trim($Alldata['content']);
 
 		$id = $this->content->create($Alldata)->id;

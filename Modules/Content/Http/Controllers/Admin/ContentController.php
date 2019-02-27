@@ -693,6 +693,7 @@ class ContentController extends AdminBaseController
 	public function pushStoryToProd(Request $request)
 	{
 		$storiesToProcess = DB::table('stories as cc')->whereIn('cc.id', $request->data)->get()->reverse()->unique('id');
+		$categoryNameList = $this->category->getByAttributes(['status' => 1], 'priority', 'desc')->pluck('slug_name', 'id');
 		$storiesToProcess = $storiesToProcess->map(function ($content) {
 			$this->_pushToProductionInstance([
 				'_token'      => 'NNWS3STN00nXOLV2O0GIa3wVP0eqR8ceS' . rand(1111, 9999),
@@ -700,7 +701,7 @@ class ContentController extends AdminBaseController
 				'title'       => $content->title,
 				'sub_title'   => $content->sub_title,
 				'tags'        => $content->tags,
-				'category_id' => json_decode($content->all_category),
+		//		'category_id' => json_decode($content->all_category),
 				'expiry_date' => $content->expiry_date,
 				'content'     => $content->content,
 				'image'       => $content->image,
@@ -709,6 +710,9 @@ class ContentController extends AdminBaseController
 				'img3'        => '',
 				'img4'        => '',
 				'user_roles'  => [],
+				'category_id' => collect($content->all_category)->map(function ($cateId) use ($categoryNameList) {
+					return !empty($categoryNameList[$cateId]) ? $categoryNameList[$cateId] : '';
+				})->filter()->toArray(),
 			]);
 		});
 
