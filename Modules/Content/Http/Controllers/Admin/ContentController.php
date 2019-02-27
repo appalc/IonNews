@@ -281,7 +281,14 @@ class ContentController extends AdminBaseController
 
 		if (env('STORY_PUSH_ENABLE') && $request->pushToProd) {
 			try {
-				$this->_pushToProductionInstance($request->all());
+				$categoryNames = $this->category->all()->pluck('slug_name', 'id');
+				$requestData   = $request->all();
+
+				$requestData['category_id'] => collect($requestData['category_id'])->map(function ($cateId) use ($categoryNames) {
+					return !empty($categoryNames[$cateId]) ? $categoryNames[$cateId] : '';
+				})->filter()->toArray(),
+
+				$this->_pushToProductionInstance($requestData);
 			} catch (Exception $e) {
 				echo 'Failed to push to Production Instance';
 			}
