@@ -81,7 +81,7 @@ class ContentController extends BasePublicController
 
 		$categoriesWithName      = $this->category->all()->pluck('id', 'slug_name');
 		$storyCategoryData       = collect($Alldata['category_id'])->map(function ($cateSlug) use ($categoriesWithName) {
-			empty !empty($categoriesWithName[$cateSlug]) ? $categoriesWithName[$cateSlug] : '';
+			return !empty($categoriesWithName[$cateSlug]) ? $categoriesWithName[$cateSlug] : '';
 		})->filter()->toArray();
 		$Alldata['all_category'] = json_encode($storyCategoryData);
 		$Alldata['category_id']  = sizeof($storyCategoryData);
