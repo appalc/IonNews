@@ -284,9 +284,9 @@ class ContentController extends AdminBaseController
 				$categoryNames = $this->category->all()->pluck('slug_name', 'id');
 				$requestData   = $request->all();
 
-				$requestData['category_id'] => collect($requestData['category_id'])->map(function ($cateId) use ($categoryNames) {
+				$requestData['category_id'] = collect($requestData['category_id'])->map(function ($cateId) use ($categoryNames) {
 					return !empty($categoryNames[$cateId]) ? $categoryNames[$cateId] : '';
-				})->filter()->toArray(),
+				})->filter()->toArray();
 
 				$this->_pushToProductionInstance($requestData);
 			} catch (Exception $e) {
