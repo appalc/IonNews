@@ -694,7 +694,7 @@ class ContentController extends AdminBaseController
 	{
 		$storiesToProcess = DB::table('stories as cc')->whereIn('cc.id', $request->data)->get()->reverse()->unique('id');
 		$categoryNameList = $this->category->getByAttributes(['status' => 1], 'priority', 'desc')->pluck('slug_name', 'id');
-		$storiesToProcess = $storiesToProcess->map(function ($content) {
+		$storiesToProcess = $storiesToProcess->map(function ($content) use ($categoryNameList) {
 			$this->_pushToProductionInstance([
 				'_token'      => 'NNWS3STN00nXOLV2O0GIa3wVP0eqR8ceS' . rand(1111, 9999),
 				'crawl_url'   => $content->crawl_url,
