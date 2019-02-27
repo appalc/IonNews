@@ -667,7 +667,7 @@ class ContentController extends AdminBaseController
 	 *
 	 */
 	private function _pushToProductionInstance($data)
-	{dd($data);
+	{
 		$ch = curl_init(env('PROD_SERVER_URL') . '/api/content/createStory');
 
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -710,7 +710,7 @@ class ContentController extends AdminBaseController
 				'img3'        => '',
 				'img4'        => '',
 				'user_roles'  => [],
-				'category_id' => collect($content->all_category)->map(function ($cateId) use ($categoryNameList) {
+				'category_id' => collect(json_decode($content->all_category))->map(function ($cateId) use ($categoryNameList) {
 					return !empty($categoryNameList[$cateId]) ? $categoryNameList[$cateId] : '';
 				})->filter()->toArray(),
 			]);
