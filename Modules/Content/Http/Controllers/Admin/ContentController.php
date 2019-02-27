@@ -667,7 +667,7 @@ class ContentController extends AdminBaseController
 	 *
 	 */
 	private function _pushToProductionInstance($data)
-	{
+	{dd($data);
 		$ch = curl_init(env('PROD_SERVER_URL') . '/api/content/createStory');
 
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
