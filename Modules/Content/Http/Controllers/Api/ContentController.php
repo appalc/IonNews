@@ -10,17 +10,16 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 use Modules\Authentication\Events\Confirmnotify;
-use Modules\Content\Entities\ContentLikeStory;
+use Modules\Content\Entities\StoryCategory;
+use Modules\Content\Entities\UserGroup;
+
 use Modules\Content\Repositories\CategoryRepository;
-use Modules\Content\Repositories\ContentLikeStoryRepository;
 use Modules\Content\Repositories\ContentRepository;
-use Modules\Content\Repositories\MultipleCategoryContentRepository;
 use Modules\Content\Repositories\UserGroupRepository;
 use Modules\Core\Http\Controllers\BasePublicController;
 use Modules\Services\Repositories\UsertypeRepository;
 use Modules\User\Events\UserHasBegunResetProcess;
 use Modules\User\Http\Requests\LoginRequest;
-use Modules\User\Repositories\RoleRepository;
 use Modules\User\Repositories\UserRepository;
 use Modules\User\Services\UserResetter;
 use Modules\User\Entities\Sentinel\User;
@@ -32,19 +31,24 @@ class ContentController extends BasePublicController
 {
     protected $guard;
 
-	public function __construct(Response $response, Guard $guard, UserRepository $user, CategoryRepository $category, RoleRepository $role, ContentRepository $content, ContentLikeStoryRepository $likestory, MultipleCategoryContentRepository $multiContCategory, UserGroupRepository $userGroup)
-	{
+	public function __construct(
+		Response $response,
+		Guard $guard,
+		UserRepository $user,
+		CategoryRepository $category,
+		ContentRepository $content,
+		StoryCategory $storyCategory,
+	 	UserGroupRepository $userGroup
+	) {
 		parent::__construct();
 
-		$this->category          = $category;
-		$this->content           = $content;
-		$this->guard             = $guard;
-		$this->likestory         = $likestory;
-		$this->multiContCategory = $multiContCategory;
-		$this->response          = $response;
-		$this->role              = $role;
-		$this->user              = $user;
-		$this->userGroup         = $userGroup;
+		$this->category      = $category;
+		$this->content       = $content;
+		$this->guard         = $guard;
+		$this->response      = $response;
+		$this->user          = $user;
+		$this->userGroup     = $userGroup;
+		$this->storyCategory = $storyCategory;
 	}
 
 	/**
@@ -57,26 +61,13 @@ class ContentController extends BasePublicController
 	 */
 	public function createStory(Request $request, Client $http)
 	{
-		$Alldata    = $request->all();
-		$tags       = '';
-		$user_roles = !empty($Alldata['user_roles']) ? $Alldata['user_roles'] : [-1];
+		$Alldata = $request->all();
+		$image   = '';
 
-		$Alldata['all_users'] = json_encode($user_roles);
-		if (!$Alldata['tags']) {
-			$categoryName = $this->category->find($Alldata['category_id']);
-			$categoryName = json_decode($categoryName, true);
-			if (sizeof($categoryName)) {
-				foreach ($categoryName as $value) {
-					$tags = $tags . "#" . $value['name'];
-					break;
-				}
-			}
-
-			$Alldata['tags'] = $tags;
+		if (empty($Alldata['tags'])) {
+			$categoryName    = $this->category->find($Alldata['category_id'])->pluck('name')->first();
+			$Alldata['tags'] = !empty($categoryName) ? '#' . $categoryName : '';
 		}
-
-		$Alldata['content'] = trim($Alldata['content']);
-		$image              = "";
 
 		if ($request->hasFile('img')) {
 			$image_name = $_FILES['img']['name'];
@@ -88,93 +79,56 @@ class ContentController extends BasePublicController
 			$Alldata['image'] = (array_key_exists('img1', $Alldata)) ? $Alldata['img1'] : $image;
 		}
 
-		$sizeofCategories        = sizeof($Alldata['category_id']);
-		$multiContCategoryData   = $Alldata['category_id'];
+		$storyCategoryData       = $Alldata['category_id'];
 		$Alldata['all_category'] = json_encode($Alldata['category_id']);
-		$Alldata['category_id']  = $sizeofCategories;
+		$Alldata['category_id']  = sizeof($Alldata['category_id']);
+		$Alldata['content']      = trim($Alldata['content']);
 
-		$ids = $this->content->create($Alldata);
+		$id = $this->content->create($Alldata)->id;
 
-		$id = json_decode($ids, true);
-		$id = $ids['id'];
-
-		if (!in_array(-1, $user_roles)) {
-			foreach ($user_roles as $key => $value) {
-				$abc['role_id']    = $value;
-				$abc['content_id'] = $id;
-
-				$this->userGroup->create($abc);
-			}
-		} else {
-			$all_roles = json_decode($this->role->all(), true);
-			foreach ($all_roles as $key => $value) {
-				if($value['id'] != 1) {
-					$abc['role_id']    = $value['id'];
-					$abc['content_id'] = $id;
-					$this->userGroup->create($abc);
-				}
+		if (sizeof($storyCategoryData)) {
+			foreach ($storyCategoryData as $value) {
+				$this->storyCategory->create(['category_id' => $value, 'story_id' => $id]);
 			}
 		}
 
-		if (sizeof($multiContCategoryData)) {
-			foreach ($multiContCategoryData as $value) {
-				$abc['category_id'] = $value;
-				$abc['content_id']  = $id;
-
-				$this->multiContCategory->create($abc);
-			}
-		}
-
-		$company_name = [];
-		$i            = 0;  
-		$device_code  = []; 
-		$users        = json_decode(User::all(), true);
-		$role_ids     = $Alldata['user_roles'];
-		$final_users  = [];
-
-		if (!in_array(-1, $role_ids)) {
-			$user_roll = $this->role->find($role_ids);
-			$all_roles = json_decode($user_roll, true);
-
-			foreach ($all_roles as $key => $value) {
-				$find[] = $value['slug'];
-			}
-
-			foreach ($users as $key => $value) { 
-				if (in_array($value['role'], $find)) {
-					$final_users[] = $value;
-				}
-			}
-		} else {
-			$final_users = $users;
-		}
-
-		foreach ($users as $key => $value) {
-			if (!empty($final_users[$i]) && ($value['id'] == $final_users[$i]['id'])) {
-				$company_name[] = $value['company'];
-				$i++;
-				if($value['device_type'])
-					$device_code[$value['device_type']][$value['id']] = $value['device_code'];
-			}
-
-			if ($i >= sizeof($final_users))
-				break;
-		}
-
-		$message = [
+		$this->generateStoryNotifications([
 			'title'     => $Alldata['title'],
 			'message'   => $Alldata['content'],
 			'imageUrl'  => (array_key_exists('image', $Alldata)) ? $Alldata['image'] : '',
 			'crawl_url' => $Alldata['crawl_url'],
-		];
+		], $storyCategoryData);
 
-		foreach ($device_code as $deviceType => $value) {
-			foreach ($value as $deviceIds) {
-				if ($value && $deviceType == 'iphone') {
-		//			$this->push_notificationsIOS($message, $deviceIds);
-				} elseif ($value && $deviceType == 'android') {
-		//			$this->push_notifications($message, $deviceIds);
-				}
+		return true;
+	}
+
+	/**
+	* To retrieve user's device info's and generate push notifictions
+	*
+	* @param array $notification  Array of ntification infos
+	* @param array $allCategories Array of categories
+	*
+	* @return Response
+	*/
+	private function generateStoryNotifications($notification, $allCategories)
+	{
+		return true;
+
+		$results = UserGroup::select('id');
+		foreach ($allCategories as $categoryId) {
+			$results->orWhereRaw('json_contains(category_id, \'["' . $categoryId . '"]\')');
+		}
+
+		$userGroups  = $results->get()->pluck('id');
+		$usersToSend = User::where('user_group_id', '=', $userGroups)->get()->pluck('device_code', 'device_type')->toArray();
+
+		foreach ($usersToSend as $deviceType => $deviceCode) {
+			if (($deviceType == "iphone") && ($deviceCode)) {
+				$this->push_notificationsIOS($message, $deviceCode);
+			}
+
+			if (($deviceType == "android") && ($deviceCode)) {
+				$this->push_notifications($message, $deviceCode);
 			}
 		}
 

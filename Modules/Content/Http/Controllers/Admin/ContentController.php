@@ -240,12 +240,11 @@ class ContentController extends AdminBaseController
 	public function store(Request $request)
 	{
 		$Alldata = $request->all();
-		$tags    = "";
-		$image   = "";
+		$image   = '';
 
 		if (empty($Alldata['tags'])) {
 			$categoryName    = $this->category->find($Alldata['category_id'])->pluck('name')->first();
-			$Alldata['tags'] = !empty($categoryName) ? $tags . "#" . $categoryName : $tags;
+			$Alldata['tags'] = !empty($categoryName) ? '#' . $categoryName : '';
 		}
 
 		if ($request->hasFile('img')) {
@@ -693,20 +692,7 @@ class ContentController extends AdminBaseController
 	 */
 	public function pushStoryToProd(Request $request)
 	{
-		$stories = DB::table('stories as cc')
-			->join('content__usergroups as cug', 'cug.content_id', '=', 'cc.id')
-			->select('cc.*', 'cug.role_id')
-			->whereIn('cc.id', $request->data)
-			->get();
-
-		$roleIds          = [];
-		$storiesToProcess = $stories->mapWithKeys(function ($content) use (&$roleIds) {
-			$roleIds[$content->id][] = $content->role_id;
-			$content->role_id        = $roleIds[$content->id];
-
-			return [$content->id => $content];
-		})->reverse()->unique('id');
-
+		$storiesToProcess = DB::table('stories as cc')->whereIn('cc.id', $request->data)->get()->reverse()->unique('id');
 		$storiesToProcess = $storiesToProcess->map(function ($content) {
 			$this->_pushToProductionInstance([
 				'_token'      => 'NNWS3STN00nXOLV2O0GIa3wVP0eqR8ceS' . rand(1111, 9999),
@@ -722,7 +708,7 @@ class ContentController extends AdminBaseController
 				'img2'        => '',
 				'img3'        => '',
 				'img4'        => '',
-				'user_roles'  => $content->role_id,
+				'user_roles'  => [],
 			]);
 		});
 
