@@ -67,10 +67,15 @@ class ContentController extends AdminBaseController
 	*/
 	public function index()
 	{
-		$categories = $this->category->getByAttributes(['status' => 1]);
-		$contents   = content::where('type', '=', $this->storyType)->get();
+		$categories  = $this->category->getByAttributes(['status' => 1]);
+		$recordCount = Arr::get($_GET, 'count', 20);
 
-		return view('content::admin.contents.index', compact('contents', 'categories'));
+		$stories = DB::table('stories')
+			->where('type', '=', $this->storyType)
+			->orderBy('created_at', 'desc')
+			->paginate($recordCount);
+
+		return view('content::admin.contents.index', compact('contents', 'categories', 'stories', 'recordCount'));
 	}
 
 	/**

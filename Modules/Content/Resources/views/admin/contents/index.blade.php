@@ -1,117 +1,121 @@
+<?php 
+use \Illuminate\Support\Arr;
+?>
+
 @extends('layouts.master')
 
 @section('content-header')
-    <h1>
-        {{ trans('content::contents.title.contents') }}
-    </h1>
-    <ol class="breadcrumb">
-        <li><a href="{{ route('dashboard.index') }}"><i class="fa fa-dashboard"></i> {{ trans('core::core.breadcrumb.home') }}</a></li>
-        <li class="active">{{ trans('content::contents.title.contents') }}</li>
-
-    </ol>
-
+	<h1>
+		{{ trans('content::contents.title.contents') }}
+	</h1>
+	<ol class="breadcrumb">
+		<li>
+			<a href="{{ route('dashboard.index') }}"><i class="fa fa-dashboard"></i> {{ trans('core::core.breadcrumb.home') }}</a>
+		</li>
+		<li class="active">{{ trans('content::contents.title.contents') }}</li>
+	</ol>
 @stop
 
 @section('content')
-    <div class="row">
+	<div class="row">
 		<div class="col-xs-12">
-			<button type="button" class="btn btn-primary btn-flat" id="deleteStory" hidden="hide" style="display: none;float: left;"> DELETE</button>
-			<?php if (env('STORY_PUSH_ENABLE')) { ?>
-				<button type="button" class="btn btn-primary btn-flat" id="pushToProduction" hidden="hide" style="margin-left:10px; display: none;float: left;">
-					Push To Production Instance
-				</button>
-		    <?php } ?>
+			<div class="row">
+				<div class="col-xs-6">
+					<button type="button" class="btn btn-primary btn-flat" id="deleteStory" hidden="hide" style="display: none;float: left;"> DELETE</button>
+					<?php if (env('STORY_PUSH_ENABLE')) { ?>
+						<button type="button" class="btn btn-primary btn-flat" id="pushToProduction" hidden="hide" style="margin-left:10px; display: none;float: left;">
+							Push To Production Instance
+						</button>
+					<?php } ?>
 
+					<div id="expiryDate" style="margin-left:20px; display:none; float:left; border: 1px #000 solid; padding: 2px;">
+						<label class="pull-left" style="margin:5px;">Expiry Date</label>
+						<div id="returnrange" class="pull-left" style="margin-left:20px;background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
+							<input type="hidden" name="expiry_date" id="expiry_date"  value="" >
+							<i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+							<span></span><b class="caret"></b>
+						</div>
 
-			<div id="expiryDate" style="margin-left:20px; display:none; float:left; border: 1px #000 solid; padding: 2px;">
-				<label class="pull-left" style="margin:5px;">Expiry Date</label>
-				<div id="returnrange" class="pull-left" style="margin-left:20px;background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
-					<input type="hidden" name="expiry_date" id="expiry_date"  value="" >
-					<i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
-					<span></span><b class="caret"></b>
+						<button type="button" class="btn btn-primary btn-flat" id="expiryDateBtn" hidden="hide" style="margin-left: 10px;">
+							Extend Expiry Date
+						</button>
+					</div>
 				</div>
 
-				<button type="button" class="btn btn-primary btn-flat" id="expiryDateBtn" hidden="hide" style="margin-left: 10px;">
-					Extend Expiry Date
-				</button>
+				<div class="col-xs-6 pull-right">
+					<div class="btn-group pull-right" style="margin: 0 15px 15px 0;">
+						<a href="{{ route('admin.content.content.create') }}" class="btn btn-primary btn-flat" style="padding: 4px 10px;">
+							<i class="fa fa-pencil"></i> {{ trans('content::contents.button.create content') }}
+						</a>
+					</div>
+				</div>
 			</div>
 
-            <div class="row">
+			<div class="box box-primary">
+				<div class="box-header">
+					<div class="col-md-6 text-left" style="padding: 1.5%;">
+						<label> Show 
+							<select class="input-sm">
+								<?php
+								foreach ([10, 25, 50, 100] as $count) {
+									$redirctLoc = route('admin.content.content.index', ['count' => $count]);
+									$selected   = ($recordCount == $count) ? "selected" : '';
+								?>
+								<option onclick="location.href='{{ $redirctLoc }}'" value="{{ $count }}" {{ $selected }} >
+									{{ $count }}
+								</option>
+								<?php } ?>
+							</select> records
+						</label>
 
-                <!--  <div class="btn-group pull-right" style="margin: 0 15px 15px 0;">
-                    <a href="{{ route('admin.crawl.crawlcontent.index') }}" class="btn btn-primary btn-flat" style="padding: 4px 10px;">
-                        <i class="fa fa-pencil"></i> {{ trans('Crawl content') }}
-                    </a>
-                </div> -->
+					</div>
 
-
-                <div class="btn-group pull-right" style="margin: 0 15px 15px 0;">
-                    <a href="{{ route('admin.content.content.create') }}" class="btn btn-primary btn-flat" style="padding: 4px 10px;">
-                        <i class="fa fa-pencil"></i> {{ trans('content::contents.button.create content') }}
-                    </a>
-
-                </div>
-                
-            </div>
-            <div class="box box-primary">
-                <div class="box-header">
-                </div>
+					<div class="col-md-6 text-right">
+						{{ $stories->render() }}
+					</div>
+				</div>
                 <!-- /.box-header -->
                 <div class="box-body">
                     <div class="table-responsive">
                         <table class="data-table table table-bordered table-hover">
                             <thead>
-                            <tr>
-                                <th data-sortable="false"><input type="checkbox"  id="select_all"/></th>
-                                <th>{{ trans('ID') }}</th>
-                                <th>{{ trans('Title') }}</th>
-                                <th>{{ trans('Category') }}</th>
-                                <th>{{ trans('Created At') }}</th>
-                                <th>{{ 'Expire At' }}</th>
-                                <th data-sortable="false">{{ trans('core::core.table.actions') }}</th>
-                            </tr>
+								<tr>
+									<th data-sortable="false"><input type="checkbox" id="select_all"/></th>
+									<th>{{ trans('ID') }}</th>
+									<th>{{ trans('Title') }}</th>
+									<th>{{ trans('Category') }}</th>
+									<th>{{ trans('Created At') }}</th>
+									<th>{{ 'Expire At' }}</th>
+									<th data-sortable="false">{{ trans('core::core.table.actions') }}</th>
+								</tr>
                             </thead>
                             <tbody>
-                            <?php if (isset($contents)): ?>
+                            <?php if (isset($stories)): ?>
 
 							<?php
-								foreach ($contents as $content):
-									$all_category = "";
+								foreach ($stories as $content):
+									$selectedCategory = '';
 									if ($content->all_category) {
-										$all_categories =json_decode($content->all_category);
-
-										foreach ($all_categories as $value) {
-											foreach ($categories as $category) {
-												if($category->id == $value)
-													$all_category = $all_category . "" . $category->name . ", ";
-											}
-										}
-									} else {
-										foreach ($categories as $category) {
-											if($category->id ==$content->category_id)
-												$all_category =$all_category."".$category->name.", ";
+										foreach (json_decode($content->all_category) as $value) {
+											$selectedCategory = $selectedCategory . '' . Arr::get($categories, $value) . ', ';
 										}
 									}
-
-									$all_category =rtrim($all_category,', ');
 							?>
 							<tr>
 								<td>
-									<input class ="checkbox" type="checkbox" onchange="changed(this);" name="check[]" value="{{ $content->id }}">
+									<input class="checkbox" type="checkbox" onchange="changed(this);" name="check[]" value="{{ $content->id }}">
 								</td>
 								<td> {{ $content->id }} </td>
 								<td> {{ $content->title }} </td>
-								<td> {{ $all_category }} </td>
+								<td> {{ rtrim($selectedCategory, ', ') }} </td>
 								<td>
-									<a href ="{{ route('admin.content.content.edit', [$content->id]) }}">
-										{{ $content->created_at }}
-									</a>
+									<a href="{{ route('admin.content.content.edit', [$content->id]) }}"> {{ $content->created_at }} </a>
 								</td>
 								<td> {{ $content->expiry_date }} </td>
 								<td>
-									<div class ="btn-group">
-										<a href ="{{ route('admin.content.content.edit', [$content->id]) }}" class="btn btn-default btn-flat"><i class="fa fa-pencil"></i></a>
-										<button class ="btn btn-danger btn-flat" data-toggle="modal" data-target="#modal-delete-confirmation" data-action-target="{{ route('admin.content.content.destroy', [$content->id]) }}"><i class="fa fa-trash"></i></button>
+									<div class="btn-group">
+										<a href="{{ route('admin.content.content.edit', [$content->id]) }}" class="btn btn-default btn-flat"><i class="fa fa-pencil"></i></a>
+										<button class="btn btn-danger btn-flat" data-toggle="modal" data-target="#modal-delete-confirmation" data-action-target="{{ route('admin.content.content.destroy', [$content->id]) }}"><i class="fa fa-trash"></i></button>
 									</div>
 								</td>
 							</tr>
@@ -165,23 +169,6 @@
         });
     </script>
     <?php $locale = locale(); ?>
-    <script type="text/javascript">
-        $(function () {
-            $('.data-table').dataTable({
-                "paginate": true,
-                "lengthChange": true,
-                "filter": true,
-                "sort": true,
-                "info": true,
-                "autoWidth": true,
-                "order": [[ 1, "desc" ]],
-                "language": {
-                    "url": '<?php echo Module::asset("core:js/vendor/datatables/{$locale}.json") ?>'
-                }
-            });
-        });
-    </script>
-
 	<script type ="text/javascript">
 		checkedArray = [];
 
