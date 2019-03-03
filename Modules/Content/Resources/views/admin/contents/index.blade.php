@@ -52,7 +52,7 @@ use \Illuminate\Support\Arr;
 			</div>
 
 			<div class="box box-primary">
-				<div class="box-header">
+				<div class="box-header" style="padding:0;">
 					<div class="col-md-6 text-left" style="padding: 1.5%;">
 						<label> Show 
 							<select class="input-sm">
@@ -67,7 +67,6 @@ use \Illuminate\Support\Arr;
 								<?php } ?>
 							</select> records
 						</label>
-
 					</div>
 
 					<div class="col-md-6 text-right">

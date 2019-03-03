@@ -3,6 +3,8 @@
 namespace Modules\User\Http\Controllers\Admin;
 
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
+
 use Modules\User\Contracts\Authentication;
 use Modules\User\Events\UserHasBegunResetProcess;
 use Modules\User\Http\Requests\CreateUserRequest;
@@ -64,11 +66,12 @@ class UserController extends BaseUserModuleController
 	*/
 	public function index()
 	{
-		$users      = $this->user->all();
-		$userGroups = $this->userGroup->all()->pluck('name', 'id');
+		$userGroups  = $this->userGroup->all()->pluck('name', 'id');
 		$currentUser = $this->auth->user();
+		$recordCount = Arr::get($_GET, 'count', 20);
+		$users       = $this->user->orderBy('created_at', 'desc')->paginate($recordCount);
 
-		return view('user::admin.users.index', compact('users', 'currentUser', 'userGroups'));
+		return view('user::admin.users.index', compact('users', 'currentUser', 'userGroups', 'recordCount'));
 	}
 
 	/**
