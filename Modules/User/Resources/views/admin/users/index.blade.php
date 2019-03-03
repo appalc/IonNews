@@ -28,7 +28,7 @@ use Illuminate\Support\Arr;
 		</div>
 		<div class="box box-primary">
 			<div class="box-header" style="padding:0;">
-				<div class="col-md-6 text-left" style="padding: 1.5%;">
+				<div class="col-md-8 text-left" style="padding: 1.5%;">
 					<label> Show 
 						<select class="input-sm">
 							<?php
@@ -43,7 +43,7 @@ use Illuminate\Support\Arr;
 						</select> records
 					</label>
 				</div>
-				<div class="col-md-6 text-right">
+				<div class="col-md-4 text-right">
 					{{ $users->render() }}
 				</div>
 			</div>

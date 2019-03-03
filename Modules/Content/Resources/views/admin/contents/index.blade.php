@@ -19,8 +19,8 @@ use \Illuminate\Support\Arr;
 @section('content')
 	<div class="row">
 		<div class="col-xs-12">
-			<div class="row">
-				<div class="col-xs-6">
+			<div class="row" style="margin: 10px 0px;">
+				<div class="col-xs-9">
 					<button type="button" class="btn btn-primary btn-flat" id="deleteStory" hidden="hide" style="display: none;float: left;"> DELETE</button>
 					<?php if (env('STORY_PUSH_ENABLE')) { ?>
 						<button type="button" class="btn btn-primary btn-flat" id="pushToProduction" hidden="hide" style="margin-left:10px; display: none;float: left;">
@@ -42,7 +42,7 @@ use \Illuminate\Support\Arr;
 					</div>
 				</div>
 
-				<div class="col-xs-6 pull-right">
+				<div class="col-xs-3 pull-right">
 					<div class="btn-group pull-right" style="margin: 0 15px 15px 0;">
 						<a href="{{ route('admin.content.content.create') }}" class="btn btn-primary btn-flat" style="padding: 4px 10px;">
 							<i class="fa fa-pencil"></i> {{ trans('content::contents.button.create content') }}
