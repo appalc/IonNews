@@ -44,7 +44,7 @@ use Illuminate\Support\Arr;
 					</label>
 				</div>
 				<div class="col-md-6 text-right">
-					{{ $stories->render() }}
+					{{ $users->render() }}
 				</div>
 			</div>
 			<!-- /.box-header -->
