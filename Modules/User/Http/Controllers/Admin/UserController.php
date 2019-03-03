@@ -69,7 +69,7 @@ class UserController extends BaseUserModuleController
 		$userGroups  = $this->userGroup->all()->pluck('name', 'id');
 		$currentUser = $this->auth->user();
 		$recordCount = Arr::get($_GET, 'count', 20);
-		$users       = $this->user->orderBy('created_at', 'desc')->paginate($recordCount);
+		$users       = DB::table('users')->orderBy('created_at', 'desc')->paginate($recordCount);
 
 		return view('user::admin.users.index', compact('users', 'currentUser', 'userGroups', 'recordCount'));
 	}
