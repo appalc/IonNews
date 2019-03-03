@@ -68,7 +68,7 @@ class ContentController extends AdminBaseController
 	*/
 	public function index()
 	{
-		$categories  = $this->category->getByAttributes(['status' => 1]);
+		$categories  = $this->category->all()->pluck('name', 'id');
 		$recordCount = Arr::get($_GET, 'count', 20);
 
 		$stories = DB::table('stories')
