@@ -285,9 +285,9 @@ class FrontController extends BasePublicController
 			$requestData                  = $request->all();
 			$requestData['user_group_id'] = DB::table('user_groups')->where('default', '=', 1)->get()->first()->id;
 
-			$user       = $this->user->createWithRoles($requestData, $role_id, true);
-			$user->role = $request->role;
-
+			$user              = $this->user->createWithRoles($requestData, $role_id, true);
+			$user->role        = $request->role;
+			$user->companyInfo = $this->getCompanyInfo($user->id);
 			$confirm->broadcastOn($user);
 
 			//register Alert Email
